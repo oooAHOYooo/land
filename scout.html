@@ -55,14 +55,17 @@
             <header
                 class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <h1 class="text-2xl font-semibold">AGSCOUT — Land Parcels</h1>
+                    <h1 class="text-2xl font-semibold">AGSCOUT — Land
+                        Parcels</h1>
                     <p class="text-sm text-slate-500">All data stays in your
                         browser. No accounts. No uploads.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <input type="file" class="hidden" x-ref="file"
                         accept=".csv,text/csv" @change="importCsv($event)">
-                    <input type="file" class="hidden" x-ref="jsonFile" accept="application/json,.json" @change="importJson($event)">
+                    <input type="file" class="hidden" x-ref="jsonFile"
+                        accept="application/json,.json"
+                        @change="importJson($event)">
                     <button
                         class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
                         @click="$refs.file.click()">
@@ -73,17 +76,17 @@
                         @click="exportCsv()">
                         Export (filtered)
                     </button>
-                        <button
-                            class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
-                            @click="exportJson()">
-                            Export JSON (filtered)
-                        </button>
-                        <button
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="exportJson()">
+                        Export JSON (filtered)
+                    </button>
+                    <button
                         class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
                         @click="openAdd()">
                         + Add
                     </button>
-                        <button
+                    <button
                         class="px-3 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700"
                         @click="openBulk()">
                         Bulk Add
