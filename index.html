@@ -4,7 +4,1023 @@
         <meta charset="utf-8">
         <title>AGSCOUT — Land Parcels</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>AGSCOUT — Land Parcels</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- Tailwind CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marker: {
+              default: '#14b8a6', // teal-500
+              shortlist: '#06b6d4', // cyan-500
+              visit: '#0ea5e9', // sky-500
+              offer: '#22c55e', // green-500
+              hold: '#10b981', // emerald-500
+              watch: '#10b981', // alias to hold
+              skip: '#9ca3af', // gray
+              archived: '#9ca3af',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+        <!-- Alpine.js -->
+        <script defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+        <!-- PapaParse -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+        <!-- Leaflet -->
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <style>
+    /* Sticky table header helpers */
+    .sticky-th { position: sticky; top: 0; z-index: 20; background: white; }
+    .scrollbar-thin::-webkit-scrollbar { height: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; }
+    /* High z-index for modals over map and UI */
+    .z-high { z-index: 9999; }
+  </style>
+    </head>
+    <body class="bg-slate-50 text-slate-900 min-h-screen" x-data="app()"
+        x-init="init()">
+        <div class="max-w-7xl mx-auto p-4 md:p-6 space-y-4">
+
+            <!-- Header actions -->
+            <header
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h1 class="text-2xl font-semibold">AGSCOUT — Land
+                        Parcels</h1>
+                    <p class="text-sm text-slate-500">All data stays in your
+                        browser. No accounts. No uploads.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <input type="file" class="hidden" x-ref="file"
+                        accept=".csv,text/csv" @change="importCsv($event)">
+                    <input type="file" class="hidden" x-ref="jsonFile"
+                        accept="application/json,.json"
+                        @change="importJson($event)">
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="$refs.file.click()">
+                        Import CSV
+                    </button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="exportCsv()">
+                        Export (filtered)
+                    </button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="exportJson()">
+                        Export JSON (filtered)
+                    </button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
+                        @click="openAdd()">
+                        + Add
+                    </button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700"
+                        @click="openBulk()">
+                        Bulk Add
+                    </button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="loadDemo()">
+                        Load demo
+                    </button>
+                    <button aria-label="Clear all rows"
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="clearAll()" x-show="rows.length">
+                        Clear all
+                    </button>
+                </div>
+            </header>
+
+            <!-- Filters + Tabs -->
+            <section class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+                <div class="flex flex-col lg:flex-row lg:items-end gap-3">
+                    <div class="flex-1">
+                        <label class="text-xs text-slate-500">Search</label>
+                        <input type="text"
+                            x-model.debounce.300ms="filters.search"
+                            placeholder="Town, Parcel, or Note"
+                            class="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-teal-200">
+                    </div>
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-none">
+                        <div>
+                            <label class="text-xs text-slate-500">State</label>
+                            <select x-model="filters.state"
+                                class="mt-1 w-full px-3 py-2 border rounded-md bg-white">
+                                <option value>Any</option>
+                                <template x-for="s in uniqueStates()" :key="s">
+                                    <option :value="s" x-text="s"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500">Water</label>
+                            <select x-model="filters.water"
+                                class="mt-1 w-full px-3 py-2 border rounded-md bg-white">
+                                <option value>Any</option>
+                                <option value="adjacent">Adjacent (0)</option>
+                                <option value="near">Near (≤900)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500">Min
+                                acres</label>
+                            <input type="number" step="any"
+                                x-model.number="filters.minAcres"
+                                class="mt-1 w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500">Max
+                                price</label>
+                            <input type="number" step="1"
+                                x-model.number="filters.maxPrice"
+                                class="mt-1 w-full px-3 py-2 border rounded-md">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs + counters -->
+                <div class="mt-3 flex items-center justify-between">
+                    <div
+                        class="inline-flex rounded-md border bg-slate-50 overflow-hidden">
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='inbox' ? 'bg-white' : ''"
+                            @click="activeTab = 'inbox'">Inbox</button>
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='shortlist' ? 'bg-white' : ''"
+                            @click="activeTab = 'shortlist'">Shortlist</button>
+                        <button class="px-3 py-1.5 text sm"
+                            :class="activeTab==='watch' ? 'bg-white' : ''"
+                            @click="activeTab = 'watch'">Watchlist</button>
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='archived' ? 'bg-white' : ''"
+                            @click="activeTab = 'archived'">Archived</button>
+                    </div>
+                    <div class="text-xs text-slate-600 flex items-center gap-3">
+                        <span>Inbox: <strong
+                                x-text="counts().inbox"></strong></span>
+                        <span>Visit: <strong
+                                x-text="counts().visit"></strong></span>
+                        <span>Watch: <strong
+                                x-text="counts().watch"></strong></span>
+                        <span>Offer: <strong
+                                x-text="counts().offer"></strong></span>
+                        <span>Skip: <strong
+                                x-text="counts().skip"></strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Map section -->
+            <section class="bg-white rounded-lg shadow-sm border">
+                <div class="p-3 md:p-4 flex items-center justify-between">
+                    <div class="text-sm text-slate-600">
+                        Pins: <strong x-text="pinCount"></strong>
+                    </div>
+                    <div class="text-xs text-slate-500">Score (lower =
+                        better)</div>
+                </div>
+                <div id="map" class="w-full h-72 md:h-96 rounded-b-lg"></div>
+            </section>
+
+            <!-- Bulk actions -->
+            <section class="flex flex-wrap items-center gap-2">
+                <button
+                    class="px-3 py-1.5 rounded-md text-sm bg-white shadow-sm border hover:bg-slate-50"
+                    @click="bulkMove('shortlist')"
+                    :disabled="selectedIds.size===0"
+                    :class="selectedIds.size===0 ? 'opacity-50 cursor-not-allowed' : ''">
+                    Move selected → Shortlist
+                </button>
+                <button
+                    class="px-3 py-1.5 rounded-md text-sm bg-white shadow-sm border hover:bg-slate-50"
+                    @click="bulkMove('watch')" :disabled="selectedIds.size===0"
+                    :class="selectedIds.size===0 ? 'opacity-50 cursor-not-allowed' : ''">
+                    Move selected → Watchlist
+                </button>
+                <button
+                    class="px-3 py-1.5 rounded-md text-sm bg-white shadow-sm border hover:bg-slate-50"
+                    @click="bulkMove('archived')"
+                    :disabled="selectedIds.size===0"
+                    :class="selectedIds.size===0 ? 'opacity-50 cursor-not-allowed' : ''">
+                    Move selected → Archived
+                </button>
+                <span class="text-xs text-slate-500 ml-2"
+                    x-show="selectedIds.size">Selected: <span
+                        x-text="selectedIds.size"></span></span>
+            </section>
+
+            <!-- Table -->
+            <section
+                class="bg-white rounded-lg shadow-sm border overflow-hidden">
+                <div class="overflow-x-auto scrollbar-thin">
+                    <table class="min-w-[1000px] w-full">
+                        <thead>
+                            <tr
+                                class="text-left text-xs text-slate-500 border-b">
+                                <th class="sticky-th px-3 py-2 w-10"><input
+                                        type="checkbox"
+                                        @change="toggleSelectAll($event)"></th>
+                                <th class="sticky-th px-3 py-2 w-10">★</th>
+                                <th class="sticky-th px-3 py-2">State</th>
+                                <th class="sticky-th px-3 py-2">County</th>
+                                <th class="sticky-th px-3 py-2">Town</th>
+                                <th class="sticky-th px-3 py-2">Parcel</th>
+                                <th
+                                    class="sticky-th px-3 py-2 text-right">Acres</th>
+                                <th
+                                    class="sticky-th px-3 py-2 text-right">Price</th>
+                                <th class="sticky-th px-3 py-2 text-right">$ /
+                                    acre</th>
+                                <th class="sticky-th px-3 py-2">Water</th>
+                                <th class="sticky-th px-3 py-2">Tag</th>
+                                <th class="sticky-th px-3 py-2">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="row in filteredSorted()"
+                                :key="row.id">
+                                <tr
+                                    class="border-b hover:bg-slate-50 cursor-pointer"
+                                    :class="activeId===row.id ? 'bg-teal-50' : ''"
+                                    @click="centerOnRow(row)"
+                                    :aria-row-id="row.id">
+                                    <td class="px-3 py-2" @click.stop>
+                                        <input type="checkbox"
+                                            :checked="selectedIds.has(row.id)"
+                                            @change="toggleSelect(row.id, $event)">
+                                    </td>
+                                    <td class="px-3 py-2" @click.stop>
+                                        <button class="text-lg" aria-label="Toggle shortlist"
+                                            :class="row.Tag==='shortlist' ? 'text-teal-600' : 'text-slate-300 hover:text-slate-500'"
+                                            @click="toggleShortlist(row)">★</button>
+                                    </td>
+                                    <td class="px-3 py-2"
+                                        x-text="row.State"></td>
+                                    <td class="px-3 py-2"
+                                        x-text="row.County"></td>
+                                    <td class="px-3 py-2"
+                                        x-text="row.Town"></td>
+                                    <td class="px-3 py-2">
+                                            <div class="flex items-center gap-2">
+                                            <template x-if="row.Link">
+                                                <a :href="row.Link"
+                                                    target="_blank"
+                                                    class="text-teal-600 hover:underline"
+                                                    @click.stop
+                                                    x-text="row.Parcel"></a>
+                                            </template>
+                                            <template x-if="!row.Link">
+                                                <span
+                                                    x-text="row.Parcel"></span>
+                                            </template>
+                                            <span class="text-xs text-slate-500"
+                                                x-text="'(' + fmt.score(row._score) + ')'"
+                                                title="Score"></span>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.number(row.Acres)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.currency(row.Price)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.currency(ppa(row))"></td>
+                                    <td class="px-3 py-2"
+                                        x-text="waterLabel(row.WaterProximity)"></td>
+                                    <td class="px-3 py-2" @click.stop>
+                                        <select
+                                            class="px-2 py-1 border rounded-md bg-white text-sm"
+                                            x-model="row.Tag"
+                                            @change="onRowChanged(row)"
+                                            aria-label="Change tag">
+                                            <option>inbox</option>
+                                            <option>visit</option>
+                                            <option>shortlist</option>
+                                            <option>watch</option>
+                                            <option>offer</option>
+                                            <option>hold</option>
+                                            <option>skip</option>
+                                            <option>archived</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2" @click.stop>
+                                        <input type="text"
+                                            class="w-full px-2 py-1 border rounded-md text-sm"
+                                            x-model="row.Note"
+                                            @change="onRowChanged(row)"
+                                            @keydown.stop>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="filteredSorted().length===0">
+                                <td colspan="12"
+                                    class="px-3 py-8 text-center text-slate-500 text-sm">No
+                                    results</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Add Modal -->
+            <div x-show="modals.add" x-transition
+                class="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-high">
+                <div
+                    class="bg-white w-full md:max-w-2xl rounded-t-lg md:rounded-lg shadow-xl">
+                    <div class="p-4 border-b flex items-center justify-between">
+                        <h3 class="text-lg font-semibold">Add property</h3>
+                        <button class="text-slate-500 hover:text-slate-700"
+                            @click="modals.add=false">✕</button>
+                    </div>
+                    <form class="p-4 space-y-3" @submit.prevent="submitAdd()">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div><label
+                                    class="text-xs text-slate-500">State</label><input
+                                    x-model="form.State" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">County</label><input
+                                    x-model="form.County" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Town</label><input
+                                    x-model="form.Town" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Parcel</label><input
+                                    x-model="form.Parcel" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Acres</label><input
+                                    type="number" step="any"
+                                    x-model.number="form.Acres"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Price</label><input
+                                    type="number" step="1"
+                                    x-model.number="form.Price"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label class="text-xs text-slate-500">Water
+                                    proximity (feet)</label><input type="number"
+                                    step="1"
+                                    x-model.number="form.WaterProximity"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"
+                                    placeholder="0=adjacent, ≤900 near"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Link</label><input
+                                    x-model="form.Link"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"
+                                    placeholder="https://..."></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Lat</label><input
+                                    type="number" step="any"
+                                    x-model.number="form.Lat"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Lon</label><input
+                                    type="number" step="any"
+                                    x-model.number="form.Lon"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                            <div class="md:col-span-2"><label
+                                    class="text-xs text-slate-500">Note</label><input
+                                    x-model="form.Note"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"></div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 pt-2">
+                            <button type="button"
+                                class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                                @click="modals.add=false">Close</button>
+                            <button type="submit"
+                                class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">Add
+                                to Inbox</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bulk Modal -->
+            <div x-show="modals.bulk" x-transition
+                class="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-high">
+                <div
+                    class="bg-white w-full md:max-w-5xl rounded-t-lg md:rounded-lg shadow-xl">
+                    <div class="p-4 border-b flex items-center justify-between">
+                        <h3 class="text-lg font-semibold">Bulk Add</h3>
+                        <button class="text-slate-500 hover:text-slate-700"
+                            @click="modals.bulk=false">✕</button>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-slate-500">Paste CSV/TSV
+                                or table (first row must be headers)</label>
+                            <textarea x-model="bulk.raw"
+                                class="mt-1 w-full h-56 px-3 py-2 border rounded-md font-mono text-sm"></textarea>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button
+                                    class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                                    @click="bulkPreview()">Preview</button>
+                                <button
+                                    class="px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                                    :disabled="bulk.preview.length===0"
+                                    :class="bulk.preview.length===0 ? 'opacity-50 cursor-not-allowed' : ''"
+                                    @click="bulkCommit()">Add to Inbox</button>
+                            </div>
+                        </div>
+                        <div class="overflow-auto border rounded-md">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr
+                                        class="text-left text-xs text-slate-500 border-b">
+                                        <template x-if="bulk.preview.length>0">
+                                            <template x-for="h in bulk.headers"
+                                                :key="h">
+                                                <th class="sticky-th px-3 py-2"
+                                                    x-text="h"></th>
+                                            </template>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(r,idx) in bulk.preview"
+                                        :key="idx">
+                                        <tr class="border-b">
+                                            <template x-for="h in bulk.headers"
+                                                :key="h">
+                                                <td class="px-3 py-1 text-sm"
+                                                    x-text="r[h] ?? ''"></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="bulk.preview.length===0">
+                                        <td
+                                            class="px-3 py-8 text-center text-slate-500 text-sm">Preview
+                                            will appear here</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 text-xs text-slate-500">
+                        Supported headers:
+                        State,County,Town,Parcel,Acres,Price,WaterProximity,Link,Lat,Lon,Tag,Note
+                    </div>
+                    <div class="p-4 pt-0 flex items-center justify-end">
+                        <button
+                            class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                            @click="modals.bulk=false">Close</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+    function app() {
+      return {
+        // State
+        rows: [],
+        activeTab: 'inbox',
+        filters: { search: '', state: '', water: '', minAcres: null, maxPrice: null },
+        selectedIds: new Set(),
+        modals: { add: false, bulk: false },
+        form: { State:'', County:'', Town:'', Parcel:'', Acres:null, Price:null, WaterProximity:null, Link:'', Lat:null, Lon:null, Note:'' },
+        bulk: { raw:'', preview:[], headers:[] },
+        // Map
+        map: null,
+        markersLayer: null,
+        idToMarker: new Map(),
+        activeId: null,
+        pinCount: 0,
+
+        // Debounce utility
+        _debounceTimer: null,
+        debounce(fn, ms = 150) {
+          clearTimeout(this._debounceTimer);
+          this._debounceTimer = setTimeout(fn, ms);
+        },
+
+        // Init
+        init() {
+          // Load from localStorage
+          try {
+            // Migrate old key to new key if needed
+            const legacy = localStorage.getItem('scout.rows');
+            if (legacy && !localStorage.getItem('agscout.rows')) {
+              localStorage.setItem('agscout.rows', legacy);
+              localStorage.removeItem('scout.rows');
+            }
+            const saved = localStorage.getItem('agscout.rows');
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (Array.isArray(parsed)) this.rows = parsed.map(this.normalizeRow);
+            }
+          } catch (e) { console.warn('Failed to load', e); }
+          // Setup map after DOM
+          this.$nextTick(() => {
+            this.initMap();
+            this.refreshMarkers();
+          });
+          // Watchers to persist and refresh (debounced)
+          this.$watch('rows', () => {
+            this.saveAll();
+            this.debounce(() => this.refreshMarkers());
+          });
+          this.$watch('filters', () => {
+            this.debounce(() => this.refreshMarkers());
+          }, { deep: true });
+          this.$watch('activeTab', () => {
+            this.debounce(() => this.refreshMarkers());
+          });
+        },
+
+        // Normalization and utilities
+        normalizeRow(raw) {
+          const trim = v => (v==null ? '' : String(v).trim());
+          const toNum = v => {
+            if (v === null || v === undefined || v === '') return null;
+            const n = Number(v);
+            return Number.isFinite(n) ? n : null;
+          };
+          const row = {
+            State: trim(raw.State),
+            County: trim(raw.County),
+            Town: trim(raw.Town),
+            Parcel: trim(raw.Parcel),
+            Acres: toNum(raw.Acres),
+            Price: toNum(raw.Price),
+            WaterProximity: toNum(raw.WaterProximity),
+            Link: trim(raw.Link),
+            Lat: toNum(raw.Lat),
+            Lon: toNum(raw.Lon),
+            Tag: (trim(raw.Tag) || 'inbox').toLowerCase(),
+            Note: trim(raw.Note),
+          };
+          // Empty value treated as inbox (spec)
+          if (!row.Tag) row.Tag = 'inbox';
+          // ID for dedupe (skip all-empty)
+          const idParts = [row.State, row.County, row.Town, row.Parcel].map(s => (s || '').toLowerCase().trim());
+          const nonEmpty = idParts.filter(Boolean);
+          row.id = nonEmpty.length ? idParts.join('|') : null;
+          return row;
+        },
+
+        mergeRows(incomingRows) {
+          const idToExisting = new Map(this.rows.map(r => [r.id, r]));
+          for (const incRaw of incomingRows) {
+            const inc = this.normalizeRow(incRaw);
+            if (!inc.id) continue;
+            const existing = idToExisting.get(inc.id);
+            if (!existing) {
+              // Default Tag to inbox if empty
+              if (!inc.Tag) inc.Tag = 'inbox';
+              this.rows.push(inc);
+              idToExisting.set(inc.id, inc);
+              continue;
+            }
+            // Merge: keep existing Tag/Note unless incoming provides explicit values
+            const merged = { ...existing };
+            const fields = ['State','County','Town','Parcel','Acres','Price','WaterProximity','Link','Lat','Lon'];
+            for (const f of fields) {
+              if (inc[f] !== null && inc[f] !== '' && inc[f] !== undefined) merged[f] = inc[f];
+            }
+            if (inc.Tag) merged.Tag = inc.Tag.toLowerCase();
+            if (inc.Note) merged.Note = inc.Note;
+            // ID unchanged
+            Object.assign(existing, merged);
+          }
+          this.rows = [...idToExisting.values()];
+        },
+
+        saveAll() {
+          try {
+            localStorage.setItem('agscout.rows', JSON.stringify(this.rows));
+          } catch (e) {
+            console.warn('Failed to save', e);
+          }
+        },
+
+        // Filtering + computed
+        tabPredicate(row) {
+          const tag = (row.Tag || '').toLowerCase();
+          if (this.activeTab === 'inbox') {
+            return tag === '' || tag === 'inbox';
+          } else if (this.activeTab === 'shortlist') {
+            return ['shortlist','offer','visit'].includes(tag);
+          } else if (this.activeTab === 'watch') {
+            return ['watch','hold'].includes(tag);
+          } else if (this.activeTab === 'archived') {
+            return ['archived','skip'].includes(tag);
+          }
+          return true;
+        },
+
+        filtered() {
+          const q = (this.filters.search || '').toLowerCase();
+          return this.rows.filter(row => {
+            if (!this.tabPredicate(row)) return false;
+            if (this.filters.state && row.State !== this.filters.state) return false;
+
+            if (this.filters.water === 'adjacent') {
+              if (!(row.WaterProximity === 0)) return false;
+            } else if (this.filters.water === 'near') {
+              if (!(row.WaterProximity !== null && row.WaterProximity <= 900)) return false;
+            }
+
+            if (this.filters.minAcres != null && row.Acres != null && row.Acres < this.filters.minAcres) return false;
+            if (this.filters.maxPrice != null && row.Price != null && row.Price > this.filters.maxPrice) return false;
+
+            if (q) {
+              const hay = [row.Town, row.Parcel, row.Note].join(' ').toLowerCase();
+              if (!hay.includes(q)) return false;
+            }
+
+            return true;
+          });
+        },
+
+        filteredSorted() {
+          const cur = this.filtered();
+          const ranks = this.buildRanks(cur);
+          const n = cur.length || 1;
+          const arr = cur.map(r => {
+            const s = this.scoreFromRanks(r, ranks, n);
+            r._score = s;
+            return { row: r, s };
+          });
+          arr.sort((a,b) => a.s - b.s || (this.ppa(a.row) ?? Infinity) - (this.ppa(b.row) ?? Infinity));
+          return arr.map(x => x.row);
+        },
+
+        counts() {
+          const c = { inbox:0, visit:0, watch:0, offer:0, skip:0 };
+          for (const r of this.rows) {
+            const t = (r.Tag || '').toLowerCase();
+            if (t === '' || t === 'inbox') c.inbox++;
+            if (t === 'visit') c.visit++;
+            if (t === 'watch') c.watch++;
+            if (t === 'offer') c.offer++;
+            if (t === 'skip') c.skip++;
+          }
+          return c;
+        },
+
+        uniqueStates() {
+          const set = new Set(this.rows.map(r => r.State).filter(Boolean));
+          return Array.from(set).sort();
+        },
+
+        // Map
+        initMap() {
+          this.map = L.map('map', { zoomControl: true, attributionControl: true }).setView([42.3, -73.1], 7);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+          }).addTo(this.map);
+          this.markersLayer = L.layerGroup().addTo(this.map);
+        },
+
+        markerColor(tag) {
+          const t = (tag || '').toLowerCase();
+          if (t === 'offer') return tailwind.theme.extend.colors.marker.offer;
+          if (t === 'visit') return tailwind.theme.extend.colors.marker.visit;
+          if (t === 'skip') return tailwind.theme.extend.colors.marker.skip;
+          if (t === 'hold') return tailwind.theme.extend.colors.marker.hold;
+          if (t === 'watch') return tailwind.theme.extend.colors.marker.watch;
+          if (t === 'shortlist') return tailwind.theme.extend.colors.marker.shortlist;
+          if (t === 'archived') return tailwind.theme.extend.colors.marker.archived;
+          return tailwind.theme.extend.colors.marker.default;
+        },
+
+        refreshMarkers() {
+          if (!this.map || !this.markersLayer) return;
+          this.markersLayer.clearLayers();
+          this.idToMarker.clear();
+
+          const rows = this.filteredSorted().filter(r => this.hasCoords(r));
+          this.pinCount = rows.length;
+
+          const bounds = [];
+          for (const r of rows) {
+            const color = this.markerColor(r.Tag);
+            const marker = L.circleMarker([r.Lat, r.Lon], {
+              radius: (this.activeId===r.id ? 9 : 6),
+              color,
+              fillColor: color,
+              weight: (this.activeId===r.id ? 3 : 1.5),
+              fillOpacity: 0.75
+            });
+            const popupHtml = `
+              <div class="text-sm">
+                <div class="font-semibold">${this.escapeHtml(r.Town)} — ${this.escapeHtml(r.Parcel)}</div>
+                <div>${this.escapeHtml(this.fmt.number(r.Acres))} acres · ${this.escapeHtml(this.fmt.currency(r.Price))}</div>
+                <div>Water: ${this.escapeHtml(this.waterLabel(r.WaterProximity))}</div>
+                ${r.Link ? `<div><a href="${this.escapeHtml(r.Link)}" target="_blank" class="text-indigo-600 underline">Link</a></div>` : ''}
+              </div>`;
+            marker.bindPopup(popupHtml);
+            marker.on('click', () => {
+              this.activeId = r.id;
+              this.$nextTick(() => this.refreshMarkers());
+              // Try scroll to row
+              this.$nextTick(() => {
+                const el = document.querySelector(`tr[aria-row-id="${r.id}"]`);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              });
+            });
+            marker.addTo(this.markersLayer);
+            this.idToMarker.set(r.id, marker);
+            bounds.push([r.Lat, r.Lon]);
+          }
+
+          if (bounds.length > 0) {
+            try {
+              const b = L.latLngBounds(bounds);
+              if (!this.map.getBounds().pad(-0.2).contains(b)) {
+                this.map.fitBounds(b, { padding: [30, 30] });
+              }
+            } catch {}
+          }
+        },
+
+        centerOnRow(row) {
+          if (!this.hasCoords(row)) return;
+          this.activeId = row.id;
+          const m = this.idToMarker.get(row.id);
+          if (m) {
+            this.map.flyTo(m.getLatLng(), Math.max(this.map.getZoom(), 13), { duration: 0.6 });
+            m.openPopup();
+          }
+          this.refreshMarkers();
+        },
+
+        hasCoords(r) { return r.Lat !== null && r.Lon !== null && isFinite(r.Lat) && isFinite(r.Lon); },
+
+        // Import/Export
+        importCsv(e) {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (res) => {
+              const rows = (res.data || []).map(r => ({
+                State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+                Acres: r.Acres, Price: r.Price, WaterProximity: r.WaterProximity,
+                Link: r.Link, Lat: r.Lat, Lon: r.Lon, Tag: r.Tag, Note: r.Note
+              }));
+              this.mergeRows(rows);
+              e.target.value = '';
+            },
+            error: (err) => { alert('Failed to import CSV' + (err?.message ? (': ' + err.message) : '')); e.target.value = ''; }
+          });
+        },
+
+        importJson(e) {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const arr = JSON.parse(String(reader.result || '[]'));
+              if (!Array.isArray(arr)) throw new Error('Invalid JSON: expected array');
+              const rows = arr.map(r => ({
+                State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+                Acres: r.Acres, Price: r.Price, WaterProximity: r.WaterProximity,
+                Link: r.Link, Lat: r.Lat, Lon: r.Lon, Tag: r.Tag, Note: r.Note
+              }));
+              this.mergeRows(rows);
+            } catch (err) {
+              alert('Failed to import JSON' + (err?.message ? (': ' + err.message) : ''));
+            } finally {
+              e.target.value = '';
+            }
+          };
+          reader.readAsText(file);
+        },
+
+        exportCsv() {
+          const headers = ['State','County','Town','Parcel','Acres','Price','WaterProximity','Link','Lat','Lon','Tag','Note'];
+          const data = this.filteredSorted().map(r => {
+            return {
+              State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+              Acres: r.Acres ?? '', Price: r.Price ?? '', WaterProximity: r.WaterProximity ?? '',
+              Link: r.Link, Lat: r.Lat ?? '', Lon: r.Lon ?? '', Tag: r.Tag ?? '', Note: r.Note ?? ''
+            };
+          });
+          const csv = Papa.unparse({ fields: headers, data: data.map(d => headers.map(h => d[h])) });
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'scout_filtered.csv';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        },
+
+        exportJson() {
+          const data = this.filteredSorted().map(r => ({
+            State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+            Acres: r.Acres ?? null, Price: r.Price ?? null, WaterProximity: r.WaterProximity ?? null,
+            Link: r.Link || '', Lat: r.Lat ?? null, Lon: r.Lon ?? null, Tag: r.Tag || 'inbox', Note: r.Note || ''
+          }));
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'agscout_filtered.json';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        },
+
+        // Add
+        openAdd() {
+          this.form = { State:'', County:'', Town:'', Parcel:'', Acres:null, Price:null, WaterProximity:null, Link:'', Lat:null, Lon:null, Note:'' };
+          this.modals.add = true;
+          this.$nextTick(()=>document.querySelector('[x-model="form.State"]')?.focus());
+        },
+        submitAdd() {
+          const r = this.normalizeRow({ ...this.form, Tag: 'inbox' });
+          this.mergeRows([r]);
+          this.modals.add = false;
+        },
+
+        // Bulk
+        openBulk() {
+          this.bulk = { raw:'', preview:[], headers:[] };
+          this.modals.bulk = true;
+        },
+        bulkPreview() {
+          const text = this.bulk.raw || '';
+          if (!text.trim()) { this.bulk.preview = []; this.bulk.headers = []; return; }
+          const res = Papa.parse(text, { header: true, skipEmptyLines: true });
+          const rows = (res.data || []);
+          const headers = res.meta?.fields || Object.keys(rows[0] || {});
+          this.bulk.preview = rows;
+          this.bulk.headers = headers;
+        },
+        bulkCommit() {
+          if (this.bulk.preview.length === 0) return;
+          const rows = this.bulk.preview.map(r => ({
+            State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+            Acres: r.Acres, Price: r.Price, WaterProximity: r.WaterProximity,
+            Link: r.Link, Lat: r.Lat, Lon: r.Lon, Tag: r.Tag || 'inbox', Note: r.Note
+          }));
+          this.mergeRows(rows);
+          this.modals.bulk = false;
+          this.bulk = { raw:'', preview:[], headers:[] };
+        },
+
+        // Bulk move
+        bulkMove(target) {
+          const toTag = (target === 'shortlist') ? 'shortlist' : (target === 'watch' ? 'watch' : 'archived');
+          for (const r of this.rows) {
+            if (this.selectedIds.has(r.id)) r.Tag = toTag;
+          }
+          this.selectedIds.clear();
+          this.saveAll();
+          this.refreshMarkers();
+        },
+
+        toggleShortlist(row) {
+          row.Tag = (row.Tag === 'shortlist' ? 'inbox' : 'shortlist');
+          this.onRowChanged(row);
+        },
+
+        onRowChanged(_row) {
+          this.saveAll();
+          this.debounce(() => this.refreshMarkers());
+        },
+
+        toggleSelect(id, e) {
+          if (e.target.checked) this.selectedIds.add(id);
+          else this.selectedIds.delete(id);
+        },
+
+        toggleSelectAll(e) {
+          if (e.target.checked) {
+            for (const r of this.filteredSorted()) this.selectedIds.add(r.id);
+          } else {
+            this.selectedIds.clear();
+          }
+        },
+
+        // Formatters
+        fmt: {
+          currency(v) {
+            if (v == null || !isFinite(v)) return '';
+            return '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 });
+          },
+          number(v) {
+            if (v == null || !isFinite(v)) return '';
+            return Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
+          },
+          score(v) {
+            if (v == null || !isFinite(v)) return '';
+            return v.toFixed(2);
+          }
+        },
+
+        ppa(row) {
+          const acres = row.Acres;
+          const price = row.Price;
+          if (!acres || !price || acres <= 0 || price <= 0) return null;
+          return price / acres;
+        },
+
+        waterLabel(v) {
+          if (v === 0) return 'adjacent';
+          if (v != null && isFinite(v) && v <= 900) return 'near';
+          return 'far';
+        },
+
+        // Scoring (precomputed ranks)
+        buildRanks(set) {
+          const ppaArr   = set.map(r => ({ id: r.id, v: this.ppa(r) }));
+          const acresArr = set.map(r => ({ id: r.id, v: (r.Acres ?? null) }));
+          const waterArr = set.map(r => ({ id: r.id, v: (r.WaterProximity ?? null) }));
+
+          const rankLow = (arr) => {
+            const vals = arr.slice().sort((a,b) => (a.v ?? Infinity) - (b.v ?? Infinity));
+            const map = new Map();
+            vals.forEach((x, i) => map.set(x.id, i + 1));
+            return map;
+          };
+          const rankHigh = (arr) => {
+            const vals = arr.slice().sort((a,b) => (b.v ?? -Infinity) - (a.v ?? -Infinity));
+            const map = new Map();
+            vals.forEach((x, i) => map.set(x.id, i + 1));
+            return map;
+          };
+
+          return {
+            ppaLow:   rankLow(ppaArr),
+            acresHigh: rankHigh(acresArr),
+            waterLow: rankLow(waterArr),
+          };
+        },
+
+        scoreFromRanks(row, ranks, n) {
+          const s =
+            (ranks.ppaLow.get(row.id)   ?? n) * 0.5 +
+            (ranks.acresHigh.get(row.id)?? n) * 0.3 +
+            (ranks.waterLow.get(row.id) ?? n) * 0.2 +
+            ((row.Tag === 'visit') ? -0.2 : 0);
+          return s;
+        },
+
+        // Map helpers
+        escapeHtml(s) {
+          if (s == null) return '';
+          return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        },
+
+        // Demo, clear
+        loadDemo() {
+          const demoCsv = `State,County,Town,Parcel,Acres,Price,WaterProximity,Link,Lat,Lon,Tag,Note
+MA,Berkshire,Otis,72 W Center Rd,0.22,12000,800,https://example.com/otis,42.1880,-73.0905,inbox,Otis Reservoir corridor
+MA,Berkshire,Savoy,River Rd,2.10,24000,1000,,42.6130,-73.0325,visit,Headwaters vibe
+MA,Berkshire,Florida,Tilda Hill Rd,2.00,24900,800,,42.6954,-73.0213,watch,Ridge above North Pond
+NY,Sullivan,Fallsburg,Tr 105 Cypert Rd,0.86,15000,1000,https://example.com/fallsburg,41.7078,-74.6374,shortlist,Stream lot
+CT,Middlesex,East Haddam,Florida Rd North,0.78,10000,600,https://example.com/easthaddam,41.4948,-72.3882,inbox,Salmon River area`;
+          const res = Papa.parse(demoCsv, { header: true, skipEmptyLines: true });
+          this.mergeRows(res.data);
+        },
+
+        clearAll() {
+          if (!confirm('Clear all rows?')) return;
+          this.rows = [];
+          this.selectedIds.clear();
+          localStorage.removeItem('agscout.rows');
+          this.refreshMarkers();
+        }
+      };
+    }
+  </script>
+    </body>
+ </html>
         <!-- Tailwind CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
