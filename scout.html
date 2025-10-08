@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Scout — Land Parcels</title>
+        <title>AGSCOUT — Land Parcels</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Tailwind CDN -->
@@ -13,12 +13,12 @@
         extend: {
           colors: {
             marker: {
-              default: '#ef4444', // red
-              shortlist: '#a855f7', // purple
-              visit: '#3b82f6', // blue
-              offer: '#22c55e', // green
-              hold: '#f59e0b', // orange
-              watch: '#f59e0b', // alias to hold
+              default: '#14b8a6', // teal-500
+              shortlist: '#06b6d4', // cyan-500
+              visit: '#0ea5e9', // sky-500
+              offer: '#22c55e', // green-500
+              hold: '#10b981', // emerald-500
+              watch: '#10b981', // alias to hold
               skip: '#9ca3af', // gray
               archived: '#9ca3af',
             }
@@ -55,13 +55,14 @@
             <header
                 class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <h1 class="text-2xl font-semibold">Scout — Land Parcels</h1>
+                    <h1 class="text-2xl font-semibold">AGSCOUT — Land Parcels</h1>
                     <p class="text-sm text-slate-500">All data stays in your
                         browser. No accounts. No uploads.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <input type="file" class="hidden" x-ref="file"
                         accept=".csv,text/csv" @change="importCsv($event)">
+                    <input type="file" class="hidden" x-ref="jsonFile" accept="application/json,.json" @change="importJson($event)">
                     <button
                         class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
                         @click="$refs.file.click()">
@@ -72,13 +73,18 @@
                         @click="exportCsv()">
                         Export (filtered)
                     </button>
-                    <button
+                        <button
+                            class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                            @click="exportJson()">
+                            Export JSON (filtered)
+                        </button>
+                        <button
                         class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
                         @click="openAdd()">
                         + Add
                     </button>
-                    <button
-                        class="px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                        <button
+                        class="px-3 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700"
                         @click="openBulk()">
                         Bulk Add
                     </button>
@@ -103,7 +109,7 @@
                         <input type="text"
                             x-model.debounce.300ms="filters.search"
                             placeholder="Town, Parcel, or Note"
-                            class="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200">
+                            class="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-teal-200">
                     </div>
                     <div
                         class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-none">
@@ -246,7 +252,7 @@
                                 :key="row.id">
                                 <tr
                                     class="border-b hover:bg-slate-50 cursor-pointer"
-                                    :class="activeId===row.id ? 'bg-indigo-50' : ''"
+                                    :class="activeId===row.id ? 'bg-teal-50' : ''"
                                     @click="centerOnRow(row)"
                                     :aria-row-id="row.id">
                                     <td class="px-3 py-2" @click.stop>
@@ -256,7 +262,7 @@
                                     </td>
                                     <td class="px-3 py-2" @click.stop>
                                         <button class="text-lg"
-                                            :class="row.Tag==='shortlist' ? 'text-purple-600' : 'text-slate-300 hover:text-slate-500'"
+                                            :class="row.Tag==='shortlist' ? 'text-teal-600' : 'text-slate-300 hover:text-slate-500'"
                                             @click="toggleShortlist(row)">★</button>
                                     </td>
                                     <td class="px-3 py-2"
@@ -270,7 +276,7 @@
                                             <template x-if="row.Link">
                                                 <a :href="row.Link"
                                                     target="_blank"
-                                                    class="text-indigo-600 hover:underline"
+                                                    class="text-teal-600 hover:underline"
                                                     @click.stop
                                                     x-text="row.Parcel"></a>
                                             </template>
@@ -499,7 +505,13 @@
         init() {
           // Load from localStorage
           try {
-            const saved = localStorage.getItem('scout.rows');
+            // Migrate old key to new key if needed
+            const legacy = localStorage.getItem('scout.rows');
+            if (legacy && !localStorage.getItem('agscout.rows')) {
+              localStorage.setItem('agscout.rows', legacy);
+              localStorage.removeItem('scout.rows');
+            }
+            const saved = localStorage.getItem('agscout.rows');
             if (saved) {
               const parsed = JSON.parse(saved);
               if (Array.isArray(parsed)) this.rows = parsed.map(this.normalizeRow);
@@ -581,7 +593,7 @@
 
         saveAll() {
           try {
-            localStorage.setItem('scout.rows', JSON.stringify(this.rows));
+            localStorage.setItem('agscout.rows', JSON.stringify(this.rows));
           } catch (e) {
             console.warn('Failed to save', e);
           }
@@ -750,6 +762,29 @@
           });
         },
 
+        importJson(e) {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const arr = JSON.parse(String(reader.result || '[]'));
+              if (!Array.isArray(arr)) throw new Error('Invalid JSON: expected array');
+              const rows = arr.map(r => ({
+                State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+                Acres: r.Acres, Price: r.Price, WaterProximity: r.WaterProximity,
+                Link: r.Link, Lat: r.Lat, Lon: r.Lon, Tag: r.Tag, Note: r.Note
+              }));
+              this.mergeRows(rows);
+            } catch (err) {
+              alert('Failed to import JSON');
+            } finally {
+              e.target.value = '';
+            }
+          };
+          reader.readAsText(file);
+        },
+
         exportCsv() {
           const headers = ['State','County','Town','Parcel','Acres','Price','WaterProximity','Link','Lat','Lon','Tag','Note'];
           const data = this.filteredSorted().map(r => {
@@ -768,6 +803,20 @@
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        },
+
+        exportJson() {
+          const data = this.filteredSorted().map(r => ({
+            State: r.State, County: r.County, Town: r.Town, Parcel: r.Parcel,
+            Acres: r.Acres ?? null, Price: r.Price ?? null, WaterProximity: r.WaterProximity ?? null,
+            Link: r.Link || '', Lat: r.Lat ?? null, Lon: r.Lon ?? null, Tag: r.Tag || 'inbox', Note: r.Note || ''
+          }));
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'agscout_filtered.json';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
           URL.revokeObjectURL(url);
         },
 
@@ -940,7 +989,7 @@ CT,Middlesex,East Haddam,Florida Rd North,0.78,10000,600,https://example.com/eas
           if (!confirm('Clear all rows?')) return;
           this.rows = [];
           this.selectedIds.clear();
-          localStorage.removeItem('scout.rows');
+          localStorage.removeItem('agscout.rows');
           this.refreshMarkers();
         }
       };
