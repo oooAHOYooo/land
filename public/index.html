@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>AGSCOUT — Hub</title>
+        <!-- Tailwind CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-slate-50 text-slate-900 min-h-screen">
+        <div class="max-w-4xl mx-auto p-6 md:p-10">
+            <h1 class="text-2xl font-semibold">AGSCOUT</h1>
+            <p class="text-sm text-slate-500">Local-first scouting tools. Your
+                data stays in your browser.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <a href="land.html"
+                    class="block bg-white rounded-lg shadow-sm border p-6 hover:shadow transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-lg font-semibold">Land Scout</div>
+                            <div class="text-sm text-slate-500">Parcels,
+                                filters, map, exports</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold"
+                                id="land-count">0</div>
+                            <div class="text-xs text-slate-500">rows</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="multi.html"
+                    class="block bg-white rounded-lg shadow-sm border p-6 hover:shadow transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-lg font-semibold">Multifamily
+                                Scout</div>
+                            <div class="text-sm text-slate-500">Underwriting,
+                                filters, map</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold"
+                                id="multi-count">0</div>
+                            <div class="text-xs text-slate-500">rows</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <a href="single.html"
+                    class="block bg-white rounded-lg shadow-sm border p-6 hover:shadow transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-lg font-semibold">Single Family
+                                Scout</div>
+                            <div class="text-sm text-slate-500">Houses, filters,
+                                map</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold"
+                                id="single-count">0</div>
+                            <div class="text-xs text-slate-500">rows</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <script type="module">
+      import { storageKeyFor } from './js/app-shared.js';
+      function readCount(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          const arr = JSON.parse(raw || '[]');
+          return Array.isArray(arr) ? arr.length : 0;
+        } catch { return 0; }
+      }
+      const landKey = storageKeyFor('land');
+      const multiKey = storageKeyFor('multi');
+      const singleKey = storageKeyFor('single');
+      document.getElementById('land-count').textContent = String(readCount(landKey));
+      document.getElementById('multi-count').textContent = String(readCount(multiKey));
+      const sc = document.getElementById('single-count'); if (sc) sc.textContent = String(readCount(singleKey));
+    </script>
+    </body>
+</html>
