@@ -35,9 +35,23 @@ export function appSingle() {
 
     init() {
       this.rows = loadFromStorage(storageKey, (r) => { const n = normalizeRow(r); computeDerived(n); return n; });
+      // Also merge from local JSON file if present
+      this.loadExternalJson();
       this.$nextTick(() => { this.initMap(); this.refreshMarkers(); });
       this.$watch('rows', () => { saveToStorage(storageKey, this.rows); this.refreshMarkers(); });
       this.$watch('filters', () => this.refreshMarkers(), { deep: true });
+    },
+
+    // Load additional rows from /data/single.json and merge
+    async loadExternalJson() {
+      try {
+        const res = await fetch('data/single.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const arr = await res.json();
+        if (!Array.isArray(arr)) return;
+        const rows = arr.map((r) => { const n = normalizeRow(r); computeDerived(n); return n; });
+        this.rows.push(...rows);
+      } catch (_e) { /* ignore */ }
     },
 
     uniqueStates() { return Array.from(new Set(this.rows.map((r) => r.State).filter(Boolean))).sort(); },

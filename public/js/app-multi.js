@@ -80,11 +80,25 @@ export function appMulti() {
         computeDerived(n);
         return n;
       });
+      // Also merge from local JSON file if present
+      this.loadExternalJson();
       this.singleRows = loadFromStorage(singleKey, (r) => ({ Address: r.Address || '', City: r.City || '', State: r.State || '', Beds: toNumber(r.Beds), Baths: toNumber(r.Baths), Sqft: toNumber(r.Sqft), Price: toNumber(r.Price), RentZestimate: toNumber(r.RentZestimate), Notes: r.Notes || '', Tag: (r.Tag || 'inbox').toLowerCase(), Lat: toNumber(r.Lat), Lon: toNumber(r.Lon), Link: r.Link || '' }));
       this.$nextTick(() => { this.initMap(); this.refreshMarkers(); });
       this.$watch('rows', () => { saveToStorage(storageKey, this.rows); this.refreshMarkers(); });
       this.$watch('singleRows', () => { saveToStorage(singleKey, this.singleRows); });
       this.$watch('filters', () => this.refreshMarkers(), { deep: true });
+    },
+
+    // Load additional rows from /data/multi.json and merge
+    async loadExternalJson() {
+      try {
+        const res = await fetch('data/multi.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const arr = await res.json();
+        if (!Array.isArray(arr)) return;
+        const rows = arr.map((r) => { const n = normalizeRow(r); computeDerived(n); return n; });
+        this.rows.push(...rows);
+      } catch (_e) { /* ignore */ }
     },
 
     uniqueStates() { return Array.from(new Set(this.rows.map((r) => r.State).filter(Boolean))).sort(); },

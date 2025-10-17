@@ -84,6 +84,8 @@ export function appLand() {
     init() {
       // Load
       this.rows = loadFromStorage(storageKey, normalizeRow);
+      // Also merge from local JSON file if present
+      this.loadExternalJson();
       // Map after DOM
       this.$nextTick(() => {
         this.initMap();
@@ -100,6 +102,17 @@ export function appLand() {
     // Debounce
     _debounceTimer: null,
     debounce(fn, ms = 150) { clearTimeout(this._debounceTimer); this._debounceTimer = setTimeout(fn, ms); },
+
+    // Load additional rows from /data/land.json and merge into localStorage rows
+    async loadExternalJson() {
+      try {
+        const res = await fetch('data/land.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const arr = await res.json();
+        if (!Array.isArray(arr)) return;
+        this.rows = mergeRowsShared(this.rows, arr, normalizeRow);
+      } catch (_e) { /* ignore */ }
+    },
 
     isNewEngland(row) {
       const s = (row.State || '').toUpperCase();
