@@ -44,9 +44,12 @@
       const escapeHtml = (s) => String(s==null?'':s)
         .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 
-      const cards = rows.map((r) => {
+      const cards = rows.map((r, idx) => {
         const pricePerSqft = (r.Sqft && r.Price) ? (Number(r.Price) / Number(r.Sqft)) : null;
         const yieldPct = (r.Price && r.RentZestimate) ? ((Number(r.RentZestimate)*12)/Number(r.Price))*100 : null;
+        const isMulti = /multi/i.test(String(r.Notes||''));
+        const unitsMatch = String(r.Notes||'').match(/(\d+)\s*unit/i);
+        const unitsDefault = unitsMatch ? Number(unitsMatch[1]) : 2;
         return `
         <div class="border rounded-md p-3 bg-white">
           <div class="flex items-start justify-between gap-2">
@@ -74,9 +77,131 @@
             ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-indigo-600 underline">View listing</a>` : ''}
             ${r.Notes ? `<span class="text-slate-500">${escapeHtml(r.Notes)}</span>` : ''}
           </div>
+          ${isMulti ? `
+          <div class="mt-3 rounded-md border bg-slate-50 p-2">
+            <div class="text-sm font-medium mb-1">House-hack calculator (per one unit)</div>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-sm">
+              <label class="block">
+                <span class="text-xs text-slate-500">Units</span>
+                <input type="number" class="calc-units mt-1 w-full px-2 py-1 border rounded-md bg-white" value="${unitsDefault}">
+              </label>
+              <label class="block">
+                <span class="text-xs text-slate-500">Rent per unit</span>
+                <input type="number" class="calc-rent mt-1 w-full px-2 py-1 border rounded-md bg-white" placeholder="e.g. 1800">
+              </label>
+              <label class="block">
+                <span class="text-xs text-slate-500">Down %</span>
+                <input type="number" class="calc-down mt-1 w-full px-2 py-1 border rounded-md bg-white" value="25">
+              </label>
+              <label class="block">
+                <span class="text-xs text-slate-500">Rate %</span>
+                <input type="number" step="0.01" class="calc-rate mt-1 w-full px-2 py-1 border rounded-md bg-white" value="6.75">
+              </label>
+              <label class="block">
+                <span class="text-xs text-slate-500">Term (yrs)</span>
+                <input type="number" class="calc-term mt-1 w-full px-2 py-1 border rounded-md bg-white" value="30">
+              </label>
+              <div class="self-end no-print">
+                <button class="save-multi px-3 py-1.5 rounded-md bg-emerald-600 text-white">Save to Multifamily</button>
+              </div>
+            </div>
+            <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+              <div><div class="text-xs text-slate-500">Monthly P&I</div><div class="font-medium calc-pi">$0</div></div>
+              <div><div class="text-xs text-slate-500">Other monthly (tax+ins+HOA)</div><div class="font-medium calc-oth">$0</div></div>
+              <div><div class="text-xs text-slate-500">Total monthly cost</div><div class="font-medium calc-total">$0</div></div>
+              <div><div class="text-xs text-slate-500">Profit from one unit</div><div class="font-medium calc-profit">$0</div></div>
+            </div>
+          </div>
+          ` : ''}
         </div>`;
       }).join('\n');
       container.innerHTML = cards;
+      // Attach calculators
+      const formatCurrency = (n) => (n==null||!isFinite(n)) ? '$0' : '$' + Number(n).toLocaleString(undefined,{maximumFractionDigits:0});
+      function monthlyPI(price, downPct, ratePct, years) {
+        const principal = Math.max(0, Number(price) * (1 - Math.max(0,Math.min(100,Number(downPct)||0))/100));
+        const mRate = (Number(ratePct)||0)/100/12;
+        const months = Math.max(1, Math.round(Number(years)||30)*12);
+        if (mRate === 0) return principal / months;
+        return principal * (mRate / (1 - Math.pow(1 + mRate, -months)));
+      }
+      document.querySelectorAll('#list .border .bg-slate-50').forEach((box, i) => {
+        const root = box.closest('.border');
+        if (!root) return;
+        const priceEl = root.querySelector('.text-sm.font-medium');
+        const price = (()=>{ const v = (priceEl?.textContent||'').replace(/[^0-9.]/g,''); return Number(v)||0; })();
+        const taxesText = root.querySelectorAll('.grid .font-medium')[6]?.textContent || '';
+        const taxes = Number((taxesText||'').replace(/[^0-9.]/g,''))||0;
+        const insText = root.querySelectorAll('.grid .font-medium')[7]?.textContent || '';
+        const ins = Number((insText||'').replace(/[^0-9.]/g,''))||0;
+        const hoaText = root.querySelectorAll('.grid .font-medium')[8]?.textContent || '';
+        const hoa = Number((hoaText||'').replace(/[^0-9.]/g,''))||0;
+        const inpUnits = box.querySelector('.calc-units');
+        const inpRent = box.querySelector('.calc-rent');
+        const inpDown = box.querySelector('.calc-down');
+        const inpRate = box.querySelector('.calc-rate');
+        const inpTerm = box.querySelector('.calc-term');
+        const outPi = box.querySelector('.calc-pi');
+        const outOth = box.querySelector('.calc-oth');
+        const outTot = box.querySelector('.calc-total');
+        const outProfit = box.querySelector('.calc-profit');
+        function recalc() {
+          const pi = monthlyPI(price, Number(inpDown.value), Number(inpRate.value), Number(inpTerm.value));
+          const other = (Number(taxes)/12) + (Number(ins)/12) + Number(hoa);
+          const total = pi + other;
+          const rent = Number(inpRent.value)||0;
+          const profit = rent - total;
+          outPi.textContent = formatCurrency(pi);
+          outOth.textContent = formatCurrency(other);
+          outTot.textContent = formatCurrency(total);
+          outProfit.textContent = formatCurrency(profit);
+        }
+        ['input','change'].forEach(ev=>{
+          inpUnits?.addEventListener(ev, recalc);
+          inpRent?.addEventListener(ev, recalc);
+          inpDown?.addEventListener(ev, recalc);
+          inpRate?.addEventListener(ev, recalc);
+          inpTerm?.addEventListener(ev, recalc);
+        });
+        recalc();
+        const saveBtn = box.querySelector('.save-multi');
+        saveBtn?.addEventListener('click', (e) => {
+          e.preventDefault();
+          try {
+            const key = 'agscout.multi';
+            const existing = JSON.parse(localStorage.getItem(key) || '[]');
+            const title = root.querySelector('.font-semibold')?.textContent || '';
+            const cityState = root.querySelector('.text-xs.text-slate-500')?.textContent || '';
+            const [city, state] = cityState.split(',').map(s => (s||'').trim());
+            const row = {
+              Address: title,
+              City: city || '',
+              State: state || '',
+              Units: Number(inpUnits.value)||2,
+              RentPerUnit: Number(inpRent.value)||null,
+              VacancyPercent: 5,
+              OtherIncomeMonthly: 0,
+              TaxesAnnual: taxes||0,
+              InsuranceAnnual: ins||0,
+              OpExAnnual: 0,
+              Price: price||0,
+              DownPercent: Number(inpDown.value)||25,
+              RatePercent: Number(inpRate.value)||6.75,
+              TermYears: Number(inpTerm.value)||30,
+              HOAmonthly: hoa||0,
+              Notes: 'Imported from Single List',
+              Tag: 'inbox',
+              Lat: null,
+              Lon: null,
+              Link: ''
+            };
+            const updated = Array.isArray(existing) ? existing.concat([row]) : [row];
+            localStorage.setItem(key, JSON.stringify(updated));
+            saveBtn.textContent = 'Saved ✔';
+            setTimeout(()=> saveBtn.textContent = 'Save to Multifamily', 1500);
+          } catch {}
+        });
+      });
     } catch (e) {
       document.getElementById('empty').textContent = 'Failed to load single.json';
       document.getElementById('empty').classList.remove('hidden');
