@@ -3,16 +3,6 @@ import { fmt, storageKeyFor, loadFromStorage, saveToStorage, normalizeRowGeneric
 export function appMulti() {
   const storageKey = storageKeyFor('multi');
   const singleKey = storageKeyFor('single');
-  // Starter sheets for CT (New Haven area)
-  const CT_SHEET_A = [
-    { Address: '123 Grand Ave', City: 'New Haven', State: 'CT', Units: 6, RentPerUnit: 1400, VacancyPercent: 5, OtherIncomeMonthly: 0, TaxesAnnual: 12000, InsuranceAnnual: 3800, OpExAnnual: 10500, Price: 850000, DownPercent: 25, RatePercent: 6.75, TermYears: 30, HOAmonthly: null, Notes: 'East Rock corridor', Tag: 'inbox', Lat: 41.318, Lon: -72.922, Link: '' },
-    { Address: '45 Main St', City: 'Branford', State: 'CT', Units: 8, RentPerUnit: 1550, VacancyPercent: 4, OtherIncomeMonthly: 150, TaxesAnnual: 14500, InsuranceAnnual: 4200, OpExAnnual: 12000, Price: 1120000, DownPercent: 25, RatePercent: 6.75, TermYears: 30, HOAmonthly: null, Notes: 'Near train', Tag: 'watch', Lat: 41.279, Lon: -72.815, Link: '' },
-    { Address: '200 Washington Ave', City: 'North Haven', State: 'CT', Units: 10, RentPerUnit: 1350, VacancyPercent: 6, OtherIncomeMonthly: 0, TaxesAnnual: 16000, InsuranceAnnual: 5000, OpExAnnual: 14000, Price: 1250000, DownPercent: 30, RatePercent: 6.9, TermYears: 30, HOAmonthly: null, Notes: 'Garden-style', Tag: 'inbox', Lat: 41.383, Lon: -72.864, Link: '' },
-  ];
-  const CT_SHEET_B = [
-    { Address: '12 Whitfield St', City: 'Guilford', State: 'CT', Units: 4, RentPerUnit: 1800, VacancyPercent: 3, OtherIncomeMonthly: 0, TaxesAnnual: 9200, InsuranceAnnual: 3000, OpExAnnual: 8000, Price: 690000, DownPercent: 25, RatePercent: 6.65, TermYears: 30, HOAmonthly: null, Notes: 'Town center', Tag: 'shortlist', Lat: 41.283, Lon: -72.681, Link: '' },
-    { Address: '78 Chapel St', City: 'New Haven', State: 'CT', Units: 12, RentPerUnit: 1450, VacancyPercent: 7, OtherIncomeMonthly: 200, TaxesAnnual: 22000, InsuranceAnnual: 6500, OpExAnnual: 20000, Price: 1650000, DownPercent: 25, RatePercent: 6.9, TermYears: 30, HOAmonthly: null, Notes: 'Downtown walkable', Tag: 'visit', Lat: 41.307, Lon: -72.929, Link: '' },
-  ];
   const normalizeRow = (raw) => normalizeRowGeneric(raw, {
     strings: ['Address','City','State','Notes','Tag','Link'],
     numbers: ['Units','RentPerUnit','VacancyPercent','OtherIncomeMonthly','TaxesAnnual','InsuranceAnnual','OpExAnnual','Price','DownPercent','RatePercent','TermYears','HOAmonthly','Lat','Lon'],
@@ -160,8 +150,8 @@ export function appMulti() {
     bulkCommit() { if (this.bulk.preview.length === 0) return; const normalized = this.bulk.preview.map((r) => { const n = normalizeRow(r); computeDerived(n); return n; }); this.rows.push(...normalized); this.modals.bulk = false; this.bulk = { raw: '', preview: [], headers: [] }; },
 
     // Load CT sheets
-    loadCtA() { const rows = CT_SHEET_A.map((r) => { const n = normalizeRow(r); computeDerived(n); return n; }); this.rows.push(...rows); },
-    loadCtB() { const rows = CT_SHEET_B.map((r) => { const n = normalizeRow(r); computeDerived(n); return n; }); this.rows.push(...rows); },
+    async loadCtA() { await this.loadExternalJson(); },
+    async loadCtB() { await this.loadExternalJson(); },
 
     importCsv(e) { const f = e.target.files?.[0]; if (!f) return; Papa.parse(f, { header: true, skipEmptyLines: true, complete: (res) => { const rows = (res.data || []).map((r) => { const n = normalizeRow(r); computeDerived(n); return n; }); this.rows.push(...rows); e.target.value=''; }, error: (err) => { alert('Failed to import CSV' + (err?.message ? ': ' + err.message : '')); e.target.value=''; } }); },
     importJson(e) { const f = e.target.files?.[0]; if (!f) return; const reader = new FileReader(); reader.onload = () => { try { const arr = JSON.parse(String(reader.result || '[]')); if (!Array.isArray(arr)) throw new Error('Invalid JSON: expected array'); const rows = arr.map((r) => { const n = normalizeRow(r); computeDerived(n); return n; }); this.rows.push(...rows); } catch (err) { alert('Failed to import JSON' + (err?.message ? ': ' + err.message : '')); } finally { e.target.value=''; } }; reader.readAsText(f); },

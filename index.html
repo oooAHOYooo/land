@@ -252,6 +252,7 @@
             </button>
           </div>
           <div class="text-xs text-slate-600 flex items-center gap-3">
+            <span>Saved: <strong x-text="savedCount()"></strong></span>
             <span>Inbox: <strong x-text="counts().inbox"></strong></span>
             <span>Visit: <strong x-text="counts().visit"></strong></span>
             <span>Watch: <strong x-text="counts().watch"></strong></span>
@@ -1235,6 +1236,10 @@
             }
             return c;
           },
+
+              savedCount() {
+                return Array.isArray(this.rows) ? this.rows.length : 0;
+              },
 
           uniqueStates() {
             const set = new Set(this.rows.map((r) => r.State).filter(Boolean));

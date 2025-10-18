@@ -13,25 +13,7 @@ import {
   landScoreFromRanks,
 } from './app-shared.js';
 
-// Keep the three starter sheets locally in this module
-const SHEET1_ROWS = [
-  { State: 'MA', County: 'Berkshire', Town: 'Becket', Parcel: '0 Squires Rd E (Sherwood Forest)', Acres: 0.53, Price: 10000, WaterProximity: 0, Link: 'https://www.zillow.com/homedetails/0-Squires-Rd-E-Becket-MA-01223/2070329383_zpid/', Lat: null, Lon: null, Tag: 'inbox', Note: 'HOA lake access (Long Bow Lake); check HOA + perc.' },
-  { State: 'MA', County: 'Berkshire', Town: 'Becket', Parcel: '0 Ronald Dr (South Cove / Center Pond)', Acres: 0.48, Price: 14800, WaterProximity: 800, Link: '', Lat: null, Lon: null, Tag: 'inbox', Note: 'Association beach on Center Pond; yearly fee; small lot.' },
-  { State: 'MA', County: 'Franklin', Town: 'Greenfield', Parcel: '0.49 ac residential lot', Acres: 0.49, Price: 9900, WaterProximity: 900, Link: '', Lat: null, Lon: null, Tag: 'inbox', Note: 'Very small in-town lot; near Green River (verify).' },
-  { State: 'NY', County: 'Sullivan', Town: 'Eldred (Yulan)', Parcel: 'Lot 8.4 Beaver Brook Rd', Acres: 4.51, Price: 10000, WaterProximity: 0, Link: '', Lat: null, Lon: null, Tag: 'inbox', Note: 'Beaver Brook stream; verify buildability (underwater classified).' },
-  { State: 'MA', County: 'Berkshire', Town: 'Pittsfield', Parcel: 'Lot 20 Plunkett St', Acres: 0.25, Price: 20000, WaterProximity: 0, Link: '', Lat: null, Lon: null, Tag: 'inbox', Note: 'Tiny in-town lot; nearby water bodies (verify).' },
-];
-
-const SHEET2_ROWS = [
-  { State: 'MA', County: 'Berkshire', Town: 'Becket', Parcel: '0 Squires Rd E (Sherwood Forest)', Acres: 0.53, Price: 10000, WaterProximity: 0, Link: 'https://www.zillow.com/homedetails/0-Squires-Rd-E-Becket-MA-01223/2070329383_zpid/', Lat: null, Lon: null, Tag: 'inbox', Note: 'HOA lake access (Long Bow Lake); check HOA + perc.' },
-  { State: 'MA', County: 'Berkshire', Town: 'Becket', Parcel: '0 Ronald Dr (South Cove / Center Pond)', Acres: 0.48, Price: 14800, WaterProximity: 800, Link: '', Lat: null, Lon: null, Tag: 'inbox', Note: 'Association beach on Center Pond; yearly fee; small lot.' },
-  { State: 'MA', County: 'Franklin', Town: 'Greenfield', Parcel: '0.49 ac residential lot', Acres: 0.49, Price: 9900, WaterProximity: 900, Link: '', Lat: null, Lon: null, Tag: 'inbox', Note: 'Very small in-town lot; near Green River (verify).' },
-];
-
-const SHEET3_ROWS = [
-  { State: 'MA', County: 'Berkshire', Town: 'Becket', Parcel: 'Area land listings', Acres: null, Price: null, WaterProximity: null, Link: 'https://www.zillow.com/becket-ma/land/', Lat: null, Lon: null, Tag: 'watch', Note: 'General Becket land listings on Zillow.' },
-  { State: 'MA', County: 'Berkshire', Town: 'Otis', Parcel: 'Area land listings', Acres: null, Price: null, WaterProximity: null, Link: 'https://www.zillow.com/otis-ma/land/', Lat: null, Lon: null, Tag: 'watch', Note: 'Scan for small-lot opportunities near lakes.' },
-];
+// Demo data now lives in data/land.json
 
 // Alpine app factory
 export function appLand() {
@@ -412,6 +394,13 @@ export function appLand() {
     monthlyTaxes() { const price = Number(this.finance.price); const taxRate = Number(this.finance.taxRatePercent) / 100; if (!isFinite(price) || !isFinite(taxRate) || price <= 0 || taxRate < 0) return 0; return (price * taxRate) / 12; },
     monthlyTotal() { const pi = this.monthlyPI(); const taxes = this.monthlyTaxes(); const ins = Number(this.finance.insuranceMonthly) || 0; const hoa = Number(this.finance.hoaMonthly) || 0; return pi + taxes + ins + hoa; },
     totalInterest() { const m = this.monthlyPI(); const principal = this.loanAmount(); const months = Math.max(1, Math.round(Number(this.finance.termYears) * 12)); if (m <= 0 || principal <= 0) return 0; return m * months - principal; },
+
+    // UI actions from land.html header
+    async loadSheet1() { await this.loadExternalJson(); },
+    async loadSheet2() { await this.loadExternalJson(); },
+    async loadSheet3() { await this.loadExternalJson(); },
+    async loadDemo() { await this.loadExternalJson(); },
+    clearAll() { this.rows = []; this.selectedIds.clear(); saveToStorage(storageKey, this.rows); this.refreshMarkers(); },
   };
 }
 

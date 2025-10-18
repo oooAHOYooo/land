@@ -83,6 +83,23 @@
                 <div id="map" class="w-full h-72 md:h-96 rounded-b-lg"></div>
             </section>
 
+            <!-- Simple list of properties -->
+            <section id="list" class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+                <h3 class="text-lg font-semibold mb-2">List</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <template x-for="row in filteredSorted()" :key="row.id">
+                        <li>
+                            <span x-text="row.Address"></span>
+                            <span class="text-slate-500"> — </span>
+                            <span x-text="row.City + ', ' + row.State"></span>
+                            <span class="text-slate-500"> · </span>
+                            <span x-text="fmt.currency(row.Price)"></span>
+                        </li>
+                    </template>
+                    <li x-show="filteredSorted().length===0" class="text-slate-500 text-sm">No results</li>
+                </ul>
+            </section>
+
             <section
                 class="bg-white rounded-lg shadow-sm border overflow-hidden">
                 <div class="overflow-x-auto">
