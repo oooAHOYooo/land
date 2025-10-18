@@ -13,7 +13,8 @@
                     <h1 class="text-2xl font-semibold">AGSCOUT — Single Family (List)</h1>
                     <p class="text-sm text-slate-500">Built from <code class="font-mono">/public/data/single.json</code></p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 no-print">
+                    <button onclick="window.print()" class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Print</button>
                     <a href="single.html" class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Back to app</a>
                 </div>
             </header>
@@ -83,6 +84,12 @@
   }
   main();
         </script>
+        <style>
+          @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+          }
+        </style>
     </body>
 </html>
 
