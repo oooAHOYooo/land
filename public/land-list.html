@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>AGSCOUT — Land List</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-slate-50 text-slate-900 min-h-screen">
+        <div class="max-w-6xl mx-auto p-4 md:p-6 space-y-4">
+            <header class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-semibold">AGSCOUT — Land
+                        (List)</h1>
+                    <p class="text-sm text-slate-500">Built from <code
+                            class="font-mono">/public/data/land.json</code></p>
+                </div>
+                <div class="flex items-center gap-2 no-print">
+                    <button onclick="window.print()"
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Print</button>
+                    <a href="land.html#list"
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Back
+                        to app</a>
+                </div>
+            </header>
+
+            <!-- Property Pokedex Grid -->
+            <section
+                class="bg-white rounded-lg shadow-sm border p-3 md:p-4 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold">Property Pokedex</h2>
+                    <div class="text-sm text-slate-600">Total: <strong
+                            id="count">0</strong></div>
+                </div>
+                <div id="pokedex"
+                    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
+                <div id="pokedex-empty"
+                    class="text-center text-slate-500 text-sm hidden">No
+                    properties</div>
+            </section>
+
+            <!-- Detailed List -->
+            <section class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold">Detailed View</h2>
+                    <div class="text-sm text-slate-600">Click property above to
+                        view details • Right-click to add to calculator</div>
+                </div>
+                <div id="list"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                <div id="empty"
+                    class="mt-3 text-center text-slate-500 text-sm hidden">No
+                    properties</div>
+            </section>
+
+            <!-- Property Calculator Tool -->
+            <section
+                class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-slate-800">Property
+                        Calculator</h2>
+                    <div class="text-sm text-slate-600">Compare & Calculate
+                        Costs</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Selected Properties -->
+                    <div>
+                        <h3 class="font-medium text-slate-700 mb-2">Selected
+                            Properties</h3>
+                        <div id="selected-properties"
+                            class="space-y-2 max-h-40 overflow-y-auto">
+                            <div class="text-sm text-slate-500 italic">Click
+                                properties above to add them</div>
+                        </div>
+                        <button onclick="clearSelection()"
+                            class="mt-2 text-xs text-red-600 hover:text-red-700">Clear
+                            All</button>
+                    </div>
+
+                    <!-- Calculator Results -->
+                    <div>
+                        <h3
+                            class="font-medium text-slate-700 mb-2">Calculations</h3>
+                        <div id="calculator-results" class="space-y-2 text-sm">
+                            <div class="text-slate-500 italic">Select properties
+                                to see calculations</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Distance Map -->
+            <section
+                class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm border p-4 md:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-slate-800">Distance
+                        Map</h2>
+                    <div class="text-sm text-slate-600">From 206 Saint John
+                        Street</div>
+                </div>
+
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+                    id="distance-map">
+                    <div class="text-center text-slate-500 italic">Loading
+                        distances...</div>
+                </div>
+            </section>
+        </div>
+
+        <script>
+  async function main() {
+    try {
+      const res = await fetch('data/land.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load JSON');
+      const rows = await res.json();
+      const arr = Array.isArray(rows) ? rows : [];
+      allProperties = arr; // Store globally for calculator
+      document.getElementById('count').textContent = String(arr.length);
+      
+      const pokedexContainer = document.getElementById('pokedex');
+      const pokedexEmpty = document.getElementById('pokedex-empty');
+      const container = document.getElementById('list');
+      const empty = document.getElementById('empty');
+      
+      if (arr.length === 0) { 
+        pokedexEmpty.classList.remove('hidden');
+        empty.classList.remove('hidden'); 
+        return; 
+      }
+      const fmtCurrency = (v) => (v==null||!isFinite(Number(v)) ? '' : '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }));
+      const fmtNumber = (v, d=2) => (v==null||!isFinite(Number(v)) ? '' : Number(v).toLocaleString(undefined, { maximumFractionDigits: d }));
+      const escapeHtml = (s) => String(s==null?'':s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+
+      // Generate Pokedex cards
+      const pokedexCards = arr.map((r, index) => {
+        const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
+        const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
+        const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
+        const images = Array.isArray(r.Images) ? r.Images : [];
+        const firstImage = images.length > 0 ? images[0] : null;
+        
+        return `
+        <div class="bg-white border rounded-lg p-2 cursor-pointer hover:shadow-md transition-shadow" 
+             onclick="navigateToProperty(${index})"
+             oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
+             data-property-index="${index}"
+             id="pokedex-card-${index}"
+             title="Click to view details • Right-click to add to calculator">
+          <div class="aspect-square mb-2 bg-slate-100 rounded overflow-hidden">
+            ${firstImage ? `
+              <img src="${escapeHtml(firstImage)}" 
+                   alt="${escapeHtml(title)}" 
+                   class="w-full h-full object-cover"
+                   loading="lazy"
+                   onerror="this.style.display='none'">
+            ` : `
+              <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                No Image
+              </div>
+            `}
+          </div>
+          <div class="text-center">
+            <div class="font-semibold text-sm truncate" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
+            <div class="text-lg font-bold text-green-600">${escapeHtml(fmtCurrency(r.Price))}</div>
+            <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
+            <div class="flex justify-center gap-1 mt-1">
+              <span class="px-1 py-0.5 bg-slate-100 text-xs rounded">${escapeHtml(String(r.Tag||'inbox'))}</span>
+              <span class="px-1 py-0.5 bg-blue-100 text-xs rounded">${escapeHtml(water)}</span>
+            </div>
+          </div>
+        </div>`;
+      }).join('\n');
+      
+      pokedexContainer.innerHTML = pokedexCards;
+
+      // Generate detailed cards
+      const cards = arr.map((r, index) => {
+        const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
+        const details = (r.Note || '').split(/\n+/).map(p => `<p>${escapeHtml(p)}</p>`).join('');
+        const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
+        const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
+        
+        // Handle images
+        const images = Array.isArray(r.Images) ? r.Images : [];
+        const imageHtml = images.length > 0 ? `
+          <div class="mb-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              ${images.slice(0, 6).map(img => `
+                <img src="${escapeHtml(img)}" 
+                     alt="${escapeHtml(title)}" 
+                     class="w-full h-24 object-cover rounded border"
+                     loading="lazy"
+                     onerror="this.style.display='none'">
+              `).join('')}
+            </div>
+            ${images.length > 6 ? `<div class="text-xs text-slate-500 mt-1">+${images.length - 6} more images</div>` : ''}
+          </div>
+        ` : '';
+        
+        return `
+        <div id="property-${index}" class="border rounded-md p-3 bg-white">
+          ${imageHtml}
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="font-semibold truncate">${escapeHtml(title)}</div>
+              <div class="text-xs text-slate-500 truncate">${escapeHtml([r.State, r.County].filter(Boolean).join(', '))}</div>
+            </div>
+            <div class="text-right flex-none">
+              <div class="text-sm font-medium">${escapeHtml(fmtCurrency(r.Price))}</div>
+              <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
+            </div>
+          </div>
+          <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+            <div><div class="text-xs text-slate-500">$ / acre</div><div class="font-medium">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : ''}</div></div>
+            <div><div class="text-xs text-slate-500">Water</div><div class="font-medium">${escapeHtml(water)}</div></div>
+            <div><div class="text-xs text-slate-500">Tag</div><div class="font-medium">${escapeHtml(String(r.Tag||'inbox'))}</div></div>
+          </div>
+          <div class="mt-2 flex items-center gap-3 text-sm">
+            ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-teal-600 underline">View listing</a>` : ''}
+          </div>
+          ${details ? `<div class="mt-3 text-sm space-y-1">${details}</div>` : ''}
+        </div>`;
+      }).join('\n');
+      container.innerHTML = cards;
+      
+      // Generate distance map
+      generateDistanceMap(arr);
+    } catch (e) {
+      document.getElementById('empty').textContent = 'Failed to load land.json';
+      document.getElementById('empty').classList.remove('hidden');
+    }
+  }
+
+  // Generate distance map from 206 Saint John Street
+  function generateDistanceMap(properties) {
+    const homeAddress = "206 Saint John Street";
+    const distanceContainer = document.getElementById('distance-map');
+    
+    if (properties.length === 0) {
+      distanceContainer.innerHTML = '<div class="text-center text-slate-500 italic">No properties to map</div>';
+      return;
+    }
+
+    // Approximate coordinates for 206 Saint John Street (you may want to update this)
+    const homeCoords = { lat: 41.3083, lng: -72.9279 }; // New Haven, CT area
+    
+    const distanceCards = properties.map((prop, index) => {
+      const address = `${prop.Parcel}, ${prop.Town}, ${prop.State}`;
+      const distance = calculateDistance(homeCoords, getPropertyCoords(prop));
+      const driveTime = estimateDriveTime(distance);
+      
+      const images = Array.isArray(prop.Images) ? prop.Images : [];
+      const firstImage = images.length > 0 ? images[0] : null;
+      
+      return `
+        <div class="bg-white rounded-lg p-4 border shadow-sm">
+          <div class="text-center">
+            <div class="text-sm font-medium text-slate-700 mb-1">${prop.Town}, ${prop.State}</div>
+            <div class="text-xs text-slate-500 mb-2 truncate" title="${address}">${prop.Parcel}</div>
+            
+            <!-- Tiny thumbnail -->
+            <div class="mb-3 flex justify-center">
+              <div class="w-12 h-12 rounded border overflow-hidden bg-slate-100">
+                ${firstImage ? `
+                  <img src="${firstImage}" 
+                       alt="${prop.Town} property" 
+                       class="w-full h-full object-cover"
+                       loading="lazy"
+                       onerror="this.style.display='none'">
+                ` : `
+                  <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                    No Image
+                  </div>
+                `}
+              </div>
+            </div>
+            
+            <div class="text-2xl font-bold text-green-600 mb-1">${distance.toFixed(1)} mi</div>
+            <div class="text-sm text-slate-600 mb-2">${driveTime}</div>
+            <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()}</div>
+            <div class="text-xs text-slate-500">${prop.Acres} acres</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    distanceContainer.innerHTML = distanceCards;
+  }
+
+  // Get approximate coordinates for properties (you may want to add actual coordinates to your JSON)
+  function getPropertyCoords(property) {
+    // These are rough estimates - you should add actual Lat/Lon to your JSON data
+    const coords = {
+      'Cheshire': { lat: 41.4981, lng: -72.9007 },
+      'Sherman': { lat: 41.5804, lng: -73.4962 },
+      'Torrington': { lat: 41.8009, lng: -73.1212 },
+      'Smithfield': { lat: 41.8887, lng: -71.5495 }
+    };
+    
+    return coords[property.Town] || { lat: 41.3083, lng: -72.9279 }; // Default to New Haven area
+  }
+
+  // Calculate distance between two coordinates using Haversine formula
+  function calculateDistance(coord1, coord2) {
+    const R = 3959; // Earth's radius in miles
+    const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+    const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  // Estimate drive time based on distance
+  function estimateDriveTime(distance) {
+    if (distance < 5) return '~10-15 min';
+    if (distance < 15) return '~20-30 min';
+    if (distance < 30) return '~30-45 min';
+    if (distance < 50) return '~45-60 min';
+    return '~1+ hours';
+  }
+
+  main();
+
+  // Global variables for calculator
+  let selectedProperties = [];
+  let allProperties = [];
+
+  // Navigate to property (scroll to detailed view)
+  function navigateToProperty(index) {
+    const element = document.getElementById(`property-${index}`);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+      // Add highlight effect
+      element.style.backgroundColor = '#fef3c7';
+      setTimeout(() => {
+        element.style.backgroundColor = '';
+      }, 2000);
+    }
+  }
+
+  // Toggle property selection for calculator (with Ctrl/Cmd click)
+  function togglePropertySelection(index) {
+    const property = allProperties[index];
+    if (!property) return;
+
+    const card = document.getElementById(`pokedex-card-${index}`);
+    const isSelected = selectedProperties.some(p => p.index === index);
+    
+    if (isSelected) {
+      // Remove from selection
+      selectedProperties = selectedProperties.filter(p => p.index !== index);
+      card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+    } else {
+      // Add to selection
+      selectedProperties.push({...property, index});
+      card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+    }
+    
+    updateCalculator();
+  }
+
+  // Update calculator display
+  function updateCalculator() {
+    const selectedContainer = document.getElementById('selected-properties');
+    const resultsContainer = document.getElementById('calculator-results');
+    
+    if (selectedProperties.length === 0) {
+      selectedContainer.innerHTML = '<div class="text-sm text-slate-500 italic">Click properties below to add them</div>';
+      resultsContainer.innerHTML = '<div class="text-slate-500 italic">Select properties to see calculations</div>';
+      return;
+    }
+
+    // Update selected properties list
+    selectedContainer.innerHTML = selectedProperties.map((prop, i) => `
+      <div class="flex items-center justify-between bg-white p-2 rounded border">
+        <div class="flex-1">
+          <div class="font-medium text-sm">${prop.Town} — ${prop.Parcel}</div>
+          <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()} • ${prop.Acres} acres</div>
+        </div>
+        <button onclick="removeFromSelection(${i})" class="text-red-500 hover:text-red-700 text-xs">×</button>
+      </div>
+    `).join('');
+
+    // Calculate totals
+    const totalPrice = selectedProperties.reduce((sum, prop) => sum + Number(prop.Price), 0);
+    const totalAcres = selectedProperties.reduce((sum, prop) => sum + Number(prop.Acres), 0);
+    const avgPricePerAcre = totalAcres > 0 ? totalPrice / totalAcres : 0;
+    
+    // Monthly payment estimates (assuming 20% down, 6.5% interest, 30 years)
+    const downPayment = totalPrice * 0.20;
+    const loanAmount = totalPrice - downPayment;
+    const monthlyRate = 0.065 / 12;
+    const numPayments = 30 * 12;
+    const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+    
+    // Property tax estimate (assuming 1.5% annually)
+    const annualTax = totalPrice * 0.015;
+    const monthlyTax = annualTax / 12;
+    
+    // Insurance estimate (assuming 0.3% annually)
+    const annualInsurance = totalPrice * 0.003;
+    const monthlyInsurance = annualInsurance / 12;
+    
+    const totalMonthly = monthlyPayment + monthlyTax + monthlyInsurance;
+
+    resultsContainer.innerHTML = `
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <div class="bg-white p-2 rounded border">
+            <div class="text-xs text-slate-500">Total Properties</div>
+            <div class="font-semibold">${selectedProperties.length}</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="text-xs text-slate-500">Total Price</div>
+            <div class="font-semibold">$${totalPrice.toLocaleString()}</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="text-xs text-slate-500">Total Acres</div>
+            <div class="font-semibold">${totalAcres.toFixed(2)}</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="text-xs text-slate-500">Avg $/Acre</div>
+            <div class="font-semibold">$${avgPricePerAcre.toLocaleString()}</div>
+          </div>
+        </div>
+        
+        <div class="bg-green-50 p-3 rounded border border-green-200">
+          <div class="text-sm font-semibold text-green-800 mb-2">Monthly Cost Breakdown</div>
+          <div class="space-y-1 text-sm">
+            <div class="flex justify-between">
+              <span>Mortgage (20% down, 6.5%)</span>
+              <span class="font-medium">$${monthlyPayment.toFixed(0)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Property Tax (1.5%)</span>
+              <span class="font-medium">$${monthlyTax.toFixed(0)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Insurance (0.3%)</span>
+              <span class="font-medium">$${monthlyInsurance.toFixed(0)}</span>
+            </div>
+            <div class="flex justify-between border-t pt-1 font-semibold text-green-800">
+              <span>Total Monthly</span>
+              <span>$${totalMonthly.toFixed(0)}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-blue-50 p-3 rounded border border-blue-200">
+          <div class="text-sm font-semibold text-blue-800 mb-1">Down Payment Required</div>
+          <div class="text-lg font-bold text-blue-900">$${downPayment.toLocaleString()}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Remove property from selection
+  function removeFromSelection(index) {
+    const removed = selectedProperties[index];
+    selectedProperties.splice(index, 1);
+    
+    // Update card appearance
+    const card = document.getElementById(`pokedex-card-${removed.index}`);
+    card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+    
+    updateCalculator();
+  }
+
+  // Clear all selections
+  function clearSelection() {
+    selectedProperties.forEach(prop => {
+      const card = document.getElementById(`pokedex-card-${prop.index}`);
+      card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+    });
+    selectedProperties = [];
+    updateCalculator();
+  }
+        </script>
+        <style>
+          @media print { .no-print { display: none !important; } body { background: white; } }
+        </style>
+    </body>
+</html>

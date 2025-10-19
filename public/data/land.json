@@ -1,10 +1,73 @@
 [
-  { "State": "MA", "County": "Berkshire", "Town": "Becket", "Parcel": "0 Squires Rd E (Sherwood Forest)", "Acres": 0.53, "Price": 10000, "WaterProximity": 0, "Link": "https://www.zillow.com/homedetails/0-Squires-Rd-E-Becket-MA-01223/2070329383_zpid/", "Lat": null, "Lon": null, "Tag": "inbox", "Note": "HOA lake access (Long Bow Lake); check HOA + perc." },
-  { "State": "MA", "County": "Berkshire", "Town": "Becket", "Parcel": "0 Ronald Dr (South Cove / Center Pond)", "Acres": 0.48, "Price": 14800, "WaterProximity": 800, "Link": "", "Lat": null, "Lon": null, "Tag": "inbox", "Note": "Association beach on Center Pond; yearly fee; small lot." },
-  { "State": "MA", "County": "Franklin", "Town": "Greenfield", "Parcel": "0.49 ac residential lot", "Acres": 0.49, "Price": 9900, "WaterProximity": 900, "Link": "", "Lat": null, "Lon": null, "Tag": "inbox", "Note": "Very small in-town lot; near Green River (verify)." },
-  { "State": "NY", "County": "Sullivan", "Town": "Eldred (Yulan)", "Parcel": "Lot 8.4 Beaver Brook Rd", "Acres": 4.51, "Price": 10000, "WaterProximity": 0, "Link": "", "Lat": null, "Lon": null, "Tag": "inbox", "Note": "Beaver Brook stream; verify buildability (underwater classified)." },
-  { "State": "MA", "County": "Berkshire", "Town": "Pittsfield", "Parcel": "Lot 20 Plunkett St", "Acres": 0.25, "Price": 20000, "WaterProximity": 0, "Link": "", "Lat": null, "Lon": null, "Tag": "inbox", "Note": "Tiny in-town lot; nearby water bodies (verify)." },
-
-  { "State": "MA", "County": "Berkshire", "Town": "Becket", "Parcel": "Area land listings", "Acres": null, "Price": null, "WaterProximity": null, "Link": "https://www.zillow.com/becket-ma/land/", "Lat": null, "Lon": null, "Tag": "watch", "Note": "General Becket land listings on Zillow." },
-  { "State": "MA", "County": "Berkshire", "Town": "Otis", "Parcel": "Area land listings", "Acres": null, "Price": null, "WaterProximity": null, "Link": "https://www.zillow.com/otis-ma/land/", "Lat": null, "Lon": null, "Tag": "watch", "Note": "Scan for small-lot opportunities near lakes." }
+  {
+    "State": "CT",
+    "County": "New Haven",
+    "Town": "Cheshire",
+    "Parcel": "Moss Farms Rd (rear lot behind 916)",
+    "Acres": 1.22,
+    "Price": 169900,
+    "WaterProximity": null,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Note": "Listed by Jorge Zea\nBrokered by Blue Lighthouse Realty\nforest featured at Moss Farms Rd, Cheshire, CT 06410\n\nLand for sale\n$169,900\n1.22acre lot\n1.22 acre lot\nMoss Farms Rd, Cheshire, CT 06410\nBig lot\nFarm\nProperty type\nLand\n\nOn Realtor.com\n281 days\n\nRealtor.com checked: A few minutes ago | Listing last updated: Oct 7, 2025 at 4:38 PM (EDT)\nSource: SMARTMLS, MLS #24068027\n\nOpen houses\nThere are no upcoming open houses.\nTour when it works for you.\n\nProperty details\nApproved and cleared .93+/- acre rear building lot located behind 916 Moss Farms Rd, Cheshire. Maps available upon request. Please do not walk property without a scheduled appointment. Contact for additional information. Subject to easements and approval stipulations.\n\nExterior and Lot Features\nRoad Frontage Type: Municipal Street, Right Of Way\n\nLand Info\nLot Size Acres: 1.22\nLot Size Source: Public Records\nNumber Of Lots: 1\nLot Size Square Feet: 53143"
+  },
+  {
+    "State": "CT",
+    "County": "Fairfield",
+    "Town": "Sherman",
+    "Parcel": "2 Coburn Rd W",
+    "Acres": 1.02,
+    "Price": 250000,
+    "WaterProximity": null,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Images": [
+      "https://ssl.cdn-redfin.com/photo/269/bigphoto/813/925813_0.webp",
+      "https://ssl.cdn-redfin.com/photo/269/bigphoto/813/925813_1_0.webp",
+      "https://ssl.cdn-redfin.com/photo/269/bigphoto/813/925813_2_0.webp",
+      "https://ssl.cdn-redfin.com/photo/269/bigphoto/813/925813_3_0.webp",
+      "https://ssl.cdn-redfin.com/photo/269/bigphoto/813/925813_4_0.webp"
+    ],
+    "Note": "Listed by Chelsea Stinson — Coldwell Banker Realty (914-997-0097)\nFor sale — Vacant land\n$250,000\nLot size: 1.02 acres (approved building lot)\nAddress: 2 Coburn Rd W, Sherman, CT 06784\n\nAbout this land\nApproved 1.02-acre building lot bordering protected open space; potential eastern views toward Timber Lake. 1600 ft driveway past pond; perc complete; approved 4-bedroom septic; professional survey & plot plan. Electric/cable/phone at road. Minutes to Metro-North and Sherman town center (courts, path, slips, racks, Candlewood Lake beach). Near 835-acre Deer Pond Farm Audubon Sanctuary (20 miles trails). Near The Club at River Oaks and Quaker Hill CC. Low Sherman taxes; privacy. Local builder available for to-be-built package. ~60 miles to NYC.\n\nOn Redfin: 1 day\nPrice/Sq.Ft.: $250,000 (land)\n\nUtilities: Cable Available; Electricity Available; Phone Available; Sewer: None\nTaxes (2025): $682 (Municipality)\nWaterfront: No\nLot Features: Borders State Land; Part Wooded\nDirections: West on Chapel Hill Rd → Left onto Coburn Rd W → First Right to 2 Coburn (DO NOT USE GPS)\nCounty: Fairfield\n\nMLS: OneKey #925813; SmartMLS #24134191\nPublic facts: APN 308798; Style Single Family Residential (historic); Built 1950; Finished 880 sq ft (house data)"
+  },
+  {
+    "State": "CT",
+    "County": "Litchfield",
+    "Town": "Torrington",
+    "Parcel": "00 Wimbledon Gate N",
+    "Acres": 0.34,
+    "Price": 18000,
+    "WaterProximity": null,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Images": [
+      "https://ssl.cdn-redfin.com/photo/234/bigphoto/836/24096836_0.webp"
+    ],
+    "Note": "Listed by Michelle Grant — Coldwell Banker Premier Real Estate\nFor sale — Vacant land\n$18,000\nLot size: 0.34 acres\nAddress: 00 Wimbledon Gate N, Torrington, CT 06790\n\nAbout this land\nThis lot is located next to 229 Wimbledon Gate and can be used to enlarge that lot or a very small house could potentially be built here.\n\nOn Redfin: 154 days\nPrice/Acres: $52,941\nHOA Dues: $25/mo\nProperty Type: Vacant land\n\nMLS: SmartMLS #24096836\nSource: Smart MLS"
+  },
+  {
+    "State": "RI",
+    "County": "Providence",
+    "Town": "Smithfield",
+    "Parcel": "258 Log Rd",
+    "Acres": 2.00,
+    "Price": 19900,
+    "WaterProximity": 0,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Images": [
+      "https://ssl.cdn-redfin.com/photo/116/bigphoto/600/1397600_0.webp",
+      "https://ssl.cdn-redfin.com/photo/116/bigphoto/600/1397600_1_0.webp",
+      "https://ssl.cdn-redfin.com/photo/116/bigphoto/600/1397600_2_0.webp"
+    ],
+    "Note": "Listed by Ed Duffy — Alltown Real Estate Group\nFor sale — Vacant land\n$19,900\nLot size: 2 acres (waterfront lot)\nAddress: 258 Log Rd, Smithfield, RI 02917\n\nAbout this land\n2 ACRE WATERFRONT LOT IRREGULARLY SHAPED ON SMALL POND KNOWN LOCALLY AS \"ONION MEADOW\" SOLD \"AS IS\" \"NO ROAD FRONTAGE\" TO LOCATE USE 258 LOG RD. BUYERS TO CONDUCT THEIR OWN DUE DILIGENCE NICE LOCATION FOR RECREATIONAL USAGE.\n\nOn Redfin: 4 days\nPrice/Acres: $9,950\nProperty Type: Vacant land\nDevelopment Status: Raw Land\nWooded Area: 100.0%\nTopography: Rolling\nWater Access: Walk to Water, Waterfront\nHas Waterfront: Yes\nHas View: Yes\n\nUtilities: None, Water Not Available\nTaxes (2024): $165\nCounty: Providence County\nAPN: 529489\n\nMLS: RIS #1397600\nSource: RIS\n\nPrevious listing history:\n- Sep 9, 2024: Listing Removed (RIS #1367495)\n- Aug 30, 2024: Listed at $29,900 (RIS #1367495)"
+  }
 ]
