@@ -1,115 +1,115 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AGSCOUT — Land List</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-slate-50 text-slate-900 min-h-screen">
-        <div class="max-w-6xl mx-auto p-4 md:p-6 space-y-4">
-            <header class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-semibold">AGSCOUT — Land
-                        (List)</h1>
-                    <p class="text-sm text-slate-500">Built from <code
-                            class="font-mono">/public/data/land.json</code></p>
-                </div>
-                <div class="flex items-center gap-2 no-print">
-                    <button onclick="window.print()"
-                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Print</button>
-                    <a href="land.html#list"
-                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Back
-                        to app</a>
-                </div>
-            </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AGSCOUT — Land List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 min-h-screen">
+    <div class="max-w-6xl mx-auto p-4 md:p-6 space-y-4">
+      <header class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold">AGSCOUT — Land
+            (List)</h1>
+          <p class="text-sm text-slate-500">Built from <code
+              class="font-mono">/public/data/land.json</code></p>
+        </div>
+        <div class="flex items-center gap-2 no-print">
+          <button onclick="window.print()"
+            class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Print</button>
+          <a href="land.html#list"
+            class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Back
+            to app</a>
+        </div>
+      </header>
 
-            <!-- Property Pokedex Grid -->
-            <section
-                class="bg-white rounded-lg shadow-sm border p-3 md:p-4 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold">Property Pokedex</h2>
-                    <div class="text-sm text-slate-600">Total: <strong
-                            id="count">0</strong></div>
-                </div>
-                <div id="pokedex"
-                    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
-                <div id="pokedex-empty"
-                    class="text-center text-slate-500 text-sm hidden">No
-                    properties</div>
-            </section>
+      <!-- Property Pokedex Grid -->
+      <section
+        class="bg-white rounded-lg shadow-sm border p-3 md:p-4 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold">Property Pokedex</h2>
+          <div class="text-sm text-slate-600">Total: <strong
+              id="count">0</strong></div>
+        </div>
+        <div id="pokedex"
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
+        <div id="pokedex-empty"
+          class="text-center text-slate-500 text-sm hidden">No
+          properties</div>
+      </section>
 
-            <!-- Detailed List -->
-            <section class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold">Detailed View</h2>
-                    <div class="text-sm text-slate-600">Click property above to
-                        view details • Right-click to add to calculator</div>
-                </div>
-                <div id="list"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                <div id="empty"
-                    class="mt-3 text-center text-slate-500 text-sm hidden">No
-                    properties</div>
-            </section>
+      <!-- Detailed List -->
+      <section class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold">Detailed View</h2>
+          <div class="text-sm text-slate-600">Click property above to
+            view details • Right-click to add to calculator</div>
+        </div>
+        <div id="list"
+          class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        <div id="empty"
+          class="mt-3 text-center text-slate-500 text-sm hidden">No
+          properties</div>
+      </section>
 
-            <!-- Property Calculator Tool -->
-            <section
-                class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-slate-800">Property
-                        Calculator</h2>
-                    <div class="text-sm text-slate-600">Compare & Calculate
-                        Costs</div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Selected Properties -->
-                    <div>
-                        <h3 class="font-medium text-slate-700 mb-2">Selected
-                            Properties</h3>
-                        <div id="selected-properties"
-                            class="space-y-2 max-h-40 overflow-y-auto">
-                            <div class="text-sm text-slate-500 italic">Click
-                                properties above to add them</div>
-                        </div>
-                        <button onclick="clearSelection()"
-                            class="mt-2 text-xs text-red-600 hover:text-red-700">Clear
-                            All</button>
-                    </div>
-
-                    <!-- Calculator Results -->
-                    <div>
-                        <h3
-                            class="font-medium text-slate-700 mb-2">Calculations</h3>
-                        <div id="calculator-results" class="space-y-2 text-sm">
-                            <div class="text-slate-500 italic">Select properties
-                                to see calculations</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Distance Map -->
-            <section
-                class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm border p-4 md:p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-slate-800">Distance
-                        Map</h2>
-                    <div class="text-sm text-slate-600">From 206 Saint John
-                        Street</div>
-                </div>
-
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-                    id="distance-map">
-                    <div class="text-center text-slate-500 italic">Loading
-                        distances...</div>
-                </div>
-            </section>
+      <!-- Property Calculator Tool -->
+      <section
+        class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-slate-800">Property
+            Calculator</h2>
+          <div class="text-sm text-slate-600">Compare & Calculate
+            Costs</div>
         </div>
 
-        <script>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Selected Properties -->
+          <div>
+            <h3 class="font-medium text-slate-700 mb-2">Selected
+              Properties</h3>
+            <div id="selected-properties"
+              class="space-y-2 max-h-40 overflow-y-auto">
+              <div class="text-sm text-slate-500 italic">Click
+                properties above to add them</div>
+            </div>
+            <button onclick="clearSelection()"
+              class="mt-2 text-xs text-red-600 hover:text-red-700">Clear
+              All</button>
+          </div>
+
+          <!-- Calculator Results -->
+          <div>
+            <h3
+              class="font-medium text-slate-700 mb-2">Calculations</h3>
+            <div id="calculator-results" class="space-y-2 text-sm">
+              <div class="text-slate-500 italic">Select properties
+                to see calculations</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Distance Map -->
+      <section
+        class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm border p-4 md:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-slate-800">Distance
+            Map</h2>
+          <div class="text-sm text-slate-600">From 206 Saint John
+            Street</div>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          id="distance-map">
+          <div class="text-center text-slate-500 italic">Loading
+            distances...</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
   async function main() {
     try {
       const res = await fetch('data/land.json', { cache: 'no-store' });
@@ -297,7 +297,8 @@
       'Cheshire': { lat: 41.4981, lng: -72.9007 },
       'Sherman': { lat: 41.5804, lng: -73.4962 },
       'Torrington': { lat: 41.8009, lng: -73.1212 },
-      'Smithfield': { lat: 41.8887, lng: -71.5495 }
+      'Smithfield': { lat: 41.8887, lng: -71.5495 },
+      'Lebanon': { lat: 41.6440, lng: -72.2100 }
     };
     
     return coords[property.Town] || { lat: 41.3083, lng: -72.9279 }; // Default to New Haven area
@@ -484,8 +485,8 @@
     updateCalculator();
   }
         </script>
-        <style>
+    <style>
           @media print { .no-print { display: none !important; } body { background: white; } }
         </style>
-    </body>
+  </body>
 </html>
