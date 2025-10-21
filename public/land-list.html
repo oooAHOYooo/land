@@ -9,8 +9,20 @@
       html { scroll-behavior: smooth; }
       .compact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.75rem; }
       .property-card { @apply bg-white border rounded-lg p-3 hover:shadow-md transition-shadow; }
-      .pokedex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem; }
-      .pokedex-card { @apply bg-white border rounded p-2 cursor-pointer hover:shadow-sm transition-shadow text-center; }
+      .grid-menu { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+      .menu-item { 
+        @apply bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 text-center;
+        border-left: 4px solid #e5e7eb;
+      }
+      .menu-item:hover {
+        border-left-color: #3b82f6;
+        transform: translateY(-1px);
+      }
+      .menu-item.selected {
+        border-left-color: #10b981;
+        background-color: #f0fdf4;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+      }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen">
@@ -24,8 +36,8 @@
             <span class="text-xs text-slate-500">30 properties</span>
           </div>
           <div class="hidden md:flex items-center space-x-4 text-xs">
-            <a href="#pokedex"
-              class="text-slate-600 hover:text-slate-900">Pokedex</a>
+            <a href="#grid-menu"
+              class="text-slate-600 hover:text-slate-900">Grid Menu</a>
             <a href="#detailed-view"
               class="text-slate-600 hover:text-slate-900">Properties</a>
             <a href="#calculator"
@@ -95,24 +107,27 @@
         </div>
       </section>
 
-      <!-- Property Pokedex Grid -->
-      <section id="pokedex" class="bg-white rounded-lg border p-3">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-semibold">Property Pokedex</h2>
+      <!-- Property Grid Menu -->
+      <section id="grid-menu" class="bg-white rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold">Property Grid Menu</h2>
           <div class="text-xs text-slate-600">Total: <strong
-              id="count">0</strong></div>
+              id="count">0</strong> properties</div>
         </div>
-        <div id="pokedex" class="pokedex-grid"></div>
-        <div id="pokedex-empty"
-          class="text-center text-slate-500 text-xs hidden">No properties</div>
+        <div id="grid-menu" class="grid-menu"></div>
+        <div id="grid-menu-empty"
+          class="text-center text-slate-500 text-sm hidden py-8">
+          <div class="text-4xl mb-2">🏞️</div>
+          <div>No properties found</div>
+        </div>
       </section>
 
       <!-- Detailed Properties Grid -->
       <section id="detailed-view" class="bg-white rounded-lg border p-3">
         <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-semibold">Detailed Properties</h2>
-          <div class="text-xs text-slate-600">Click property above to view
-            details • Right-click to add to calculator</div>
+          <h2 class="text-sm font-semibold">Properties</h2>
+          <div class="text-xs text-slate-600">Right-click properties to add to
+            calculator</div>
         </div>
         <div id="list" class="compact-grid"></div>
         <div id="empty" class="text-center text-slate-500 text-xs hidden">No
@@ -341,15 +356,15 @@
             return images.length > 0;
           });
           allProperties = arr;
-          document.getElementById('count').textContent = String(arr.length);
+          document.getElementById('count').textContent = String(arr.length).padStart(3, '0');
           
-          const pokedexContainer = document.getElementById('pokedex');
-          const pokedexEmpty = document.getElementById('pokedex-empty');
+          const gridMenuContainer = document.getElementById('grid-menu');
+          const gridMenuEmpty = document.getElementById('grid-menu-empty');
           const container = document.getElementById('list');
           const empty = document.getElementById('empty');
           
           if (arr.length === 0) { 
-            pokedexEmpty.classList.remove('hidden');
+            gridMenuEmpty.classList.remove('hidden');
             empty.classList.remove('hidden'); 
             return; 
           }
@@ -359,21 +374,22 @@
           const escapeHtml = (s) => String(s==null?'':s)
             .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 
-          // Generate compact Pokedex cards
-          const pokedexCards = arr.map((r, index) => {
+          // Generate grid menu items
+          const gridMenuItems = arr.map((r, index) => {
             const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
             const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
             const images = Array.isArray(r.Images) ? r.Images : [];
             const firstImage = images.length > 0 ? images[0] : null;
+            const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
             
             return `
-            <div class="pokedex-card" 
-                 onclick="navigateToProperty(${index})"
+            <div class="menu-item" 
+                 onclick="scrollToProperty(${index})"
                  oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
                  data-property-index="${index}"
-                 id="pokedex-card-${index}"
+                 id="menu-item-${index}"
                  title="Click to view details • Right-click to add to calculator">
-              <div class="w-16 h-16 mx-auto mb-1 bg-slate-100 rounded overflow-hidden">
+              <div class="w-16 h-16 mx-auto mb-2 bg-slate-100 rounded-lg overflow-hidden">
                 ${firstImage ? `
                   <img src="${escapeHtml(firstImage)}" 
                        alt="${escapeHtml(title)}" 
@@ -382,21 +398,22 @@
                        onerror="this.style.display='none'">
                 ` : `
                   <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
-                    No Image
+                    🏞️
                   </div>
                 `}
               </div>
-              <div class="font-semibold text-xs truncate" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
-              <div class="text-sm font-bold text-green-600">${escapeHtml(fmtCurrency(r.Price))}</div>
-              <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
-              <div class="flex justify-center gap-1 mt-1">
-                <span class="px-1 py-0.5 bg-slate-100 text-xs rounded">${escapeHtml(String(r.Tag||'inbox'))}</span>
-                <span class="px-1 py-0.5 bg-blue-100 text-xs rounded">${escapeHtml(water)}</span>
+              <div class="font-semibold text-sm truncate mb-1" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
+              <div class="text-lg font-bold text-green-600 mb-1">${escapeHtml(fmtCurrency(r.Price))}</div>
+              <div class="text-xs text-slate-500 mb-2">${escapeHtml(fmtNumber(r.Acres))} acres</div>
+              <div class="flex justify-center gap-1 mb-2">
+                <span class="px-2 py-0.5 bg-slate-100 text-xs rounded-full">${escapeHtml(String(r.Tag||'inbox'))}</span>
+                <span class="px-2 py-0.5 bg-blue-100 text-xs rounded-full">${escapeHtml(water)}</span>
               </div>
+              <div class="text-xs text-slate-400">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) + '/acre' : ''}</div>
             </div>`;
           }).join('\n');
           
-          pokedexContainer.innerHTML = pokedexCards;
+          gridMenuContainer.innerHTML = gridMenuItems;
 
           // Generate compact detailed cards
           const cards = arr.map((r, index) => {
@@ -422,7 +439,9 @@
             ` : '';
             
             return `
-            <div id="property-${index}" class="property-card">
+            <div id="property-${index}" class="property-card"
+                 oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
+                 title="Right-click to add to calculator">
               ${imageHtml}
               <div class="flex items-start justify-between gap-2 mb-2">
                 <div class="min-w-0 flex-1">
@@ -441,6 +460,7 @@
               </div>
               <div class="flex items-center gap-2 text-xs">
                 ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-teal-600 underline">View listing</a>` : ''}
+                <button onclick="togglePropertySelection(${index})" class="text-blue-600 hover:text-blue-800 underline">Add to Calculator</button>
               </div>
               ${details ? `<div class="mt-2 space-y-1">${details}</div>` : ''}
             </div>`;
@@ -458,8 +478,8 @@
       let selectedProperties = [];
       let allProperties = [];
 
-      // Navigate to property
-      function navigateToProperty(index) {
+      // Scroll to property in detailed view
+      function scrollToProperty(index) {
         const element = document.getElementById(`property-${index}`);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -473,15 +493,18 @@
         const property = allProperties[index];
         if (!property) return;
 
-        const card = document.getElementById(`pokedex-card-${index}`);
+        const card = document.getElementById(`property-${index}`);
+        const menuItem = document.getElementById(`menu-item-${index}`);
         const isSelected = selectedProperties.some(p => p.index === index);
         
         if (isSelected) {
           selectedProperties = selectedProperties.filter(p => p.index !== index);
           card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+          menuItem.classList.remove('selected');
         } else {
           selectedProperties.push({...property, index});
           card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+          menuItem.classList.add('selected');
         }
         
         updateCalculator();
@@ -575,16 +598,20 @@
       function removeFromSelection(index) {
         const removed = selectedProperties[index];
         selectedProperties.splice(index, 1);
-        const card = document.getElementById(`pokedex-card-${removed.index}`);
+        const card = document.getElementById(`property-${removed.index}`);
+        const menuItem = document.getElementById(`menu-item-${removed.index}`);
         card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        menuItem.classList.remove('selected');
         updateCalculator();
       }
 
       // Clear all selections
       function clearSelection() {
         selectedProperties.forEach(prop => {
-          const card = document.getElementById(`pokedex-card-${prop.index}`);
+          const card = document.getElementById(`property-${prop.index}`);
+          const menuItem = document.getElementById(`menu-item-${prop.index}`);
           card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+          menuItem.classList.remove('selected');
         });
         selectedProperties = [];
         updateCalculator();
