@@ -6,951 +6,372 @@
     <title>AGSCOUT — Land List</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      html {
-        scroll-behavior: smooth;
-      }
+      html { scroll-behavior: smooth; }
+      .compact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.75rem; }
+      .property-card { @apply bg-white border rounded-lg p-3 hover:shadow-md transition-shadow; }
+      .pokedex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem; }
+      .pokedex-card { @apply bg-white border rounded p-2 cursor-pointer hover:shadow-sm transition-shadow text-center; }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen">
-    <!-- Top Navigation -->
+    <!-- Compact Top Navigation -->
     <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
-      <div class="max-w-6xl mx-auto px-4 md:px-6">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center space-x-8">
-            <div>
-              <h1 class="text-xl font-semibold text-slate-800">AGSCOUT — Land
-                List</h1>
-              <p class="text-xs text-slate-500">28 properties • Film retreat
-                focus</p>
-            </div>
-            <div class="hidden md:flex items-center space-x-6">
-              <a href="#pokedex"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Pokedex</a>
-              <a href="#detailed-view"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Detailed
-                View</a>
-              <a href="#calculator"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Calculator</a>
-              <a href="#distance-map"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Distance
-                Map</a>
-              <a href="#financing"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Financing</a>
-              <a href="#strategy"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Strategy</a>
-              <a href="#vision"
-                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Vision</a>
-            </div>
+      <div class="max-w-7xl mx-auto px-3">
+        <div class="flex items-center justify-between h-12">
+          <div class="flex items-center space-x-4">
+            <h1 class="text-lg font-semibold text-slate-800">AGSCOUT — Land
+              List</h1>
+            <span class="text-xs text-slate-500">28 properties</span>
+          </div>
+          <div class="hidden md:flex items-center space-x-4 text-xs">
+            <a href="#pokedex"
+              class="text-slate-600 hover:text-slate-900">Pokedex</a>
+            <a href="#detailed-view"
+              class="text-slate-600 hover:text-slate-900">Properties</a>
+            <a href="#calculator"
+              class="text-slate-600 hover:text-slate-900">Calculator</a>
+            <a href="#distance-map"
+              class="text-slate-600 hover:text-slate-900">Distance</a>
+            <a href="#financing"
+              class="text-slate-600 hover:text-slate-900">Financing</a>
+            <a href="#strategy"
+              class="text-slate-600 hover:text-slate-900">Strategy</a>
+            <a href="#vision"
+              class="text-slate-600 hover:text-slate-900">Vision</a>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="window.print()"
-              class="px-3 py-2 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm transition-colors">Print</button>
+              class="px-2 py-1 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs">Print</button>
             <a href="index.html"
-              class="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 text-sm transition-colors">Back
-              to Hub</a>
+              class="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-xs">Hub</a>
           </div>
         </div>
       </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto p-4 md:p-6 space-y-4">
-
-      <!-- Western Massachusetts Alternatives -->
+    <div class="max-w-7xl mx-auto p-3 space-y-3">
+      <!-- Compact Western MA Alternatives -->
       <section
-        class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg shadow-sm border p-4 md:p-6 mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-slate-800">Western Massachusetts
+        class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-800">Western MA
             Alternatives</h2>
-
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Southern Berkshires -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-md font-semibold text-slate-800 mb-3 flex items-center">
-              <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
-              Southern Berkshires
-            </h3>
-            <div class="space-y-2 text-sm">
-              <div class="flex items-start">
-                <span class="font-medium text-emerald-700">Otis</span>
-                <span class="text-slate-600 ml-2">– lakes/ponds, 2–10 acre
-                  wooded lots</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-emerald-700">Monterey</span>
-                <span class="text-slate-600 ml-2">– low-key, creative, pricier
-                  but lovely</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-emerald-700">Tyringham</span>
-                <span class="text-slate-600 ml-2">– pastoral + wooded, very
-                  serene</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-emerald-700">Sandisfield</span>
-                <span class="text-slate-600 ml-2">– big acreage, great
-                  privacy</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-emerald-700">New
-                  Marlborough</span>
-                <span class="text-slate-600 ml-2">– streams + stone walls, artsy
-                  quiet</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hilltowns -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-md font-semibold text-slate-800 mb-3 flex items-center">
-              <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              Hilltowns (Cheaper, Rugged)
-            </h3>
-            <div class="space-y-2 text-sm">
-              <div class="flex items-start">
-                <span class="font-medium text-blue-700">Hinsdale / Peru /
-                  Washington</span>
-                <span class="text-slate-600 ml-2">– rolling woods, ponds, access
-                  to Pittsfield</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-blue-700">Savoy / Windsor</span>
-                <span class="text-slate-600 ml-2">– higher elevation, brooks,
-                  great prices</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-blue-700">Cheshire / Adams</span>
-                <span class="text-slate-600 ml-2">– north Berkshire edges,
-                  mountain/valley</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pioneer Valley -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-md font-semibold text-slate-800 mb-3 flex items-center">
-              <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Pioneer Valley Edges
-            </h3>
-            <div class="space-y-2 text-sm">
-              <div class="flex items-start">
-                <span class="font-medium text-purple-700">Cummington /
-                  Worthington / Plainfield</span>
-                <span class="text-slate-600 ml-2">– maker/artist presence,
-                  streams</span>
-              </div>
-              <div class="flex items-start">
-                <span class="font-medium text-purple-700">Ashfield / Hawley /
-                  Charlemont</span>
-                <span class="text-slate-600 ml-2">– forest + brooks, access to
-                  Rt. 2</span>
-              </div>
-            </div>
+          <div class="flex gap-1 text-xs">
+            <span
+              class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded">Berkshires</span>
+            <span
+              class="px-2 py-1 bg-blue-100 text-blue-800 rounded">Hilltowns</span>
+            <span
+              class="px-2 py-1 bg-purple-100 text-purple-800 rounded">Pioneer
+              Valley</span>
           </div>
         </div>
-
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 text-xs">
+          <div class="bg-white p-2 rounded border">
+            <div class="font-medium text-emerald-700">Otis</div>
+            <div class="text-slate-600">lakes/ponds</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="font-medium text-emerald-700">Monterey</div>
+            <div class="text-slate-600">creative, pricier</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="font-medium text-emerald-700">Tyringham</div>
+            <div class="text-slate-600">pastoral + wooded</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="font-medium text-blue-700">Hinsdale</div>
+            <div class="text-slate-600">rolling woods</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="font-medium text-blue-700">Savoy</div>
+            <div class="text-slate-600">brooks, great prices</div>
+          </div>
+          <div class="bg-white p-2 rounded border">
+            <div class="font-medium text-purple-700">Cummington</div>
+            <div class="text-slate-600">maker/artist</div>
+          </div>
+        </div>
       </section>
 
       <!-- Property Pokedex Grid -->
-      <section
-        id="pokedex"
-        class="bg-white rounded-lg shadow-sm border p-3 md:p-4 mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold">Property Pokedex</h2>
-          <div class="text-sm text-slate-600">Total: <strong
+      <section id="pokedex" class="bg-white rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold">Property Pokedex</h2>
+          <div class="text-xs text-slate-600">Total: <strong
               id="count">0</strong></div>
         </div>
-        <div id="pokedex"
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
+        <div id="pokedex" class="pokedex-grid"></div>
         <div id="pokedex-empty"
-          class="text-center text-slate-500 text-sm hidden">No
-          properties</div>
+          class="text-center text-slate-500 text-xs hidden">No properties</div>
       </section>
 
-      <!-- Detailed List -->
-      <section id="detailed-view"
-        class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold">Detailed View</h2>
-          <div class="text-sm text-slate-600">Click property above to
-            view details • Right-click to add to calculator</div>
+      <!-- Detailed Properties Grid -->
+      <section id="detailed-view" class="bg-white rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold">Detailed Properties</h2>
+          <div class="text-xs text-slate-600">Click property above to view
+            details • Right-click to add to calculator</div>
         </div>
-        <div id="list"
-          class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-        <div id="empty"
-          class="mt-3 text-center text-slate-500 text-sm hidden">No
+        <div id="list" class="compact-grid"></div>
+        <div id="empty" class="text-center text-slate-500 text-xs hidden">No
           properties</div>
       </section>
 
       <!-- Property Calculator Tool -->
-      <section
-        id="calculator"
-        class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-slate-800">Property
+      <section id="calculator"
+        class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-800">Property
             Calculator</h2>
-          <div class="text-sm text-slate-600">Compare & Calculate
-            Costs</div>
+          <div class="text-xs text-slate-600">Compare & Calculate Costs</div>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Selected Properties -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <h3 class="font-medium text-slate-700 mb-2">Selected
+            <h3 class="text-xs font-medium text-slate-700 mb-1">Selected
               Properties</h3>
             <div id="selected-properties"
-              class="space-y-2 max-h-40 overflow-y-auto">
-              <div class="text-sm text-slate-500 italic">Click
-                properties above to add them</div>
+              class="space-y-1 max-h-32 overflow-y-auto text-xs">
+              <div class="text-slate-500 italic">Click properties above to add
+                them</div>
             </div>
             <button onclick="clearSelection()"
-              class="mt-2 text-xs text-red-600 hover:text-red-700">Clear
+              class="mt-1 text-xs text-red-600 hover:text-red-700">Clear
               All</button>
           </div>
-
-          <!-- Calculator Results -->
           <div>
             <h3
-              class="font-medium text-slate-700 mb-2">Calculations</h3>
-            <div id="calculator-results" class="space-y-2 text-sm">
-              <div class="text-slate-500 italic">Select properties
-                to see calculations</div>
+              class="text-xs font-medium text-slate-700 mb-1">Calculations</h3>
+            <div id="calculator-results" class="space-y-1 text-xs">
+              <div class="text-slate-500 italic">Select properties to see
+                calculations</div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Distance Map -->
-      <section
-        id="distance-map"
-        class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm border p-4 md:p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-slate-800">Distance
-            Map</h2>
-          <div class="text-sm text-slate-600">From 206 Saint John
-            Street</div>
+      <section id="distance-map"
+        class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-800">Distance Map</h2>
+          <div class="text-xs text-slate-600">From 206 Saint John Street</div>
         </div>
-
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2"
           id="distance-map">
-          <div class="text-center text-slate-500 italic">Loading
+          <div class="text-center text-slate-500 italic text-xs">Loading
             distances...</div>
         </div>
       </section>
 
-      <!-- Financing Guide -->
-      <section
-        id="financing"
-        class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg shadow-sm border p-4 md:p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-slate-800">Financing Guide</h2>
-          <div class="text-sm text-slate-600">$15K Down Payment Strategy</div>
+      <!-- Compact Financing Guide -->
+      <section id="financing"
+        class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-800">Financing Guide</h2>
+          <div class="text-xs text-slate-600">$15K Down Payment Strategy</div>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Quick Reality Check -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-              Quick Reality Check
-            </h3>
-            <div class="space-y-3 text-sm">
-              <div class="bg-red-50 p-3 rounded border-l-4 border-red-400">
-                <p class="font-medium text-red-800">Raw land loans usually want
-                  20–50% down, shorter terms (10–15 yrs), and higher rates than
-                  home mortgages.</p>
-              </div>
-              <div
-                class="bg-yellow-50 p-3 rounded border-l-4 border-yellow-400">
-                <p class="font-medium text-yellow-800">With $15k down, target
-                  lot price ≤ $50–75k (20–30% down payment).</p>
-              </div>
-              <div class="bg-green-50 p-3 rounded border-l-4 border-green-400">
-                <p class="font-medium text-green-800">"Build soon" lots (septic
-                  + driveway + power feasible within ~24 months) get better
-                  rates.</p>
-              </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-red-800 mb-1">Reality
+              Check</h3>
+            <div class="text-xs text-slate-600">Raw land loans: 20-50% down,
+              10-15yr terms, higher rates</div>
           </div>
-
-          <!-- Best Paths -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              Best Financing Paths (Ranked)
-            </h3>
-            <div class="space-y-3 text-sm">
-              <div class="border-l-4 border-blue-400 pl-3">
-                <div class="font-semibold text-blue-800">1. Local Credit Union
-                  "Lot Loan"</div>
-                <div class="text-slate-600">10–15 yr, 20–30% down, decent rates.
-                  Good for $50–75k parcels with road access.</div>
-              </div>
-              <div class="border-l-4 border-green-400 pl-3">
-                <div class="font-semibold text-green-800">2. Seller Financing
-                  (Owner-Carry)</div>
-                <div class="text-slate-600">15 yr amortization, 5-year balloon.
-                  Great for odd parcels, low closing costs.</div>
-              </div>
-              <div class="border-l-4 border-purple-400 pl-3">
-                <div class="font-semibold text-purple-800">3.
-                  Construction-to-Perm (Later)</div>
-                <div class="text-slate-600">Buy land now, refi into 30-yr
-                  mortgage when ready to build. Requires real plans.</div>
-              </div>
-            </div>
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-blue-800 mb-1">Best Paths</h3>
+            <div class="text-xs text-slate-600">1. Credit Union 2. Seller
+              Financing 3. Construction-to-Perm</div>
           </div>
-
-          <!-- Payment Examples -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Monthly Payment Examples
-            </h3>
-            <div class="space-y-2 text-sm">
-              <div
-                class="flex justify-between items-center p-2 bg-slate-50 rounded">
-                <span>$60k lot, $15k down, $45k financed</span>
-                <span class="font-semibold">$511-595/mo</span>
-              </div>
-              <div
-                class="flex justify-between items-center p-2 bg-slate-50 rounded">
-                <span>$50k lot, $15k down, $35k financed</span>
-                <span class="font-semibold">$463/mo</span>
-              </div>
-              <div class="text-xs text-slate-500 mt-2">
-                <strong>Rule of thumb:</strong> Keep monthly $450–$650 by
-                targeting $45–$65k financed on 10–15 yr terms.
-              </div>
-            </div>
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-green-800 mb-1">Monthly
+              Examples</h3>
+            <div class="text-xs text-slate-600">$60k lot: $511-595/mo • $50k
+              lot: $463/mo</div>
           </div>
-
-          <!-- Hidden Costs -->
-          <div class="bg-white rounded-lg p-4 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-              Hidden Costs to Budget
-            </h3>
-            <div class="space-y-2 text-sm">
-              <div class="flex justify-between">
-                <span>Survey & stakes</span>
-                <span class="font-semibold">$1.5–4k</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Perc test & soil engineer</span>
-                <span class="font-semibold">$800–3k</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Driveway (gravel, 200–400 ft)</span>
-                <span class="font-semibold">$6–20k</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Power drop (future)</span>
-                <span class="font-semibold">$3–15k</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Well & septic (future)</span>
-                <span class="font-semibold">$8–15k each</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Plan -->
-        <div
-          class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-          <h3 class="text-lg font-semibold text-blue-800 mb-3">Fast Path Action
-            Plan</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <div class="font-semibold text-blue-700 mb-2">Target
-                Properties:</div>
-              <ul class="space-y-1 text-blue-600">
-                <li>• $50–75k listings (20–30% down)</li>
-                <li>• 5–10 acres, stream/creek access</li>
-                <li>• Road frontage or recorded ROW</li>
-                <li>• Not in floodway</li>
-              </ul>
-            </div>
-            <div>
-              <div class="font-semibold text-blue-700 mb-2">Next Steps:</div>
-              <ul class="space-y-1 text-blue-600">
-                <li>• Call 2 local credit unions</li>
-                <li>• Ask sellers about owner financing</li>
-                <li>• Order survey + perc during due diligence</li>
-                <li>• Verify zoning setbacks from water</li>
-              </ul>
-            </div>
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-orange-800 mb-1">Hidden
+              Costs</h3>
+            <div class="text-xs text-slate-600">Survey: $1.5-4k • Perc: $800-3k
+              • Driveway: $6-20k</div>
           </div>
         </div>
       </section>
 
-      <!-- Investment Strategy Analysis -->
-      <section
-        id="strategy"
-        class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-slate-800">Investment Strategy
-            Analysis</h2>
-          <div class="text-sm text-slate-600">Patterns & Checklists</div>
+      <!-- Compact Investment Strategy -->
+      <section id="strategy"
+        class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-800">Investment
+            Strategy</h2>
+          <div class="text-xs text-slate-600">Patterns & Checklists</div>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Primary Residence Checklist -->
-          <div class="bg-white rounded-lg border">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-white rounded border">
             <button onclick="toggleDropdown('primary-residence')"
-              class="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50">
-              <h3
-                class="text-lg font-semibold text-slate-800 flex items-center">
-                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                Primary Residence Build
-              </h3>
+              class="w-full p-2 text-left flex items-center justify-between hover:bg-slate-50">
+              <h3 class="text-xs font-semibold text-slate-800">Primary
+                Residence</h3>
               <span id="primary-residence-arrow" class="text-slate-400">▼</span>
             </button>
-            <div id="primary-residence" class="px-4 pb-4 space-y-3 hidden">
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-1">
-                <label for="pr-1" class="text-sm">Close to major highways
-                  (I-395, I-84, Route 12)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-2">
-                <label for="pr-2" class="text-sm">Within 30 minutes of your
-                  apartment</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-3">
-                <label for="pr-3" class="text-sm">Good school districts</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-4">
-                <label for="pr-4" class="text-sm">Utilities available (electric,
-                  cable, phone)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-5">
-                <label for="pr-5" class="text-sm">Level or gently sloping
-                  terrain</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-6">
-                <label for="pr-6" class="text-sm">Road frontage for easy
-                  access</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="pr-7">
-                <label for="pr-7" class="text-sm">Zoning allows residential
-                  construction</label>
-              </div>
+            <div id="primary-residence"
+              class="px-2 pb-2 space-y-1 hidden text-xs">
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="pr-1"><label for="pr-1">Highway
+                  access</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="pr-2"><label for="pr-2">Within 30
+                  min</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="pr-3"><label for="pr-3">Good
+                  schools</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="pr-4"><label for="pr-4">Utilities
+                  available</label></div>
             </div>
           </div>
-
-          <!-- Retreat House Checklist -->
-          <div class="bg-white rounded-lg border">
+          <div class="bg-white rounded border">
             <button onclick="toggleDropdown('retreat-house')"
-              class="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50">
-              <h3
-                class="text-lg font-semibold text-slate-800 flex items-center">
-                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Retreat House Build
-              </h3>
+              class="w-full p-2 text-left flex items-center justify-between hover:bg-slate-50">
+              <h3 class="text-xs font-semibold text-slate-800">Retreat
+                House</h3>
               <span id="retreat-house-arrow" class="text-slate-400">▼</span>
             </button>
-            <div id="retreat-house" class="px-4 pb-4 space-y-3 hidden">
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-1">
-                <label for="rh-1"
-                  class="text-sm font-medium text-green-700">Water nearby (lake,
-                  pond, river)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-2">
-                <label for="rh-2" class="text-sm">Privacy from neighbors</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-3">
-                <label for="rh-3" class="text-sm">Wooded or natural
-                  setting</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-4">
-                <label for="rh-4" class="text-sm">Off-grid potential (well,
-                  septic, solar)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-5">
-                <label for="rh-5" class="text-sm">Recreational activities
-                  nearby</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-6">
-                <label for="rh-6" class="text-sm">Scenic views or natural
-                  beauty</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="rh-7">
-                <label for="rh-7" class="text-sm">Quiet, peaceful
-                  location</label>
-              </div>
+            <div id="retreat-house" class="px-2 pb-2 space-y-1 hidden text-xs">
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="rh-1"><label for="rh-1">Water
+                  nearby</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="rh-2"><label
+                  for="rh-2">Privacy</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="rh-3"><label for="rh-3">Wooded
+                  setting</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="rh-4"><label for="rh-4">Off-grid
+                  potential</label></div>
             </div>
           </div>
-
-          <!-- Real Estate Investment Checklist -->
-          <div class="bg-white rounded-lg border">
+          <div class="bg-white rounded border">
             <button onclick="toggleDropdown('real-estate')"
-              class="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50">
-              <h3
-                class="text-lg font-semibold text-slate-800 flex items-center">
-                <span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                Real Estate Investment Play
-              </h3>
+              class="w-full p-2 text-left flex items-center justify-between hover:bg-slate-50">
+              <h3 class="text-xs font-semibold text-slate-800">Investment
+                Play</h3>
               <span id="real-estate-arrow" class="text-slate-400">▼</span>
             </button>
-            <div id="real-estate" class="px-4 pb-4 space-y-3 hidden">
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-1">
-                <label for="re-1" class="text-sm">Low price per acre
-                  ($10K-$50K)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-2">
-                <label for="re-2" class="text-sm">Development potential or
-                  zoning flexibility</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-3">
-                <label for="re-3" class="text-sm">Growing area or upcoming
-                  development</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-4">
-                <label for="re-4" class="text-sm">Multiple exit strategies
-                  (build, flip, hold)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-5">
-                <label for="re-5" class="text-sm">Good rental market
-                  potential</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-6">
-                <label for="re-6" class="text-sm">Low carrying costs (taxes,
-                  maintenance)</label>
-              </div>
-              <div class="flex items-start">
-                <input type="checkbox" class="mt-1 mr-2" id="re-7">
-                <label for="re-7" class="text-sm">Easy to manage
-                  remotely</label>
-              </div>
+            <div id="real-estate" class="px-2 pb-2 space-y-1 hidden text-xs">
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="re-1"><label for="re-1">Low
+                  price/acre</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="re-2"><label for="re-2">Development
+                  potential</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="re-3"><label for="re-3">Growing
+                  area</label></div>
+              <div class="flex items-start"><input type="checkbox"
+                  class="mt-0.5 mr-1" id="re-4"><label for="re-4">Multiple
+                  exits</label></div>
             </div>
           </div>
-
-          <!-- Portfolio Analysis -->
-          <div class="bg-white rounded-lg border">
+          <div class="bg-white rounded border">
             <button onclick="toggleDropdown('portfolio-analysis')"
-              class="w-full p-4 text-left flex items-center justify-between hover:bg-slate-50">
-              <h3
-                class="text-lg font-semibold text-slate-800 flex items-center">
-                <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                Portfolio Analysis
-              </h3>
+              class="w-full p-2 text-left flex items-center justify-between hover:bg-slate-50">
+              <h3 class="text-xs font-semibold text-slate-800">Portfolio
+                Analysis</h3>
               <span id="portfolio-analysis-arrow"
                 class="text-slate-400">▼</span>
             </button>
-            <div id="portfolio-analysis" class="px-4 pb-4 space-y-3 hidden">
-              <div class="text-sm text-slate-500 italic">Loading
-                analysis...</div>
+            <div id="portfolio-analysis"
+              class="px-2 pb-2 space-y-1 hidden text-xs">
+              <div class="text-slate-500 italic">Loading analysis...</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Vision for the Land -->
-      <section
-        id="vision"
-        class="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg shadow-sm border p-4 md:p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-slate-800">Off-Grid Film Retreat
+      <!-- Compact Vision -->
+      <section id="vision"
+        class="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg border p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-800">Off-Grid Film Retreat
             Vision</h2>
-          <div class="text-sm text-slate-600">Creative Sanctuary Development
-            Plan</div>
+          <div class="text-xs text-slate-600">Creative Sanctuary
+            Development</div>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Core Vision -->
-          <div class="bg-white rounded-lg p-6 border">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-slate-800 mb-1">The
+              Vision</h3>
+            <div class="text-xs text-slate-600">Hand-built creative sanctuary
+              for film work, writing, editing. Modular growth over time.</div>
+          </div>
+          <div class="bg-white rounded p-2 border">
             <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              The Vision
-            </h3>
-            <div class="space-y-4 text-sm text-slate-700">
-              <p>A quiet woodland retreat designed for creative film
-                work—writing, editing, and artistic development. This isn't just
-                land acquisition; it's the foundation for a sustainable,
-                hand-built creative sanctuary that grows organically over
-                time.</p>
-
-              <p>The goal is to create a low-impact, modular retreat that
-                supports deep creative work while respecting the natural
-                environment. Each structure will be built by hand, using local
-                materials and traditional techniques, creating a unique space
-                that feels integrated with the landscape.</p>
-
-              <p>This retreat will serve as both a personal creative sanctuary
-                and potentially a future space for small artist residencies,
-                fostering a community of filmmakers and creatives in a natural
-                setting.</p>
-            </div>
+              class="text-xs font-semibold text-slate-800 mb-1">Structures</h3>
+            <div class="text-xs text-slate-600">2-3 Yurts • Stone/Timber Studio
+              • Treehouses • Solar • Water System</div>
           </div>
-
-          <!-- Structures & Infrastructure -->
-          <div class="bg-white rounded-lg p-6 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Structures & Infrastructure
-            </h3>
-            <div class="space-y-3 text-sm">
-              <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🏕️</span>
-                <div>
-                  <div class="font-medium text-slate-800">2-3 Homemade
-                    Yurts</div>
-                  <div class="text-slate-600">Sleeping quarters, guest space,
-                    seasonal living</div>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🎬</span>
-                <div>
-                  <div class="font-medium text-slate-800">Stone/Timber Editing
-                    Studio</div>
-                  <div class="text-slate-600">Main creative workspace with
-                    natural light</div>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🌳</span>
-                <div>
-                  <div class="font-medium text-slate-800">1-2 Treehouses</div>
-                  <div class="text-slate-600">Elevated creative spaces,
-                    meditation spots</div>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">💧</span>
-                <div>
-                  <div class="font-medium text-slate-800">Water System</div>
-                  <div class="text-slate-600">Rain catchment or creek access,
-                    basic plumbing</div>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">⚡</span>
-                <div>
-                  <div class="font-medium text-slate-800">Solar Power</div>
-                  <div class="text-slate-600">Off-grid electricity for studio
-                    equipment</div>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🔥</span>
-                <div>
-                  <div class="font-medium text-slate-800">Wood Stove &
-                    Composting</div>
-                  <div class="text-slate-600">Heating, waste management,
-                    sustainability</div>
-                </div>
-              </div>
-            </div>
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-slate-800 mb-1">Land
+              Requirements</h3>
+            <div class="text-xs text-slate-600">5-15 acres • Water access • Road
+              access • Western MA/VT/ME preferred</div>
           </div>
-
-          <!-- Land Requirements -->
-          <div class="bg-white rounded-lg p-6 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Land Requirements
-            </h3>
-            <div class="space-y-3 text-sm text-slate-700">
-              <div class="flex items-start">
-                <span class="text-purple-600 font-bold mr-2">•</span>
-                <span><strong>Size:</strong> 5-15 acres of woodland with
-                  privacy</span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-purple-600 font-bold mr-2">•</span>
-                <span><strong>Water Access:</strong> Creek, pond, or reliable
-                  water source on or near property</span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-purple-600 font-bold mr-2">•</span>
-                <span><strong>Access:</strong> Year-round or seasonal road
-                  access for materials delivery</span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-purple-600 font-bold mr-2">•</span>
-                <span><strong>Terrain:</strong> Mix of flat areas for structures
-                  and varied topography for trails</span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-purple-600 font-bold mr-2">•</span>
-                <span><strong>Location:</strong> Western MA, Vermont, Maine, or
-                  Catskills NY preferred</span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-purple-600 font-bold mr-2">•</span>
-                <span><strong>Zoning:</strong> Allows residential/agricultural
-                  use with minimal restrictions</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Development Timeline -->
-          <div class="bg-white rounded-lg p-6 border">
-            <h3
-              class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-              <span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-              Development Timeline
-            </h3>
-            <div class="space-y-3 text-sm text-slate-700">
-              <p><strong>Year 1:</strong> Land acquisition, site survey, basic
-                access road, first yurt construction</p>
-              <p><strong>Year 2:</strong> Water system installation, solar
-                setup, composting toilet, trail network</p>
-              <p><strong>Year 3:</strong> Stone/timber studio construction,
-                second yurt, wood stove installation</p>
-              <p><strong>Year 4-5:</strong> Treehouse construction, garden
-                establishment, guest amenities</p>
-              <p><strong>Year 6+:</strong> Artist residency program development,
-                community building</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Design Philosophy -->
-        <div
-          class="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
-          <h3 class="text-lg font-semibold text-indigo-800 mb-3">Design
-            Philosophy</h3>
-          <div
-            class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-indigo-700">
-            <div>
-              <div class="font-semibold mb-2">Low Impact Principles:</div>
-              <ul class="space-y-1">
-                <li>• Work with existing landscape, not against it</li>
-                <li>• Use local, sustainable materials</li>
-                <li>• Minimize environmental footprint</li>
-                <li>• Preserve natural water features</li>
-              </ul>
-            </div>
-            <div>
-              <div class="font-semibold mb-2">Modular Growth:</div>
-              <ul class="space-y-1">
-                <li>• Build incrementally as needs evolve</li>
-                <li>• Each structure serves multiple purposes</li>
-                <li>• Easy to modify or expand over time</li>
-                <li>• Maintain flexibility for creative use</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Call to Action -->
-        <div
-          class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-          <div class="text-center">
-            <h3 class="text-lg font-semibold text-blue-800 mb-2">Ready to Build
-              Your Creative Sanctuary?</h3>
-            <p class="text-sm text-blue-700 mb-4">Every great creative retreat
-              starts with the right piece of land. Use the tools above to find
-              properties that match your vision for sustainable, hand-built film
-              retreat development.</p>
-            <div class="flex flex-wrap justify-center gap-2">
-              <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Find
-                Land</span>
-              <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Plan
-                Build</span>
-              <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Create</span>
-              <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Inspire</span>
-            </div>
+          <div class="bg-white rounded p-2 border">
+            <h3 class="text-xs font-semibold text-slate-800 mb-1">Timeline</h3>
+            <div class="text-xs text-slate-600">Yr 1: Land + first yurt • Yr 2:
+              Water + solar • Yr 3: Studio • Yr 4-5: Treehouses</div>
           </div>
         </div>
       </section>
     </div>
 
     <script>
-  async function main() {
-    try {
-      const res = await fetch('data/land.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error('Failed to load JSON');
-      const rows = await res.json();
-      const arr = Array.isArray(rows) ? rows : [];
-      allProperties = arr; // Store globally for calculator
-      document.getElementById('count').textContent = String(arr.length);
-      
-      const pokedexContainer = document.getElementById('pokedex');
-      const pokedexEmpty = document.getElementById('pokedex-empty');
-      const container = document.getElementById('list');
-      const empty = document.getElementById('empty');
-      
-      if (arr.length === 0) { 
-        pokedexEmpty.classList.remove('hidden');
-        empty.classList.remove('hidden'); 
-        return; 
-      }
-      const fmtCurrency = (v) => (v==null||!isFinite(Number(v)) ? '' : '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }));
-      const fmtNumber = (v, d=2) => (v==null||!isFinite(Number(v)) ? '' : Number(v).toLocaleString(undefined, { maximumFractionDigits: d }));
-      const escapeHtml = (s) => String(s==null?'':s)
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+      async function main() {
+        try {
+          const res = await fetch('data/land.json', { cache: 'no-store' });
+          if (!res.ok) throw new Error('Failed to load JSON');
+          const rows = await res.json();
+          const arr = Array.isArray(rows) ? rows : [];
+          allProperties = arr;
+          document.getElementById('count').textContent = String(arr.length);
+          
+          const pokedexContainer = document.getElementById('pokedex');
+          const pokedexEmpty = document.getElementById('pokedex-empty');
+          const container = document.getElementById('list');
+          const empty = document.getElementById('empty');
+          
+          if (arr.length === 0) { 
+            pokedexEmpty.classList.remove('hidden');
+            empty.classList.remove('hidden'); 
+            return; 
+          }
+          
+          const fmtCurrency = (v) => (v==null||!isFinite(Number(v)) ? '' : '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }));
+          const fmtNumber = (v, d=2) => (v==null||!isFinite(Number(v)) ? '' : Number(v).toLocaleString(undefined, { maximumFractionDigits: d }));
+          const escapeHtml = (s) => String(s==null?'':s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 
-      // Generate Pokedex cards
-      const pokedexCards = arr.map((r, index) => {
-        const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
-        const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
-        const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
-        const images = Array.isArray(r.Images) ? r.Images : [];
-        const firstImage = images.length > 0 ? images[0] : null;
-        
-        return `
-        <div class="bg-white border rounded-lg p-2 cursor-pointer hover:shadow-md transition-shadow" 
-             onclick="navigateToProperty(${index})"
-             oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
-             data-property-index="${index}"
-             id="pokedex-card-${index}"
-             title="Click to view details • Right-click to add to calculator">
-          <div class="aspect-square mb-2 bg-slate-100 rounded overflow-hidden">
-            ${firstImage ? `
-              <img src="${escapeHtml(firstImage)}" 
-                   alt="${escapeHtml(title)}" 
-                   class="w-full h-full object-cover"
-                   loading="lazy"
-                   onerror="this.style.display='none'">
-            ` : `
-              <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
-                No Image
-              </div>
-            `}
-          </div>
-          <div class="text-center">
-            <div class="font-semibold text-sm truncate" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
-            <div class="text-lg font-bold text-green-600">${escapeHtml(fmtCurrency(r.Price))}</div>
-            <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
-            <div class="flex justify-center gap-1 mt-1">
-              <span class="px-1 py-0.5 bg-slate-100 text-xs rounded">${escapeHtml(String(r.Tag||'inbox'))}</span>
-              <span class="px-1 py-0.5 bg-blue-100 text-xs rounded">${escapeHtml(water)}</span>
-            </div>
-          </div>
-        </div>`;
-      }).join('\n');
-      
-      pokedexContainer.innerHTML = pokedexCards;
-
-      // Generate detailed cards
-      const cards = arr.map((r, index) => {
-        const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
-        const details = (r.Note || '').split(/\n+/).map(p => `<p>${escapeHtml(p)}</p>`).join('');
-        const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
-        const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
-        
-        // Handle images
-        const images = Array.isArray(r.Images) ? r.Images : [];
-        const imageHtml = images.length > 0 ? `
-          <div class="mb-3">
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-              ${images.slice(0, 6).map(img => `
-                <img src="${escapeHtml(img)}" 
-                     alt="${escapeHtml(title)}" 
-                     class="w-full h-24 object-cover rounded border"
-                     loading="lazy"
-                     onerror="this.style.display='none'">
-              `).join('')}
-            </div>
-            ${images.length > 6 ? `<div class="text-xs text-slate-500 mt-1">+${images.length - 6} more images</div>` : ''}
-          </div>
-        ` : '';
-        
-        return `
-        <div id="property-${index}" class="border rounded-md p-3 bg-white">
-          ${imageHtml}
-          <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0">
-              <div class="font-semibold truncate">${escapeHtml(title)}</div>
-              <div class="text-xs text-slate-500 truncate">${escapeHtml([r.State, r.County].filter(Boolean).join(', '))}</div>
-            </div>
-            <div class="text-right flex-none">
-              <div class="text-sm font-medium">${escapeHtml(fmtCurrency(r.Price))}</div>
-              <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
-            </div>
-          </div>
-          <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-            <div><div class="text-xs text-slate-500">$ / acre</div><div class="font-medium">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : ''}</div></div>
-            <div><div class="text-xs text-slate-500">Water</div><div class="font-medium">${escapeHtml(water)}</div></div>
-            <div><div class="text-xs text-slate-500">Tag</div><div class="font-medium">${escapeHtml(String(r.Tag||'inbox'))}</div></div>
-          </div>
-          <div class="mt-2 flex items-center gap-3 text-sm">
-            ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-teal-600 underline">View listing</a>` : ''}
-          </div>
-          ${details ? `<div class="mt-3 text-sm space-y-1">${details}</div>` : ''}
-        </div>`;
-      }).join('\n');
-      container.innerHTML = cards;
-      
-      // Generate distance map
-      generateDistanceMap(arr);
-    } catch (e) {
-      document.getElementById('empty').textContent = 'Failed to load land.json';
-      document.getElementById('empty').classList.remove('hidden');
-    }
-  }
-
-  // Generate distance map from 206 Saint John Street
-  function generateDistanceMap(properties) {
-    const homeAddress = "206 Saint John Street";
-    const distanceContainer = document.getElementById('distance-map');
-    
-    if (properties.length === 0) {
-      distanceContainer.innerHTML = '<div class="text-center text-slate-500 italic">No properties to map</div>';
-      return;
-    }
-
-    // Approximate coordinates for 206 Saint John Street (you may want to update this)
-    const homeCoords = { lat: 41.3083, lng: -72.9279 }; // New Haven, CT area
-    
-    const distanceCards = properties.map((prop, index) => {
-      const address = `${prop.Parcel}, ${prop.Town}, ${prop.State}`;
-      const distance = calculateDistance(homeCoords, getPropertyCoords(prop));
-      const driveTime = estimateDriveTime(distance);
-      
-      const images = Array.isArray(prop.Images) ? prop.Images : [];
-      const firstImage = images.length > 0 ? images[0] : null;
-      
-      return `
-        <div class="bg-white rounded-lg p-4 border shadow-sm">
-          <div class="text-center">
-            <div class="text-sm font-medium text-slate-700 mb-1">${prop.Town}, ${prop.State}</div>
-            <div class="text-xs text-slate-500 mb-2 truncate" title="${address}">${prop.Parcel}</div>
+          // Generate compact Pokedex cards
+          const pokedexCards = arr.map((r, index) => {
+            const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
+            const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
+            const images = Array.isArray(r.Images) ? r.Images : [];
+            const firstImage = images.length > 0 ? images[0] : null;
             
-            <!-- Tiny thumbnail -->
-            <div class="mb-3 flex justify-center">
-              <div class="w-12 h-12 rounded border overflow-hidden bg-slate-100">
+            return `
+            <div class="pokedex-card" 
+                 onclick="navigateToProperty(${index})"
+                 oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
+                 data-property-index="${index}"
+                 id="pokedex-card-${index}"
+                 title="Click to view details • Right-click to add to calculator">
+              <div class="w-16 h-16 mx-auto mb-1 bg-slate-100 rounded overflow-hidden">
                 ${firstImage ? `
-                  <img src="${firstImage}" 
-                       alt="${prop.Town} property" 
+                  <img src="${escapeHtml(firstImage)}" 
+                       alt="${escapeHtml(title)}" 
                        class="w-full h-full object-cover"
                        loading="lazy"
                        onerror="this.style.display='none'">
@@ -960,244 +381,327 @@
                   </div>
                 `}
               </div>
+              <div class="font-semibold text-xs truncate" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
+              <div class="text-sm font-bold text-green-600">${escapeHtml(fmtCurrency(r.Price))}</div>
+              <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
+              <div class="flex justify-center gap-1 mt-1">
+                <span class="px-1 py-0.5 bg-slate-100 text-xs rounded">${escapeHtml(String(r.Tag||'inbox'))}</span>
+                <span class="px-1 py-0.5 bg-blue-100 text-xs rounded">${escapeHtml(water)}</span>
+              </div>
+            </div>`;
+          }).join('\n');
+          
+          pokedexContainer.innerHTML = pokedexCards;
+
+          // Generate compact detailed cards
+          const cards = arr.map((r, index) => {
+            const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
+            const details = (r.Note || '').split(/\n+/).slice(0, 3).map(p => `<p class="text-xs text-slate-600">${escapeHtml(p)}</p>`).join('');
+            const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
+            const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
+            
+            const images = Array.isArray(r.Images) ? r.Images : [];
+            const imageHtml = images.length > 0 ? `
+              <div class="mb-2">
+                <div class="grid grid-cols-3 gap-1">
+                  ${images.slice(0, 3).map(img => `
+                    <img src="${escapeHtml(img)}" 
+                         alt="${escapeHtml(title)}" 
+                         class="w-full h-16 object-cover rounded border"
+                         loading="lazy"
+                         onerror="this.style.display='none'">
+                  `).join('')}
+                </div>
+                ${images.length > 3 ? `<div class="text-xs text-slate-500 mt-1">+${images.length - 3} more</div>` : ''}
+              </div>
+            ` : '';
+            
+            return `
+            <div id="property-${index}" class="property-card">
+              ${imageHtml}
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="min-w-0 flex-1">
+                  <div class="font-semibold text-sm truncate">${escapeHtml(title)}</div>
+                  <div class="text-xs text-slate-500 truncate">${escapeHtml([r.State, r.County].filter(Boolean).join(', '))}</div>
+                </div>
+                <div class="text-right flex-none">
+                  <div class="text-sm font-medium">${escapeHtml(fmtCurrency(r.Price))}</div>
+                  <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-xs mb-2">
+                <div><div class="text-slate-500">$/acre</div><div class="font-medium">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : ''}</div></div>
+                <div><div class="text-slate-500">Water</div><div class="font-medium">${escapeHtml(water)}</div></div>
+                <div><div class="text-slate-500">Tag</div><div class="font-medium">${escapeHtml(String(r.Tag||'inbox'))}</div></div>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-teal-600 underline">View listing</a>` : ''}
+              </div>
+              ${details ? `<div class="mt-2 space-y-1">${details}</div>` : ''}
+            </div>`;
+          }).join('\n');
+          container.innerHTML = cards;
+          
+          generateDistanceMap(arr);
+        } catch (e) {
+          document.getElementById('empty').textContent = 'Failed to load land.json';
+          document.getElementById('empty').classList.remove('hidden');
+        }
+      }
+
+      // Global variables for calculator
+      let selectedProperties = [];
+      let allProperties = [];
+
+      // Navigate to property
+      function navigateToProperty(index) {
+        const element = document.getElementById(`property-${index}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          element.style.backgroundColor = '#fef3c7';
+          setTimeout(() => { element.style.backgroundColor = ''; }, 2000);
+        }
+      }
+
+      // Toggle property selection
+      function togglePropertySelection(index) {
+        const property = allProperties[index];
+        if (!property) return;
+
+        const card = document.getElementById(`pokedex-card-${index}`);
+        const isSelected = selectedProperties.some(p => p.index === index);
+        
+        if (isSelected) {
+          selectedProperties = selectedProperties.filter(p => p.index !== index);
+          card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        } else {
+          selectedProperties.push({...property, index});
+          card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+        }
+        
+        updateCalculator();
+      }
+
+      // Update calculator display
+      function updateCalculator() {
+        const selectedContainer = document.getElementById('selected-properties');
+        const resultsContainer = document.getElementById('calculator-results');
+        
+        if (selectedProperties.length === 0) {
+          selectedContainer.innerHTML = '<div class="text-xs text-slate-500 italic">Click properties above to add them</div>';
+          resultsContainer.innerHTML = '<div class="text-slate-500 italic text-xs">Select properties to see calculations</div>';
+          return;
+        }
+
+        selectedContainer.innerHTML = selectedProperties.map((prop, i) => `
+          <div class="flex items-center justify-between bg-white p-1 rounded border">
+            <div class="flex-1">
+              <div class="font-medium text-xs">${prop.Town} — ${prop.Parcel}</div>
+              <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()} • ${prop.Acres} acres</div>
+            </div>
+            <button onclick="removeFromSelection(${i})" class="text-red-500 hover:text-red-700 text-xs">×</button>
+          </div>
+        `).join('');
+
+        const totalPrice = selectedProperties.reduce((sum, prop) => sum + Number(prop.Price), 0);
+        const totalAcres = selectedProperties.reduce((sum, prop) => sum + Number(prop.Acres), 0);
+        const avgPricePerAcre = totalAcres > 0 ? totalPrice / totalAcres : 0;
+        
+        const downPayment = totalPrice * 0.20;
+        const loanAmount = totalPrice - downPayment;
+        const monthlyRate = 0.065 / 12;
+        const numPayments = 30 * 12;
+        const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+        
+        const annualTax = totalPrice * 0.015;
+        const monthlyTax = annualTax / 12;
+        const annualInsurance = totalPrice * 0.003;
+        const monthlyInsurance = annualInsurance / 12;
+        const totalMonthly = monthlyPayment + monthlyTax + monthlyInsurance;
+
+        resultsContainer.innerHTML = `
+          <div class="space-y-2">
+            <div class="grid grid-cols-2 gap-1 text-xs">
+              <div class="bg-white p-1 rounded border">
+                <div class="text-slate-500">Properties</div>
+                <div class="font-semibold">${selectedProperties.length}</div>
+              </div>
+              <div class="bg-white p-1 rounded border">
+                <div class="text-slate-500">Total Price</div>
+                <div class="font-semibold">$${totalPrice.toLocaleString()}</div>
+              </div>
+              <div class="bg-white p-1 rounded border">
+                <div class="text-slate-500">Total Acres</div>
+                <div class="font-semibold">${totalAcres.toFixed(1)}</div>
+              </div>
+              <div class="bg-white p-1 rounded border">
+                <div class="text-slate-500">Avg $/Acre</div>
+                <div class="font-semibold">$${avgPricePerAcre.toLocaleString()}</div>
+              </div>
             </div>
             
-            <div class="text-2xl font-bold text-green-600 mb-1">${distance.toFixed(1)} mi</div>
-            <div class="text-sm text-slate-600 mb-2">${driveTime}</div>
-            <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()}</div>
-            <div class="text-xs text-slate-500">${prop.Acres} acres</div>
+            <div class="bg-green-50 p-2 rounded border border-green-200">
+              <div class="text-xs font-semibold text-green-800 mb-1">Monthly Costs</div>
+              <div class="space-y-1 text-xs">
+                <div class="flex justify-between">
+                  <span>Mortgage (20% down, 6.5%)</span>
+                  <span class="font-medium">$${monthlyPayment.toFixed(0)}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Tax + Insurance</span>
+                  <span class="font-medium">$${(monthlyTax + monthlyInsurance).toFixed(0)}</span>
+                </div>
+                <div class="flex justify-between border-t pt-1 font-semibold text-green-800">
+                  <span>Total Monthly</span>
+                  <span>$${totalMonthly.toFixed(0)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-blue-50 p-2 rounded border border-blue-200">
+              <div class="text-xs font-semibold text-blue-800 mb-1">Down Payment</div>
+              <div class="text-sm font-bold text-blue-900">$${downPayment.toLocaleString()}</div>
+            </div>
           </div>
-        </div>
-      `;
-    }).join('');
+        `;
+      }
 
-    distanceContainer.innerHTML = distanceCards;
-  }
+      // Remove property from selection
+      function removeFromSelection(index) {
+        const removed = selectedProperties[index];
+        selectedProperties.splice(index, 1);
+        const card = document.getElementById(`pokedex-card-${removed.index}`);
+        card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        updateCalculator();
+      }
 
-  // Get approximate coordinates for properties (you may want to add actual coordinates to your JSON)
-  function getPropertyCoords(property) {
-    // These are rough estimates - you should add actual Lat/Lon to your JSON data
-    const coords = {
-      'Cheshire': { lat: 41.4981, lng: -72.9007 },
-      'Sherman': { lat: 41.5804, lng: -73.4962 },
-      'Torrington': { lat: 41.8009, lng: -73.1212 },
-      'Smithfield': { lat: 41.8887, lng: -71.5495 },
-      'Lebanon': { lat: 41.6440, lng: -72.2100 },
-      'Norwich': { lat: 41.5245, lng: -72.0759 },
-      'Putnam': { lat: 41.9154, lng: -71.9089 },
-      'Clifton Park': { lat: 42.8656, lng: -73.7708 },
-      'Monterey': { lat: 42.1895, lng: -73.2121 },
-      'Tolland': { lat: 42.0648, lng: -72.9990 },
-      'Ware': { lat: 42.2598, lng: -72.2398 },
-      'New Marlborough': { lat: 42.1220, lng: -73.2284 },
-      'Brimfield': { lat: 42.1226, lng: -72.2006 },
-      'Sheffield': { lat: 42.1098, lng: -73.3551 },
-      'Becket': { lat: 42.3333, lng: -73.0833 },
-      'Hinsdale': { lat: 42.4333, lng: -73.1167 },
-      'Florida': { lat: 42.6667, lng: -73.0167 },
-      'North Adams': { lat: 42.7000, lng: -73.1167 }
-    };
-    
-    return coords[property.Town] || { lat: 41.3083, lng: -72.9279 }; // Default to New Haven area
-  }
+      // Clear all selections
+      function clearSelection() {
+        selectedProperties.forEach(prop => {
+          const card = document.getElementById(`pokedex-card-${prop.index}`);
+          card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        });
+        selectedProperties = [];
+        updateCalculator();
+      }
 
-  // Calculate distance between two coordinates using Haversine formula
-  function calculateDistance(coord1, coord2) {
-    const R = 3959; // Earth's radius in miles
-    const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
-    const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
-              Math.sin(dLng/2) * Math.sin(dLng/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-  }
-
-  // Estimate drive time based on distance
-  function estimateDriveTime(distance) {
-    if (distance < 5) return '~10-15 min';
-    if (distance < 15) return '~20-30 min';
-    if (distance < 30) return '~30-45 min';
-    if (distance < 50) return '~45-60 min';
-    return '~1+ hours';
-  }
-
-  main();
-
-  // Global variables for calculator
-  let selectedProperties = [];
-  let allProperties = [];
-
-  // Navigate to property (scroll to detailed view)
-  function navigateToProperty(index) {
-    const element = document.getElementById(`property-${index}`);
-    if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
-      // Add highlight effect
-      element.style.backgroundColor = '#fef3c7';
-      setTimeout(() => {
-        element.style.backgroundColor = '';
-      }, 2000);
-    }
-  }
-
-  // Toggle property selection for calculator (with Ctrl/Cmd click)
-  function togglePropertySelection(index) {
-    const property = allProperties[index];
-    if (!property) return;
-
-    const card = document.getElementById(`pokedex-card-${index}`);
-    const isSelected = selectedProperties.some(p => p.index === index);
-    
-    if (isSelected) {
-      // Remove from selection
-      selectedProperties = selectedProperties.filter(p => p.index !== index);
-      card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-    } else {
-      // Add to selection
-      selectedProperties.push({...property, index});
-      card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
-    }
-    
-    updateCalculator();
-  }
-
-  // Update calculator display
-  function updateCalculator() {
-    const selectedContainer = document.getElementById('selected-properties');
-    const resultsContainer = document.getElementById('calculator-results');
-    
-    if (selectedProperties.length === 0) {
-      selectedContainer.innerHTML = '<div class="text-sm text-slate-500 italic">Click properties below to add them</div>';
-      resultsContainer.innerHTML = '<div class="text-slate-500 italic">Select properties to see calculations</div>';
-      return;
-    }
-
-    // Update selected properties list
-    selectedContainer.innerHTML = selectedProperties.map((prop, i) => `
-      <div class="flex items-center justify-between bg-white p-2 rounded border">
-        <div class="flex-1">
-          <div class="font-medium text-sm">${prop.Town} — ${prop.Parcel}</div>
-          <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()} • ${prop.Acres} acres</div>
-        </div>
-        <button onclick="removeFromSelection(${i})" class="text-red-500 hover:text-red-700 text-xs">×</button>
-      </div>
-    `).join('');
-
-    // Calculate totals
-    const totalPrice = selectedProperties.reduce((sum, prop) => sum + Number(prop.Price), 0);
-    const totalAcres = selectedProperties.reduce((sum, prop) => sum + Number(prop.Acres), 0);
-    const avgPricePerAcre = totalAcres > 0 ? totalPrice / totalAcres : 0;
-    
-    // Monthly payment estimates (assuming 20% down, 6.5% interest, 30 years)
-    const downPayment = totalPrice * 0.20;
-    const loanAmount = totalPrice - downPayment;
-    const monthlyRate = 0.065 / 12;
-    const numPayments = 30 * 12;
-    const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
-    
-    // Property tax estimate (assuming 1.5% annually)
-    const annualTax = totalPrice * 0.015;
-    const monthlyTax = annualTax / 12;
-    
-    // Insurance estimate (assuming 0.3% annually)
-    const annualInsurance = totalPrice * 0.003;
-    const monthlyInsurance = annualInsurance / 12;
-    
-    const totalMonthly = monthlyPayment + monthlyTax + monthlyInsurance;
-
-    resultsContainer.innerHTML = `
-      <div class="space-y-3">
-        <div class="grid grid-cols-2 gap-2 text-sm">
-          <div class="bg-white p-2 rounded border">
-            <div class="text-xs text-slate-500">Total Properties</div>
-            <div class="font-semibold">${selectedProperties.length}</div>
-          </div>
-          <div class="bg-white p-2 rounded border">
-            <div class="text-xs text-slate-500">Total Price</div>
-            <div class="font-semibold">$${totalPrice.toLocaleString()}</div>
-          </div>
-          <div class="bg-white p-2 rounded border">
-            <div class="text-xs text-slate-500">Total Acres</div>
-            <div class="font-semibold">${totalAcres.toFixed(2)}</div>
-          </div>
-          <div class="bg-white p-2 rounded border">
-            <div class="text-xs text-slate-500">Avg $/Acre</div>
-            <div class="font-semibold">$${avgPricePerAcre.toLocaleString()}</div>
-          </div>
-        </div>
+      // Toggle dropdown sections
+      function toggleDropdown(sectionId) {
+        const section = document.getElementById(sectionId);
+        const arrow = document.getElementById(sectionId + '-arrow');
         
-        <div class="bg-green-50 p-3 rounded border border-green-200">
-          <div class="text-sm font-semibold text-green-800 mb-2">Monthly Cost Breakdown</div>
-          <div class="space-y-1 text-sm">
-            <div class="flex justify-between">
-              <span>Mortgage (20% down, 6.5%)</span>
-              <span class="font-medium">$${monthlyPayment.toFixed(0)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Property Tax (1.5%)</span>
-              <span class="font-medium">$${monthlyTax.toFixed(0)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Insurance (0.3%)</span>
-              <span class="font-medium">$${monthlyInsurance.toFixed(0)}</span>
-            </div>
-            <div class="flex justify-between border-t pt-1 font-semibold text-green-800">
-              <span>Total Monthly</span>
-              <span>$${totalMonthly.toFixed(0)}</span>
-            </div>
-          </div>
-        </div>
+        if (section.classList.contains('hidden')) {
+          section.classList.remove('hidden');
+          arrow.textContent = '▲';
+        } else {
+          section.classList.add('hidden');
+          arrow.textContent = '▼';
+        }
+      }
+
+      // Generate distance map
+      function generateDistanceMap(properties) {
+        const homeAddress = "206 Saint John Street";
+        const distanceContainer = document.getElementById('distance-map');
         
-        <div class="bg-blue-50 p-3 rounded border border-blue-200">
-          <div class="text-sm font-semibold text-blue-800 mb-1">Down Payment Required</div>
-          <div class="text-lg font-bold text-blue-900">$${downPayment.toLocaleString()}</div>
-        </div>
-      </div>
-    `;
-  }
+        if (properties.length === 0) {
+          distanceContainer.innerHTML = '<div class="text-center text-slate-500 italic text-xs">No properties to map</div>';
+          return;
+        }
 
-  // Remove property from selection
-  function removeFromSelection(index) {
-    const removed = selectedProperties[index];
-    selectedProperties.splice(index, 1);
-    
-    // Update card appearance
-    const card = document.getElementById(`pokedex-card-${removed.index}`);
-    card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-    
-    updateCalculator();
-  }
+        const homeCoords = { lat: 41.3083, lng: -72.9279 };
+        
+        const distanceCards = properties.map((prop, index) => {
+          const address = `${prop.Parcel}, ${prop.Town}, ${prop.State}`;
+          const distance = calculateDistance(homeCoords, getPropertyCoords(prop));
+          const driveTime = estimateDriveTime(distance);
+          
+          const images = Array.isArray(prop.Images) ? prop.Images : [];
+          const firstImage = images.length > 0 ? images[0] : null;
+          
+          return `
+            <div class="bg-white rounded p-2 border shadow-sm text-center">
+              <div class="text-xs font-medium text-slate-700 mb-1">${prop.Town}, ${prop.State}</div>
+              <div class="text-xs text-slate-500 mb-2 truncate" title="${address}">${prop.Parcel}</div>
+              
+              <div class="mb-2 flex justify-center">
+                <div class="w-8 h-8 rounded border overflow-hidden bg-slate-100">
+                  ${firstImage ? `
+                    <img src="${firstImage}" 
+                         alt="${prop.Town} property" 
+                         class="w-full h-full object-cover"
+                         loading="lazy"
+                         onerror="this.style.display='none'">
+                  ` : `
+                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                      No Image
+                    </div>
+                  `}
+                </div>
+              </div>
+              
+              <div class="text-lg font-bold text-green-600 mb-1">${distance.toFixed(1)} mi</div>
+              <div class="text-xs text-slate-600 mb-1">${driveTime}</div>
+              <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()}</div>
+              <div class="text-xs text-slate-500">${prop.Acres} acres</div>
+            </div>
+          `;
+        }).join('');
 
-  // Clear all selections
-  function clearSelection() {
-    selectedProperties.forEach(prop => {
-      const card = document.getElementById(`pokedex-card-${prop.index}`);
-      card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-    });
-    selectedProperties = [];
-    updateCalculator();
-  }
+        distanceContainer.innerHTML = distanceCards;
+      }
 
-  // Toggle dropdown sections
-  function toggleDropdown(sectionId) {
-    const section = document.getElementById(sectionId);
-    const arrow = document.getElementById(sectionId + '-arrow');
-    
-    if (section.classList.contains('hidden')) {
-      section.classList.remove('hidden');
-      arrow.textContent = '▲';
-    } else {
-      section.classList.add('hidden');
-      arrow.textContent = '▼';
-    }
-  }
-        </script>
+      // Get property coordinates
+      function getPropertyCoords(property) {
+        const coords = {
+          'Cheshire': { lat: 41.4981, lng: -72.9007 },
+          'Sherman': { lat: 41.5804, lng: -73.4962 },
+          'Torrington': { lat: 41.8009, lng: -73.1212 },
+          'Smithfield': { lat: 41.8887, lng: -71.5495 },
+          'Lebanon': { lat: 41.6440, lng: -72.2100 },
+          'Norwich': { lat: 41.5245, lng: -72.0759 },
+          'Putnam': { lat: 41.9154, lng: -71.9089 },
+          'Clifton Park': { lat: 42.8656, lng: -73.7708 },
+          'Monterey': { lat: 42.1895, lng: -73.2121 },
+          'Tolland': { lat: 42.0648, lng: -72.9990 },
+          'Ware': { lat: 42.2598, lng: -72.2398 },
+          'New Marlborough': { lat: 42.1220, lng: -73.2284 },
+          'Brimfield': { lat: 42.1226, lng: -72.2006 },
+          'Sheffield': { lat: 42.1098, lng: -73.3551 },
+          'Becket': { lat: 42.3333, lng: -73.0833 },
+          'Hinsdale': { lat: 42.4333, lng: -73.1167 },
+          'Florida': { lat: 42.6667, lng: -73.0167 },
+          'North Adams': { lat: 42.7000, lng: -73.1167 }
+        };
+        
+        return coords[property.Town] || { lat: 41.3083, lng: -72.9279 };
+      }
+
+      // Calculate distance using Haversine formula
+      function calculateDistance(coord1, coord2) {
+        const R = 3959;
+        const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+        const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      }
+
+      // Estimate drive time
+      function estimateDriveTime(distance) {
+        if (distance < 5) return '~10-15 min';
+        if (distance < 15) return '~20-30 min';
+        if (distance < 30) return '~30-45 min';
+        if (distance < 50) return '~45-60 min';
+        return '~1+ hours';
+      }
+
+      main();
+    </script>
     <style>
-          @media print { .no-print { display: none !important; } body { background: white; } }
-        </style>
+      @media print { .no-print { display: none !important; } body { background: white; } }
+    </style>
   </body>
 </html>
