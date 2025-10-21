@@ -169,13 +169,15 @@
       <!-- Distance Map -->
       <section id="distance-map"
         class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border p-3">
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center justify-between mb-3">
           <h2 class="text-sm font-semibold text-slate-800">Distance Map</h2>
           <div class="text-xs text-slate-600">From 206 Saint John Street</div>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2"
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
           id="distance-map">
-          <div class="text-center text-slate-500 italic text-xs">Loading
+          <div
+            class="text-center text-slate-500 italic text-xs col-span-full">Loading
             distances...</div>
         </div>
       </section>
@@ -637,7 +639,7 @@
         const distanceContainer = document.getElementById('distance-map');
         
         if (properties.length === 0) {
-          distanceContainer.innerHTML = '<div class="text-center text-slate-500 italic text-xs">No properties to map</div>';
+          distanceContainer.innerHTML = '<div class="text-center text-slate-500 italic text-xs col-span-full">No properties to map</div>';
           return;
         }
 
@@ -652,30 +654,34 @@
           const firstImage = images.length > 0 ? images[0] : null;
           
           return `
-            <div class="bg-white rounded p-2 border shadow-sm text-center">
-              <div class="text-xs font-medium text-slate-700 mb-1">${prop.Town}, ${prop.State}</div>
-              <div class="text-xs text-slate-500 mb-2 truncate" title="${address}">${prop.Parcel}</div>
-              
-              <div class="mb-2 flex justify-center">
-                <div class="w-8 h-8 rounded border overflow-hidden bg-slate-100">
-                  ${firstImage ? `
-                    <img src="${firstImage}" 
-                         alt="${prop.Town} property" 
-                         class="w-full h-full object-cover"
-                         loading="lazy"
-                         onerror="this.style.display='none'">
-                  ` : `
-                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
-                      No Image
-                    </div>
-                  `}
-                </div>
+            <div class="bg-white rounded-lg p-3 border shadow-sm text-center hover:shadow-md transition-shadow cursor-pointer"
+                 onclick="scrollToProperty(${index})"
+                 title="Click to view property details">
+              <div class="w-12 h-12 mx-auto mb-2 rounded-lg overflow-hidden bg-slate-100">
+                ${firstImage ? `
+                  <img src="${firstImage}" 
+                       alt="${prop.Town} property" 
+                       class="w-full h-full object-cover"
+                       loading="lazy"
+                       onerror="this.style.display='none'">
+                ` : `
+                  <div class="w-full h-full flex items-center justify-center text-slate-400 text-lg">
+                    🏞️
+                  </div>
+                `}
               </div>
               
-              <div class="text-lg font-bold text-green-600 mb-1">${distance.toFixed(1)} mi</div>
-              <div class="text-xs text-slate-600 mb-1">${driveTime}</div>
-              <div class="text-xs text-slate-500">$${Number(prop.Price).toLocaleString()}</div>
-              <div class="text-xs text-slate-500">${prop.Acres} acres</div>
+              <div class="text-xs font-medium text-slate-700 mb-1 truncate" title="${prop.Town}, ${prop.State}">${prop.Town}, ${prop.State}</div>
+              <div class="text-xs text-slate-500 mb-2 truncate" title="${address}">${prop.Parcel}</div>
+              
+              <div class="text-xl font-bold text-green-600 mb-1">${distance.toFixed(1)} mi</div>
+              <div class="text-xs text-slate-600 mb-2">${driveTime}</div>
+              
+              <div class="space-y-1">
+                <div class="text-sm font-semibold text-slate-800">$${Number(prop.Price).toLocaleString()}</div>
+                <div class="text-xs text-slate-500">${prop.Acres} acres</div>
+                <div class="text-xs text-slate-400">$${Math.round(Number(prop.Price)/Number(prop.Acres)).toLocaleString()}/acre</div>
+              </div>
             </div>
           `;
         }).join('');
