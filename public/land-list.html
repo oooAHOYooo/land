@@ -5,24 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AGSCOUT — Land List</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
   </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-4 md:px-6">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center space-x-8">
+            <div>
+              <h1 class="text-xl font-semibold text-slate-800">AGSCOUT — Land
+                List</h1>
+              <p class="text-xs text-slate-500">28 properties • Film retreat
+                focus</p>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+              <a href="#pokedex"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Pokedex</a>
+              <a href="#detailed-view"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Detailed
+                View</a>
+              <a href="#calculator"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Calculator</a>
+              <a href="#distance-map"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Distance
+                Map</a>
+              <a href="#financing"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Financing</a>
+              <a href="#strategy"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Strategy</a>
+              <a href="#vision"
+                class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Vision</a>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="window.print()"
+              class="px-3 py-2 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm transition-colors">Print</button>
+            <a href="index.html"
+              class="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 text-sm transition-colors">Back
+              to Hub</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
     <div class="max-w-6xl mx-auto p-4 md:p-6 space-y-4">
-      <header class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-semibold">AGSCOUT — Land
-            (List)</h1>
-          <p class="text-sm text-slate-500">Built from <code
-              class="font-mono">/public/data/land.json</code></p>
-        </div>
-        <div class="flex items-center gap-2 no-print">
-          <button onclick="window.print()"
-            class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Print</button>
-          <a href="land.html#list"
-            class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50">Back
-            to app</a>
-        </div>
-      </header>
 
       <!-- Western Massachusetts Alternatives -->
       <section
@@ -126,6 +157,7 @@
 
       <!-- Property Pokedex Grid -->
       <section
+        id="pokedex"
         class="bg-white rounded-lg shadow-sm border p-3 md:p-4 mb-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold">Property Pokedex</h2>
@@ -140,7 +172,8 @@
       </section>
 
       <!-- Detailed List -->
-      <section class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+      <section id="detailed-view"
+        class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold">Detailed View</h2>
           <div class="text-sm text-slate-600">Click property above to
@@ -155,6 +188,7 @@
 
       <!-- Property Calculator Tool -->
       <section
+        id="calculator"
         class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-slate-800">Property
@@ -192,6 +226,7 @@
 
       <!-- Distance Map -->
       <section
+        id="distance-map"
         class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm border p-4 md:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-slate-800">Distance
@@ -210,6 +245,7 @@
 
       <!-- Financing Guide -->
       <section
+        id="financing"
         class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg shadow-sm border p-4 md:p-6">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-lg font-semibold text-slate-800">Financing Guide</h2>
@@ -360,6 +396,7 @@
 
       <!-- Investment Strategy Analysis -->
       <section
+        id="strategy"
         class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg shadow-sm border p-4 md:p-6">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-lg font-semibold text-slate-800">Investment Strategy
@@ -539,15 +576,17 @@
 
       <!-- Vision for the Land -->
       <section
+        id="vision"
         class="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg shadow-sm border p-4 md:p-6">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-semibold text-slate-800">Vision for the
-            Land</h2>
-          <div class="text-sm text-slate-600">Building the Future</div>
+          <h2 class="text-lg font-semibold text-slate-800">Off-Grid Film Retreat
+            Vision</h2>
+          <div class="text-sm text-slate-600">Creative Sanctuary Development
+            Plan</div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Primary Vision -->
+          <!-- Core Vision -->
           <div class="bg-white rounded-lg p-6 border">
             <h3
               class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
@@ -555,132 +594,174 @@
               The Vision
             </h3>
             <div class="space-y-4 text-sm text-slate-700">
-              <p>Each parcel represents more than just land—it's a canvas for
-                creating something meaningful. Whether it's a primary residence,
-                a retreat house, or a strategic investment, every property has
-                the potential to become part of a larger vision for sustainable,
-                intentional living.</p>
+              <p>A quiet woodland retreat designed for creative film
+                work—writing, editing, and artistic development. This isn't just
+                land acquisition; it's the foundation for a sustainable,
+                hand-built creative sanctuary that grows organically over
+                time.</p>
 
-              <p>From the rolling hills of Western Massachusetts to the quiet
-                corners of Connecticut, these properties offer the opportunity
-                to build not just structures, but communities. They represent a
-                chance to live closer to nature, to create spaces that inspire
-                creativity and connection, and to invest in land that will
-                appreciate not just in value, but in meaning.</p>
+              <p>The goal is to create a low-impact, modular retreat that
+                supports deep creative work while respecting the natural
+                environment. Each structure will be built by hand, using local
+                materials and traditional techniques, creating a unique space
+                that feels integrated with the landscape.</p>
 
-              <p>The goal isn't just to own land—it's to steward it, to develop
-                it thoughtfully, and to create something that will serve not
-                just our immediate needs, but the needs of future
-                generations.</p>
+              <p>This retreat will serve as both a personal creative sanctuary
+                and potentially a future space for small artist residencies,
+                fostering a community of filmmakers and creatives in a natural
+                setting.</p>
             </div>
           </div>
 
-          <!-- Potential Uses -->
+          <!-- Structures & Infrastructure -->
           <div class="bg-white rounded-lg p-6 border">
             <h3
               class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
               <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Potential Uses
+              Structures & Infrastructure
             </h3>
             <div class="space-y-3 text-sm">
               <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🏠</span>
-                <div>
-                  <div class="font-medium text-slate-800">Primary
-                    Residence</div>
-                  <div class="text-slate-600">Custom home with modern amenities,
-                    designed for daily living and entertaining</div>
-                </div>
-              </div>
-              <div class="flex items-start">
                 <span class="text-green-600 font-medium mr-2">🏕️</span>
                 <div>
-                  <div class="font-medium text-slate-800">Retreat House</div>
-                  <div class="text-slate-600">Off-grid sanctuary for creativity,
-                    meditation, and reconnection with nature</div>
+                  <div class="font-medium text-slate-800">2-3 Homemade
+                    Yurts</div>
+                  <div class="text-slate-600">Sleeping quarters, guest space,
+                    seasonal living</div>
                 </div>
               </div>
               <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🌱</span>
+                <span class="text-green-600 font-medium mr-2">🎬</span>
                 <div>
-                  <div class="font-medium text-slate-800">Sustainable
-                    Living</div>
-                  <div class="text-slate-600">Solar power, well water,
-                    composting, and organic gardening</div>
+                  <div class="font-medium text-slate-800">Stone/Timber Editing
+                    Studio</div>
+                  <div class="text-slate-600">Main creative workspace with
+                    natural light</div>
                 </div>
               </div>
               <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">🎨</span>
+                <span class="text-green-600 font-medium mr-2">🌳</span>
                 <div>
-                  <div class="font-medium text-slate-800">Creative Studio</div>
-                  <div class="text-slate-600">Art studio, workshop, or maker
-                    space with natural light and inspiration</div>
+                  <div class="font-medium text-slate-800">1-2 Treehouses</div>
+                  <div class="text-slate-600">Elevated creative spaces,
+                    meditation spots</div>
                 </div>
               </div>
               <div class="flex items-start">
-                <span class="text-green-600 font-medium mr-2">💼</span>
+                <span class="text-green-600 font-medium mr-2">💧</span>
                 <div>
-                  <div class="font-medium text-slate-800">Investment
-                    Portfolio</div>
-                  <div class="text-slate-600">Strategic land banking for future
-                    development or resale opportunities</div>
+                  <div class="font-medium text-slate-800">Water System</div>
+                  <div class="text-slate-600">Rain catchment or creek access,
+                    basic plumbing</div>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <span class="text-green-600 font-medium mr-2">⚡</span>
+                <div>
+                  <div class="font-medium text-slate-800">Solar Power</div>
+                  <div class="text-slate-600">Off-grid electricity for studio
+                    equipment</div>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <span class="text-green-600 font-medium mr-2">🔥</span>
+                <div>
+                  <div class="font-medium text-slate-800">Wood Stove &
+                    Composting</div>
+                  <div class="text-slate-600">Heating, waste management,
+                    sustainability</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Development Philosophy -->
+          <!-- Land Requirements -->
           <div class="bg-white rounded-lg p-6 border">
             <h3
               class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
               <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Development Philosophy
+              Land Requirements
             </h3>
             <div class="space-y-3 text-sm text-slate-700">
               <div class="flex items-start">
                 <span class="text-purple-600 font-bold mr-2">•</span>
-                <span>Respect the natural landscape and work with the land, not
-                  against it</span>
+                <span><strong>Size:</strong> 5-15 acres of woodland with
+                  privacy</span>
               </div>
               <div class="flex items-start">
                 <span class="text-purple-600 font-bold mr-2">•</span>
-                <span>Prioritize sustainability and environmental responsibility
-                  in all decisions</span>
+                <span><strong>Water Access:</strong> Creek, pond, or reliable
+                  water source on or near property</span>
               </div>
               <div class="flex items-start">
                 <span class="text-purple-600 font-bold mr-2">•</span>
-                <span>Create spaces that foster community and connection with
-                  neighbors</span>
+                <span><strong>Access:</strong> Year-round or seasonal road
+                  access for materials delivery</span>
               </div>
               <div class="flex items-start">
                 <span class="text-purple-600 font-bold mr-2">•</span>
-                <span>Design for longevity—build structures that will last
-                  generations</span>
+                <span><strong>Terrain:</strong> Mix of flat areas for structures
+                  and varied topography for trails</span>
               </div>
               <div class="flex items-start">
                 <span class="text-purple-600 font-bold mr-2">•</span>
-                <span>Maintain the character and charm of the local area</span>
+                <span><strong>Location:</strong> Western MA, Vermont, Maine, or
+                  Catskills NY preferred</span>
+              </div>
+              <div class="flex items-start">
+                <span class="text-purple-600 font-bold mr-2">•</span>
+                <span><strong>Zoning:</strong> Allows residential/agricultural
+                  use with minimal restrictions</span>
               </div>
             </div>
           </div>
 
-          <!-- Long-term Goals -->
+          <!-- Development Timeline -->
           <div class="bg-white rounded-lg p-6 border">
             <h3
               class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
               <span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-              Long-term Goals
+              Development Timeline
             </h3>
             <div class="space-y-3 text-sm text-slate-700">
-              <p><strong>5 Years:</strong> Complete primary residence with
-                sustainable systems, establish garden and outdoor living
-                spaces</p>
-              <p><strong>10 Years:</strong> Develop retreat house or studio
-                space, create walking trails and natural areas</p>
-              <p><strong>15 Years:</strong> Consider additional properties for
-                family or investment, establish community connections</p>
-              <p><strong>20+ Years:</strong> Legacy planning—ensure the land
-                continues to serve future generations</p>
+              <p><strong>Year 1:</strong> Land acquisition, site survey, basic
+                access road, first yurt construction</p>
+              <p><strong>Year 2:</strong> Water system installation, solar
+                setup, composting toilet, trail network</p>
+              <p><strong>Year 3:</strong> Stone/timber studio construction,
+                second yurt, wood stove installation</p>
+              <p><strong>Year 4-5:</strong> Treehouse construction, garden
+                establishment, guest amenities</p>
+              <p><strong>Year 6+:</strong> Artist residency program development,
+                community building</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Design Philosophy -->
+        <div
+          class="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+          <h3 class="text-lg font-semibold text-indigo-800 mb-3">Design
+            Philosophy</h3>
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-indigo-700">
+            <div>
+              <div class="font-semibold mb-2">Low Impact Principles:</div>
+              <ul class="space-y-1">
+                <li>• Work with existing landscape, not against it</li>
+                <li>• Use local, sustainable materials</li>
+                <li>• Minimize environmental footprint</li>
+                <li>• Preserve natural water features</li>
+              </ul>
+            </div>
+            <div>
+              <div class="font-semibold mb-2">Modular Growth:</div>
+              <ul class="space-y-1">
+                <li>• Build incrementally as needs evolve</li>
+                <li>• Each structure serves multiple purposes</li>
+                <li>• Easy to modify or expand over time</li>
+                <li>• Maintain flexibility for creative use</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -689,23 +770,23 @@
         <div
           class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
           <div class="text-center">
-            <h3 class="text-lg font-semibold text-blue-800 mb-2">Ready to Make
-              It Happen?</h3>
-            <p class="text-sm text-blue-700 mb-4">Every great vision starts with
-              a single step. Use the tools above to analyze properties,
-              calculate costs, and find the perfect piece of land to begin
-              building your future.</p>
+            <h3 class="text-lg font-semibold text-blue-800 mb-2">Ready to Build
+              Your Creative Sanctuary?</h3>
+            <p class="text-sm text-blue-700 mb-4">Every great creative retreat
+              starts with the right piece of land. Use the tools above to find
+              properties that match your vision for sustainable, hand-built film
+              retreat development.</p>
             <div class="flex flex-wrap justify-center gap-2">
               <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Research</span>
+                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Find
+                Land</span>
               <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Plan</span>
+                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Plan
+                Build</span>
               <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Invest</span>
+                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Create</span>
               <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Build</span>
-              <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Thrive</span>
+                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Inspire</span>
             </div>
           </div>
         </div>
@@ -910,7 +991,11 @@
       'Ware': { lat: 42.2598, lng: -72.2398 },
       'New Marlborough': { lat: 42.1220, lng: -73.2284 },
       'Brimfield': { lat: 42.1226, lng: -72.2006 },
-      'Sheffield': { lat: 42.1098, lng: -73.3551 }
+      'Sheffield': { lat: 42.1098, lng: -73.3551 },
+      'Becket': { lat: 42.3333, lng: -73.0833 },
+      'Hinsdale': { lat: 42.4333, lng: -73.1167 },
+      'Florida': { lat: 42.6667, lng: -73.0167 },
+      'North Adams': { lat: 42.7000, lng: -73.1167 }
     };
     
     return coords[property.Town] || { lat: 41.3083, lng: -72.9279 }; // Default to New Haven area
