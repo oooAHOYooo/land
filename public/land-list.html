@@ -21,7 +21,7 @@
           <div class="flex items-center space-x-4">
             <h1 class="text-lg font-semibold text-slate-800">AGSCOUT — Land
               List</h1>
-            <span class="text-xs text-slate-500">28 properties</span>
+            <span class="text-xs text-slate-500">30 properties</span>
           </div>
           <div class="hidden md:flex items-center space-x-4 text-xs">
             <a href="#pokedex"
@@ -334,7 +334,12 @@
           const res = await fetch('data/land.json', { cache: 'no-store' });
           if (!res.ok) throw new Error('Failed to load JSON');
           const rows = await res.json();
-          const arr = Array.isArray(rows) ? rows : [];
+          const allRows = Array.isArray(rows) ? rows : [];
+          // Filter to only show properties with images
+          const arr = allRows.filter(property => {
+            const images = Array.isArray(property.Images) ? property.Images : [];
+            return images.length > 0;
+          });
           allProperties = arr;
           document.getElementById('count').textContent = String(arr.length);
           

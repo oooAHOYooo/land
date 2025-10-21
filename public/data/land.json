@@ -443,5 +443,44 @@
     "Tag": "inbox",
     "Images": [],
     "Note": "1.0 acre on quiet country road; appears at $29,000 in 01247 land results."
+  },
+  {
+    "State": "MA",
+    "County": "Hampden",
+    "Town": "Becket",
+    "Parcel": "32 Valley View Rd (Horse Property)",
+    "Acres": 2.58,
+    "Price": 22001,
+    "WaterProximity": null,
+    "Link": "https://www.land.com/property/lot-32-valley-view-rd-becket-ma-01223/24497551",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Images": [
+      "https://assets.land.com/resizedimages/600/0/h/80/w/1-5674946703",
+      "https://assets.land.com/resizedimages/600/0/h/80/w/1-5674946704",
+      "https://assets.land.com/resizedimages/0/1185/w/80/w/1-5674946706",
+      "https://assets.land.com/resizedimages/0/1185/w/80/w/1-5674946707"
+    ],
+    "Note": "Horse property with 2.58 acres in Becket, MA. Horses permitted. Undeveloped land with potential northern views. Listed by Ginger Conner - RED HORSE REAL ESTATE, LLC (413-250-6149). MLS# 245800. Property ID 24497551. Listed August 18, 2025. Elevation and vegetation maps available for detailed parcel information."
+  },
+  {
+    "State": "MA",
+    "County": "Berkshire",
+    "Town": "Becket",
+    "Parcel": "0 Hopkins Lane",
+    "Acres": 3.57,
+    "Price": 23500,
+    "WaterProximity": null,
+    "Link": "https://www.land.com/property/0-hopkins-lane-becket-ma-01223/24682449",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Images": [
+      "https://assets.land.com/resizedimages/600/0/h/80/w/1-5796589515",
+      "https://assets.land.com/resizedimages/600/0/h/80/w/1-5796589522",
+      "https://assets.land.com/resizedimages/600/0/h/80/w/1-5796589520"
+    ],
+    "Note": "3.57-acre raw parcel on quiet Hopkins Lane in Becket, MA. Nestled in the heart of the Berkshires, this wooded lot offers a serene natural setting while being within easy reach of year-round recreation. Perfect for building a full-time residence, seasonal getaway, or investment. Becket features natural beauty, hiking trails, pristine lakes, and cultural attractions like Jacob's Pillow. Convenient to Lee, Lenox, and the Mass Pike. Directions: Wade Inn Road to Hopkins Lane, lot on right heading toward Bancroft Road, about 800 feet past Partridge Road, telephone pole 16 16 in front of property. Listed by Peter West - BISHOP WEST REAL ESTATE LLC (413-300-2290). MLS# 247631. Property ID 24682449. Listed October 21, 2025."
   }
 ]
