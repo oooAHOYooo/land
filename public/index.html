@@ -3,80 +3,85 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AGSCOUT — Hub</title>
+        <title>AGSCOUT — Command Center</title>
         <!-- Tailwind CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
-    <body class="bg-slate-50 text-slate-900 min-h-screen">
-        <div class="max-w-4xl mx-auto p-6 md:p-10">
-            <h1 class="text-2xl font-semibold">AGSCOUT</h1>
-            <p class="text-sm text-slate-500">Local-first scouting tools. For
-                personal use by Alex Gonzalez.</p>
+    <body
+        class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white min-h-screen">
+        <!-- Animated background -->
+        <div
+            class="fixed inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+            <div
+                class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60"
+                height="60" viewBox="0 0 60 60"
+                xmlns="http://www.w3.org/2000/svg" %3E%3Cg fill="none"
+                fill-rule="evenodd" %3E%3Cg fill="%23ffffff" fill-opacity="0.05"
+                %3E%3Ccircle cx="30" cy="30"
+                r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <a href="land.html#list"
-                    class="block bg-white rounded-lg shadow-sm border p-6 hover:shadow transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="text-lg font-semibold">Land Scout</div>
-                            <div class="text-sm text-slate-500">Parcels,
-                                filters, map, exports</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-bold"
-                                id="land-count">0</div>
-                            <div class="text-xs text-slate-500">rows</div>
-                        </div>
-                    </div>
-                </a>
-                <a href="multi.html#list"
-                    class="block bg-white rounded-lg shadow-sm border p-6 hover:shadow transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="text-lg font-semibold">Multifamily
-                                Scout</div>
-                            <div class="text-sm text-slate-500">Underwriting,
-                                filters, map</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-bold"
-                                id="multi-count">0</div>
-                            <div class="text-xs text-slate-500">rows</div>
-                        </div>
-                    </div>
-                </a>
+        <div class="relative z-10 max-w-6xl mx-auto p-6 md:p-10">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <div
+                    class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 shadow-2xl">
+                    <span class="text-2xl font-bold">AG</span>
+                </div>
+                <h1
+                    class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                    AGSCOUT
+                </h1>
+                <p class="text-lg text-blue-200">Real Estate Command Center</p>
+                <p class="text-sm text-slate-400 mt-2">Local-first scouting
+                    tools • Personal use by Alex Gonzalez</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <a href="single-list.html"
-                    class="block bg-white rounded-lg shadow-sm border p-6 hover:shadow transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="text-lg font-semibold">Single Family
-                                Scout</div>
-                            <div class="text-sm text-slate-500">Houses, filters,
-                                map</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-bold"
-                                id="single-count">0</div>
-                            <div class="text-xs text-slate-500">rows</div>
-                        </div>
-                    </div>
-                </a>
+            <!-- Quick Access Panel -->
+            <div
+                class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                <h3 class="text-xl font-semibold mb-6 text-center">Quick
+                    Access</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="land-list.html"
+                        class="text-center p-6 bg-white/10 rounded-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105 group">
+                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">📋</div>
+                        <div class="text-sm font-medium">Land List</div>
+                        <div class="text-xs text-slate-400 mt-1">Properties & Analysis</div>
+                    </a>
+                    <a href="single-list.html"
+                        class="text-center p-6 bg-white/10 rounded-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105 group">
+                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🏘️</div>
+                        <div class="text-sm font-medium">Single List</div>
+                        <div class="text-xs text-slate-400 mt-1">Houses & Filters</div>
+                    </a>
+                    <a href="land.html#list"
+                        class="text-center p-6 bg-white/10 rounded-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105 group">
+                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🏞️</div>
+                        <div class="text-sm font-medium">Land Scout</div>
+                        <div class="text-xs text-slate-400 mt-1">Interactive App</div>
+                    </a>
+                    <a href="multi.html#list"
+                        class="text-center p-6 bg-white/10 rounded-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105 group">
+                        <div class="text-3xl mb-3 group-hover:scale-110 transition-transform">🏢</div>
+                        <div class="text-sm font-medium">Multi Scout</div>
+                        <div class="text-xs text-slate-400 mt-1">Multifamily Tools</div>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <footer class="mt-8 border-t">
+        <footer class="relative z-10 mt-12 border-t border-white/20">
             <div
-                class="max-w-4xl mx-auto p-6 md:p-10 text-sm text-slate-600 flex items-center justify-between">
-                <span>AGSCOUT — local-first tools</span>
-                <div class="space-x-4">
+                class="max-w-6xl mx-auto p-6 md:p-10 text-sm text-slate-400 flex items-center justify-between">
+                <span>AGSCOUT — Real Estate Command Center</span>
+                <div class="space-x-6">
                     <a href="land-list.html"
-                        class="text-teal-600 hover:underline">View Land list</a>
+                        class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Land
+                        List</a>
                     <a href="single-list.html"
-                        class="text-indigo-600 hover:underline">View Single
-                        Family list</a>
+                        class="text-purple-400 hover:text-purple-300 hover:underline transition-colors">Single
+                        List</a>
                 </div>
             </div>
         </footer>
