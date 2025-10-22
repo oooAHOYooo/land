@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>AGSCOUT — Land Detail</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+      html { scroll-behavior: smooth; }
+      .property-hero { background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); }
+      .image-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+      .image-card { aspect-ratio: 4/3; overflow: hidden; border-radius: 0.5rem; }
+      .image-card img { width: 100%; height: 100%; object-fit: cover; }
+      .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+      .metric-card { background: white; border-radius: 0.5rem; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      .back-button { 
+        position: fixed; 
+        top: 1rem; 
+        left: 1rem; 
+        z-index: 50; 
+        background: white; 
+        border-radius: 0.5rem; 
+        padding: 0.5rem 1rem; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+      }
+      .back-button:hover { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+    </style>
+    </head>
+    <body class="bg-slate-50 text-slate-900 min-h-screen">
+        <!-- Back Button -->
+        <a href="land-list.html"
+            class="back-button text-slate-700 hover:text-slate-900 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Back to List
+        </a>
+
+        <!-- Loading State -->
+        <div id="loading" class="min-h-screen flex items-center justify-center">
+            <div class="text-center">
+                <div
+                    class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                <div class="text-slate-600">Loading property details...</div>
+            </div>
+        </div>
+
+        <!-- Property Detail Content -->
+        <div id="content" class="hidden">
+            <!-- Hero Section -->
+            <section class="property-hero py-8">
+                <div class="max-w-6xl mx-auto px-4">
+                    <div
+                        class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <div class="text-sm text-slate-600 mb-2">
+                                <span id="property-location"></span>
+                            </div>
+                            <h1 id="property-title"
+                                class="text-3xl font-bold text-slate-900 mb-4"></h1>
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="text-3xl font-bold text-green-600"
+                                    id="property-price"></div>
+                                <div class="text-lg text-slate-600"
+                                    id="property-acres"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span id="property-tag"
+                                    class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"></span>
+                                <span id="property-water"
+                                    class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm"></span>
+                            </div>
+                            <div class="flex gap-3">
+                                <a id="property-link" href="#" target="_blank"
+                                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    View Original Listing
+                                </a>
+                                <button onclick="addToCalculator()"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    Add to Calculator
+                                </button>
+                            </div>
+                        </div>
+                        <div id="hero-image" class="image-card">
+                            <!-- Hero image will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Image Gallery -->
+            <section id="image-gallery-section" class="py-8 bg-white">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Property
+                        Images</h2>
+                    <div id="image-gallery" class="image-gallery">
+                        <!-- Images will be inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Property Details -->
+            <section class="py-8">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Property
+                        Details</h2>
+                    <div class="info-grid">
+                        <div class="metric-card">
+                            <h3
+                                class="text-lg font-semibold text-slate-800 mb-3">Basic
+                                Information</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">State:</span>
+                                    <span id="detail-state"
+                                        class="font-medium"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">County:</span>
+                                    <span id="detail-county"
+                                        class="font-medium"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Town:</span>
+                                    <span id="detail-town"
+                                        class="font-medium"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Parcel:</span>
+                                    <span id="detail-parcel"
+                                        class="font-medium"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <h3
+                                class="text-lg font-semibold text-slate-800 mb-3">Financial
+                                Details</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Price:</span>
+                                    <span id="detail-price"
+                                        class="font-medium text-green-600"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Acres:</span>
+                                    <span id="detail-acres"
+                                        class="font-medium"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Price per
+                                        Acre:</span>
+                                    <span id="detail-ppa"
+                                        class="font-medium text-blue-600"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Estimated
+                                        Monthly Payment:</span>
+                                    <span id="detail-monthly"
+                                        class="font-medium text-orange-600"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <h3
+                                class="text-lg font-semibold text-slate-800 mb-3">Location
+                                Features</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Water
+                                        Proximity:</span>
+                                    <span id="detail-water"
+                                        class="font-medium"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span
+                                        class="text-slate-600">Coordinates:</span>
+                                    <span id="detail-coords"
+                                        class="font-medium text-xs"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Distance from
+                                        Home:</span>
+                                    <span id="detail-distance"
+                                        class="font-medium"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <h3
+                                class="text-lg font-semibold text-slate-800 mb-3">Property
+                                Status</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Status:</span>
+                                    <span id="detail-status"
+                                        class="font-medium"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">Last
+                                        Updated:</span>
+                                    <span id="detail-updated"
+                                        class="font-medium"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Notes -->
+            <section id="notes-section" class="py-8 bg-white">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Property
+                        Notes</h2>
+                    <div id="property-notes" class="prose max-w-none">
+                        <!-- Notes will be inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Financing Calculator -->
+            <section class="py-8 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Financing
+                        Calculator</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-6">
+                            <h3
+                                class="text-lg font-semibold text-slate-800 mb-4">Loan
+                                Parameters</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 mb-1">Down
+                                        Payment %</label>
+                                    <input type="number" id="down-payment"
+                                        value="20" min="0" max="100"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 mb-1">Interest
+                                        Rate %</label>
+                                    <input type="number" id="interest-rate"
+                                        value="6.5" min="0" max="20" step="0.1"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 mb-1">Loan
+                                        Term (Years)</label>
+                                    <input type="number" id="loan-term"
+                                        value="30" min="1" max="50"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-6">
+                            <h3
+                                class="text-lg font-semibold text-slate-800 mb-4">Payment
+                                Breakdown</h3>
+                            <div id="payment-breakdown" class="space-y-3">
+                                <!-- Payment details will be calculated and inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Error State -->
+        <div id="error"
+            class="hidden min-h-screen flex items-center justify-center">
+            <div class="text-center">
+                <div class="text-6xl mb-4">🏞️</div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Property Not
+                    Found</h2>
+                <p class="text-slate-600 mb-6">The property you're looking for
+                    doesn't exist or has been removed.</p>
+                <a href="land-list.html"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Back to Property List
+                </a>
+            </div>
+        </div>
+
+        <script>
+      let currentProperty = null;
+      let allProperties = [];
+
+      // Utility functions
+      function fmtCurrency(value) {
+        if (value == null || !isFinite(Number(value))) return 'N/A';
+        return '$' + Number(value).toLocaleString(undefined, { maximumFractionDigits: 0 });
+      }
+
+      function fmtNumber(value, decimals = 2) {
+        if (value == null || !isFinite(Number(value))) return 'N/A';
+        return Number(value).toLocaleString(undefined, { maximumFractionDigits: decimals });
+      }
+
+      function escapeHtml(text) {
+        if (text == null) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function waterLabel(proximity) {
+        if (proximity === 0) return 'Adjacent';
+        if (proximity != null && isFinite(Number(proximity)) && Number(proximity) <= 900) return 'Near';
+        return 'Far';
+      }
+
+      // Load property data
+      async function loadProperty() {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const propertyId = urlParams.get('id');
+          
+          if (!propertyId) {
+            showError();
+            return;
+          }
+
+          const res = await fetch('data/land.json', { cache: 'no-store' });
+          if (!res.ok) throw new Error('Failed to load property data');
+          
+          allProperties = await res.json();
+          currentProperty = allProperties[parseInt(propertyId)];
+          
+          if (!currentProperty) {
+            showError();
+            return;
+          }
+
+          displayProperty();
+        } catch (error) {
+          console.error('Error loading property:', error);
+          showError();
+        }
+      }
+
+      function displayProperty() {
+        // Hide loading, show content
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('content').classList.remove('hidden');
+
+        // Update page title
+        document.title = `AGSCOUT — ${currentProperty.Town || 'Unknown'} — ${currentProperty.Parcel || 'Property'}`;
+
+        // Hero section
+        document.getElementById('property-location').textContent = 
+          [currentProperty.State, currentProperty.County, currentProperty.Town].filter(Boolean).join(', ');
+        
+        document.getElementById('property-title').textContent = 
+          `${currentProperty.Town || 'Unknown'} — ${currentProperty.Parcel || 'Property'}`;
+        
+        document.getElementById('property-price').textContent = fmtCurrency(currentProperty.Price);
+        document.getElementById('property-acres').textContent = `${fmtNumber(currentProperty.Acres)} acres`;
+        
+        document.getElementById('property-tag').textContent = currentProperty.Tag || 'inbox';
+        document.getElementById('property-water').textContent = waterLabel(currentProperty.WaterProximity);
+
+        // Hero image
+        const images = Array.isArray(currentProperty.Images) ? currentProperty.Images : [];
+        if (images.length > 0) {
+          document.getElementById('hero-image').innerHTML = `
+            <img src="${escapeHtml(images[0])}" 
+                 alt="${escapeHtml(currentProperty.Town)} property" 
+                 class="w-full h-full object-cover"
+                 loading="lazy"
+                 onerror="this.style.display='none'">
+          `;
+        }
+
+        // Property link
+        if (currentProperty.Link) {
+          document.getElementById('property-link').href = currentProperty.Link;
+        } else {
+          document.getElementById('property-link').style.display = 'none';
+        }
+
+        // Image gallery
+        displayImageGallery(images);
+
+        // Property details
+        document.getElementById('detail-state').textContent = currentProperty.State || 'N/A';
+        document.getElementById('detail-county').textContent = currentProperty.County || 'N/A';
+        document.getElementById('detail-town').textContent = currentProperty.Town || 'N/A';
+        document.getElementById('detail-parcel').textContent = currentProperty.Parcel || 'N/A';
+        
+        document.getElementById('detail-price').textContent = fmtCurrency(currentProperty.Price);
+        document.getElementById('detail-acres').textContent = fmtNumber(currentProperty.Acres);
+        
+        const ppa = (currentProperty.Price && currentProperty.Acres) ? 
+          (Number(currentProperty.Price) / Number(currentProperty.Acres)) : null;
+        document.getElementById('detail-ppa').textContent = fmtCurrency(ppa);
+        
+        document.getElementById('detail-water').textContent = waterLabel(currentProperty.WaterProximity);
+        
+        const coords = (currentProperty.Lat && currentProperty.Lon) ? 
+          `${fmtNumber(currentProperty.Lat, 4)}, ${fmtNumber(currentProperty.Lon, 4)}` : 'N/A';
+        document.getElementById('detail-coords').textContent = coords;
+        
+        document.getElementById('detail-distance').textContent = calculateDistance();
+        
+        document.getElementById('detail-status').textContent = currentProperty.Tag || 'inbox';
+        document.getElementById('detail-updated').textContent = new Date().toLocaleDateString();
+
+        // Notes
+        displayNotes();
+
+        // Calculate initial payment breakdown
+        calculatePayments();
+      }
+
+      function displayImageGallery(images) {
+        const gallerySection = document.getElementById('image-gallery-section');
+        const gallery = document.getElementById('image-gallery');
+        
+        if (images.length === 0) {
+          gallerySection.style.display = 'none';
+          return;
+        }
+
+        gallery.innerHTML = images.map(img => `
+          <div class="image-card">
+            <img src="${escapeHtml(img)}" 
+                 alt="${escapeHtml(currentProperty.Town)} property" 
+                 class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                 loading="lazy"
+                 onclick="openImageModal('${escapeHtml(img)}')"
+                 onerror="this.style.display='none'">
+          </div>
+        `).join('');
+      }
+
+      function displayNotes() {
+        const notesSection = document.getElementById('notes-section');
+        const notesContainer = document.getElementById('property-notes');
+        
+        if (!currentProperty.Note || currentProperty.Note.trim() === '') {
+          notesSection.style.display = 'none';
+          return;
+        }
+
+        const notes = currentProperty.Note.split('\n').filter(line => line.trim());
+        notesContainer.innerHTML = notes.map(note => `
+          <p class="text-slate-700 leading-relaxed mb-4">${escapeHtml(note)}</p>
+        `).join('');
+      }
+
+      function calculateDistance() {
+        const homeCoords = { lat: 41.3083, lng: -72.9279 };
+        const propertyCoords = { lat: currentProperty.Lat, lng: currentProperty.Lon };
+        
+        if (!currentProperty.Lat || !currentProperty.Lon) return 'N/A';
+        
+        const distance = calculateDistanceBetween(homeCoords, propertyCoords);
+        return `${distance.toFixed(1)} miles`;
+      }
+
+      function calculateDistanceBetween(coord1, coord2) {
+        const R = 3959; // Earth's radius in miles
+        const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+        const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+      }
+
+      function calculatePayments() {
+        const price = Number(currentProperty.Price) || 0;
+        const downPaymentPercent = Number(document.getElementById('down-payment').value) || 20;
+        const interestRate = Number(document.getElementById('interest-rate').value) || 6.5;
+        const termYears = Number(document.getElementById('loan-term').value) || 30;
+
+        const downPayment = price * (downPaymentPercent / 100);
+        const loanAmount = price - downPayment;
+        const monthlyRate = interestRate / 100 / 12;
+        const numPayments = termYears * 12;
+
+        let monthlyPayment = 0;
+        if (monthlyRate > 0) {
+          monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                          (Math.pow(1 + monthlyRate, numPayments) - 1);
+        } else {
+          monthlyPayment = loanAmount / numPayments;
+        }
+
+        const annualTax = price * 0.015; // 1.5% annual tax estimate
+        const monthlyTax = annualTax / 12;
+        const annualInsurance = price * 0.003; // 0.3% annual insurance estimate
+        const monthlyInsurance = annualInsurance / 12;
+        const totalMonthly = monthlyPayment + monthlyTax + monthlyInsurance;
+
+        document.getElementById('payment-breakdown').innerHTML = `
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-slate-600">Down Payment:</span>
+              <span class="font-semibold">${fmtCurrency(downPayment)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-600">Loan Amount:</span>
+              <span class="font-semibold">${fmtCurrency(loanAmount)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-600">Monthly Principal & Interest:</span>
+              <span class="font-semibold">${fmtCurrency(monthlyPayment)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-600">Monthly Taxes:</span>
+              <span class="font-semibold">${fmtCurrency(monthlyTax)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-600">Monthly Insurance:</span>
+              <span class="font-semibold">${fmtCurrency(monthlyInsurance)}</span>
+            </div>
+            <div class="flex justify-between border-t pt-2">
+              <span class="text-slate-800 font-semibold">Total Monthly Payment:</span>
+              <span class="text-green-600 font-bold">${fmtCurrency(totalMonthly)}</span>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('detail-monthly').textContent = fmtCurrency(totalMonthly);
+      }
+
+      function showError() {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error').classList.remove('hidden');
+      }
+
+      function addToCalculator() {
+        // Store property in localStorage for calculator
+        const calculatorData = JSON.parse(localStorage.getItem('selectedProperties') || '[]');
+        calculatorData.push(currentProperty);
+        localStorage.setItem('selectedProperties', JSON.stringify(calculatorData));
+        
+        // Show confirmation
+        alert('Property added to calculator! Go to the land list to view calculations.');
+      }
+
+      function openImageModal(imageSrc) {
+        // Simple image modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+        modal.innerHTML = `
+          <div class="max-w-4xl max-h-full p-4">
+            <img src="${imageSrc}" alt="Property image" class="max-w-full max-h-full object-contain">
+            <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300">×</button>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      // Event listeners for calculator inputs
+      document.addEventListener('DOMContentLoaded', () => {
+        loadProperty();
+        
+        ['down-payment', 'interest-rate', 'loan-term'].forEach(id => {
+          document.getElementById(id).addEventListener('input', calculatePayments);
+        });
+      });
+    </script>
+    </body>
+</html>

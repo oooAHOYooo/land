@@ -23,39 +23,95 @@
         background-color: #f0fdf4;
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
       }
+      .nav-link {
+        @apply px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors;
+      }
+      .mobile-nav-link {
+        @apply block px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors;
+      }
+      .action-btn {
+        @apply px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors;
+      }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen">
-    <!-- Compact Top Navigation -->
+    <!-- Enhanced Top Navigation -->
     <nav class="bg-white shadow-sm border-b sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-3">
-        <div class="flex items-center justify-between h-12">
+        <div class="flex items-center justify-between h-14">
           <div class="flex items-center space-x-4">
-            <h1 class="text-lg font-semibold text-slate-800">AGSCOUT — Land
+            <h1 class="text-xl font-bold text-slate-800">AGSCOUT — Land
               List</h1>
-            <span class="text-xs text-slate-500">30 properties</span>
+            <span
+              class="text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-full"
+              id="property-count">Loading...</span>
           </div>
-          <div class="hidden md:flex items-center space-x-4 text-xs">
-            <a href="#grid-menu"
-              class="text-slate-600 hover:text-slate-900">Grid Menu</a>
-            <a href="#detailed-view"
-              class="text-slate-600 hover:text-slate-900">Properties</a>
-            <a href="#calculator"
-              class="text-slate-600 hover:text-slate-900">Calculator</a>
-            <a href="#distance-map"
-              class="text-slate-600 hover:text-slate-900">Distance</a>
-            <a href="#financing"
-              class="text-slate-600 hover:text-slate-900">Financing</a>
-            <a href="#strategy"
-              class="text-slate-600 hover:text-slate-900">Strategy</a>
-            <a href="#vision"
-              class="text-slate-600 hover:text-slate-900">Vision</a>
+
+          <!-- Main Navigation -->
+          <div class="hidden lg:flex items-center space-x-1">
+            <a href="#grid-menu" class="nav-link">Overview</a>
+            <a href="#detailed-view" class="nav-link">Properties</a>
+            <a href="#calculator" class="nav-link">Calculator</a>
+            <a href="#distance-map" class="nav-link">Distance</a>
+            <a href="#financing" class="nav-link">Financing</a>
+            <a href="#strategy" class="nav-link">Strategy</a>
+            <a href="#vision" class="nav-link">Vision</a>
           </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="lg:hidden">
+            <button onclick="toggleMobileMenu()"
+              class="p-2 rounded-lg hover:bg-slate-100">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Action Buttons -->
           <div class="flex items-center gap-2">
             <button onclick="window.print()"
-              class="px-2 py-1 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs">Print</button>
+              class="action-btn bg-slate-100 text-slate-700 hover:bg-slate-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+              </svg>
+              <span class="hidden sm:inline">Print</span>
+            </button>
             <a href="index.html"
-              class="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-xs">Hub</a>
+              class="action-btn bg-blue-600 text-white hover:bg-blue-700">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+              <span class="hidden sm:inline">Hub</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="lg:hidden hidden border-t bg-slate-50">
+          <div class="px-3 py-2 space-y-1">
+            <a href="#grid-menu" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Overview</a>
+            <a href="#detailed-view" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Properties</a>
+            <a href="#calculator" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Calculator</a>
+            <a href="#distance-map" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Distance</a>
+            <a href="#financing" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Financing</a>
+            <a href="#strategy" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Strategy</a>
+            <a href="#vision" class="mobile-nav-link"
+              onclick="closeMobileMenu()">Vision</a>
           </div>
         </div>
       </div>
@@ -359,6 +415,7 @@
           });
           allProperties = arr;
           document.getElementById('count').textContent = String(arr.length).padStart(3, '0');
+          document.getElementById('property-count').textContent = `${arr.length} properties`;
           
           const gridMenuContainer = document.getElementById('grid-menu');
           const gridMenuEmpty = document.getElementById('grid-menu-empty');
@@ -411,7 +468,8 @@
                 <span class="px-2 py-0.5 bg-slate-100 text-xs rounded-full">${escapeHtml(String(r.Tag||'inbox'))}</span>
                 <span class="px-2 py-0.5 bg-blue-100 text-xs rounded-full">${escapeHtml(water)}</span>
               </div>
-              <div class="text-xs text-slate-400">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) + '/acre' : ''}</div>
+              <div class="text-xs text-slate-400 mb-2">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) + '/acre' : ''}</div>
+              <a href="land-detail.html?id=${index}" class="text-xs text-green-600 hover:text-green-800 underline font-medium">See More</a>
             </div>`;
           }).join('\n');
           
@@ -461,6 +519,7 @@
                 <div><div class="text-slate-500">Tag</div><div class="font-medium">${escapeHtml(String(r.Tag||'inbox'))}</div></div>
               </div>
               <div class="flex items-center gap-2 text-xs">
+                <a href="land-detail.html?id=${index}" class="text-green-600 hover:text-green-800 underline font-medium">See More</a>
                 ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-teal-600 underline">View listing</a>` : ''}
                 <button onclick="togglePropertySelection(${index})" class="text-blue-600 hover:text-blue-800 underline">Add to Calculator</button>
               </div>
@@ -735,6 +794,32 @@
         if (distance < 50) return '~45-60 min';
         return '~1+ hours';
       }
+
+      // Mobile menu functions
+      function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+      }
+
+      function closeMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.add('hidden');
+      }
+
+      // Smooth scrolling for navigation links
+      document.addEventListener('DOMContentLoaded', () => {
+        // Add smooth scrolling to all navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        });
+      });
 
       main();
     </script>
