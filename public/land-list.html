@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AGSCOUT — Land List</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="js/acreAnalysis.js"></script>
     <style>
       html { scroll-behavior: smooth; }
-      .compact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.75rem; }
-      .property-card { @apply bg-white border rounded-lg p-3 hover:shadow-md transition-shadow; }
+      .compact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+      .property-card { @apply bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-all; }
       .grid-menu { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
       .menu-item { 
-        @apply bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 text-center;
+        @apply bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 text-center shadow-sm;
         border-left: 4px solid #e5e7eb;
       }
       .menu-item:hover {
@@ -92,6 +94,7 @@
               </svg>
               <span class="hidden sm:inline">Hub</span>
             </a>
+            <button onclick="toggleResearchMode()" class="action-btn bg-emerald-600 text-white hover:bg-emerald-700" title="Toggle Research Mode">Research Mode</button>
           </div>
         </div>
 
@@ -418,6 +421,8 @@
         try {
           // Load benchmarks
           loadBenchmarks();
+          // Load region stats for acre analysis
+          regionStats = await window.acreAnalysis.loadRegionStats();
 
           const res = await fetch('data/land.json', { cache: 'no-store' });
           if (!res.ok) throw new Error('Failed to load JSON');
@@ -496,6 +501,23 @@
             const details = (r.Note || '').split(/\n+/).slice(0, 3).map(p => `<p class="text-xs text-slate-600">${escapeHtml(p)}</p>`).join('');
             const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
             const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
+            const analysis = window.acreAnalysis && regionStats ? window.acreAnalysis.analyzeProperty(r, regionStats) : null;
+            const ppaClass = analysis?.ppaColor || '';
+            const researchExtra = (window.Alpine?.store('app')?.research && analysis) ? `
+              <div class="mt-2 text-xs bg-slate-50 border rounded p-2">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  ${analysis.badge ? `<span class="px-2 py-0.5 rounded-full ${analysis.badgeColor}">${analysis.badge}</span>` : ''}
+                  ${analysis.signal ? `<span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">${analysis.signal}</span>` : ''}
+                </div>
+                <div class="text-slate-600">${analysis.detail || ''}</div>
+                ${analysis.percentile!=null ? `<div class="text-slate-500">Percentile vs region: ${analysis.percentile}</div>` : ''}
+                ${analysis.regionName ? `<div class="text-slate-500">Region: ${analysis.regionName}</div>` : ''}
+                <div class="mt-1"><a href="#" class="text-emerald-700 underline">Open comp dataset</a></div>
+                <div class="mt-2">
+                  <textarea rows="2" class="w-full border rounded p-1 text-xs" placeholder="Notes..."></textarea>
+                </div>
+              </div>
+            ` : '';
             
             const images = Array.isArray(r.Images) ? r.Images : [];
             const imageHtml = images.length > 0 ? `
@@ -529,7 +551,7 @@
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-2 text-xs mb-2">
-                <div><div class="text-slate-500">$/acre</div><div class="font-medium">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : ''}</div></div>
+                <div><div class="text-slate-500">$/acre</div><div class="font-medium ${ppaClass}">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : ''}</div></div>
                 <div><div class="text-slate-500">Water</div><div class="font-medium">${escapeHtml(water)}</div></div>
                 <div><div class="text-slate-500">Tag</div><div class="font-medium">${escapeHtml(String(r.Tag||'inbox'))}</div></div>
               </div>
@@ -539,6 +561,7 @@
                 <button onclick="togglePropertySelection(${index})" class="text-blue-600 hover:text-blue-800 underline">Add to Calculator</button>
               </div>
               ${details ? `<div class="mt-2 space-y-1">${details}</div>` : ''}
+              ${researchExtra}
             </div>`;
           }).join('\n');
           container.innerHTML = cards;
@@ -550,9 +573,10 @@
         }
       }
 
-      // Global variables for calculator
+      // Global variables for calculator and research
       let selectedProperties = [];
       let allProperties = [];
+      let regionStats = null;
 
       // Scroll to property in detailed view
       function scrollToProperty(index) {
@@ -834,7 +858,20 @@
             }
           });
         });
+        // Alpine store for research mode
+        document.addEventListener('alpine:init', () => {
+          Alpine.store('app', { research: false });
+        });
       });
+
+      function toggleResearchMode() {
+        try {
+          const cur = Alpine.store('app');
+          cur.research = !cur.research;
+          // re-render cards to show/hide research extras
+          main();
+        } catch(_e) { /* ignore */ }
+      }
 
       async function loadBenchmarks() {
         try {
