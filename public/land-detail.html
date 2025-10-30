@@ -72,6 +72,7 @@
                                     class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"></span>
                                 <span id="property-water"
                                     class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm"></span>
+                                <span id="property-region-badge" class="px-3 py-1 rounded-full text-sm hidden"></span>
                             </div>
                             <div class="flex gap-3">
                                 <a id="property-link" href="#" target="_blank"
@@ -423,6 +424,9 @@
 
         // Calculate initial payment breakdown
         calculatePayments();
+
+        // Load regional benchmark badge
+        loadRegionBadge(ppa);
       }
 
       function displayImageGallery(images) {
@@ -575,6 +579,46 @@
           document.getElementById(id).addEventListener('input', calculatePayments);
         });
       });
+
+      async function loadRegionBadge(propertyPpa) {
+        try {
+          const res = await fetch('data/benchmarks/price_per_acre_regions.json', { cache: 'no-store' });
+          if (!res.ok) return;
+          const regions = await res.json();
+          if (!Array.isArray(regions)) return;
+
+          const region = inferRegion(currentProperty, regions);
+          if (!region || region.price_per_acre_median == null || propertyPpa == null) return;
+
+          const badge = document.getElementById('property-region-badge');
+          const median = Number(region.price_per_acre_median);
+          let label = 'Near regional median';
+          let classes = 'bg-yellow-100 text-yellow-800';
+          if (propertyPpa < 0.8 * median) { label = 'Below regional median'; classes = 'bg-green-100 text-green-800'; }
+          else if (propertyPpa > 1.2 * median) { label = 'Above regional median'; classes = 'bg-red-100 text-red-800'; }
+          badge.textContent = label;
+          badge.className = 'px-3 py-1 rounded-full text-sm ' + classes;
+          badge.classList.remove('hidden');
+        } catch(_e) { /* ignore */ }
+      }
+
+      function inferRegion(prop, regions) {
+        const town = String(prop.Town || '').toLowerCase();
+        const county = String(prop.County || '').toLowerCase();
+        const state = String(prop.State || '').toUpperCase();
+        // 1) Town in subregions
+        for (const r of regions) {
+          const subs = Array.isArray(r.subregions) ? r.subregions : [];
+          if (subs.some(s => String(s).toLowerCase() === town)) return r;
+        }
+        // 2) Simple heuristics
+        if (state === 'MA' && county === 'berkshire') return regions.find(r => /Berkshires/i.test(r.region));
+        if (state === 'CT' && county === 'litchfield') return regions.find(r => /Litchfield Hills/i.test(r.region));
+        // 3) Fallback by state match if only one region matches state
+        const byState = regions.filter(r => Array.isArray(r.states) && r.states.map(String).includes(state));
+        if (byState.length === 1) return byState[0];
+        return null;
+      }
     </script>
     </body>
 </html>

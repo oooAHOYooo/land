@@ -163,6 +163,18 @@
         </div>
       </section>
 
+      <!-- Market Benchmarks -->
+      <section id="market-benchmarks" class="bg-white rounded-lg border p-3">
+        <button onclick="toggleDropdown('benchmarks-body')" class="w-full text-left flex items-center justify-between">
+          <h2 class="text-sm font-semibold">Market Benchmarks</h2>
+          <span id="benchmarks-body-arrow" class="text-slate-400">▼</span>
+        </button>
+        <div id="benchmarks-body" class="mt-2 hidden">
+          <div id="benchmarks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+          <div id="benchmarks-empty" class="text-xs text-slate-500 italic">Loading benchmarks...</div>
+        </div>
+      </section>
+
       <!-- Property Grid Menu -->
       <section id="grid-menu" class="bg-white rounded-lg border p-3">
         <div class="flex items-center justify-between mb-3">
@@ -404,6 +416,9 @@
     <script>
       async function main() {
         try {
+          // Load benchmarks
+          loadBenchmarks();
+
           const res = await fetch('data/land.json', { cache: 'no-store' });
           if (!res.ok) throw new Error('Failed to load JSON');
           const rows = await res.json();
@@ -820,6 +835,37 @@
           });
         });
       });
+
+      async function loadBenchmarks() {
+        try {
+          const res = await fetch('data/benchmarks/price_per_acre_regions.json', { cache: 'no-store' });
+          if (!res.ok) throw new Error('Failed to load benchmarks');
+          const regions = await res.json();
+          const list = document.getElementById('benchmarks-list');
+          const empty = document.getElementById('benchmarks-empty');
+          if (!Array.isArray(regions) || regions.length === 0) { empty.textContent = 'No benchmarks yet'; return; }
+          empty.classList.add('hidden');
+          list.innerHTML = regions.map(r => {
+            const median = r.price_per_acre_median == null ? '—' : ('$' + Number(r.price_per_acre_median).toLocaleString());
+            const low = r.price_per_acre_low == null ? '—' : ('$' + Number(r.price_per_acre_low).toLocaleString());
+            const high = r.price_per_acre_high == null ? '—' : ('$' + Number(r.price_per_acre_high).toLocaleString());
+            const updated = r.last_updated == null ? '—' : String(r.last_updated);
+            return `
+              <div class="border rounded-lg p-2 bg-slate-50">
+                <div class="text-sm font-semibold mb-1">${r.region}</div>
+                <div class="grid grid-cols-2 gap-1 text-xs">
+                  <div><div class="text-slate-500">Median $/acre</div><div class="font-medium">${median}</div></div>
+                  <div><div class="text-slate-500">Range</div><div class="font-medium">${low} – ${high}</div></div>
+                  <div><div class="text-slate-500">Last updated</div><div class="font-medium">${updated}</div></div>
+                  <div><div class="text-slate-500">Notes</div><div class="font-medium">${r.notes || ''}</div></div>
+                </div>
+              </div>`;
+          }).join('');
+        } catch (_e) {
+          const empty = document.getElementById('benchmarks-empty');
+          empty.textContent = 'Failed to load benchmarks';
+        }
+      }
 
       main();
     </script>
