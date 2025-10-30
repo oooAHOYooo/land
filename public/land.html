@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>AGSCOUT — Land Parcels</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- Tailwind CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              marker: {
+                default: "#14b8a6",
+                shortlist: "#06b6d4",
+                visit: "#0ea5e9",
+                offer: "#22c55e",
+                hold: "#10b981",
+                watch: "#10b981",
+                skip: "#9ca3af",
+                archived: "#9ca3af",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+        <!-- Alpine.js -->
+        <script defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+        <!-- PapaParse -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+        <!-- Leaflet -->
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <!-- jsPDF + AutoTable -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+        <style>
+      .sticky-th { position: sticky; top: 0; z-index: 20; background: white; }
+      .scrollbar-thin::-webkit-scrollbar { height: 8px; }
+      .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+      .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; }
+      .z-high { z-index: 9999; }
+      
+      /* Enhanced Typography */
+      .font-display { font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .font-body { font-family: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .font-mono { font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace; }
+      
+      /* Improved spacing */
+      .space-y-6 > * + * { margin-top: 1.5rem; }
+      .space-y-8 > * + * { margin-top: 2rem; }
+      
+      /* Better text hierarchy */
+      .text-display { font-size: 2.5rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.025em; }
+      .text-heading-1 { font-size: 2rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.025em; }
+      .text-heading-2 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.025em; }
+      .text-heading-3 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+      .text-body-lg { font-size: 1.125rem; line-height: 1.6; }
+      .text-body { font-size: 1rem; line-height: 1.6; }
+      .text-body-sm { font-size: 0.875rem; line-height: 1.5; }
+      .text-caption { font-size: 0.75rem; line-height: 1.4; font-weight: 500; }
+      
+      /* Enhanced colors */
+      .text-primary { color: #0f172a; }
+      .text-secondary { color: #475569; }
+      .text-tertiary { color: #64748b; }
+      .text-muted { color: #94a3b8; }
+      
+      /* Better form styling */
+      .form-input { 
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        transition: all 0.2s ease;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+      }
+      
+      /* Enhanced button styling */
+      .btn-primary {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+      }
+      
+      /* Card enhancements */
+      .card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s ease;
+      }
+      .card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+      }
+    </style>
+    </head>
+    <body class="bg-slate-50 text-slate-900 min-h-screen font-body" x-data="app()"
+        x-init="init()">
+        <div class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+            <header
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h1 class="text-heading-1 font-display text-primary">AGSCOUT — Land
+                        Parcels</h1>
+                    <p class="text-body-sm text-secondary mt-2">All data stays in your
+                        browser. No accounts. No uploads.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <input type="file" class="hidden" x-ref="file"
+                        accept=".csv,text/csv" @change="importCsv($event)" />
+                    <input type="file" class="hidden" x-ref="jsonFile"
+                        accept="application/json,.json"
+                        @change="importJson($event)" />
+                    <button
+                        class="px-4 py-2 rounded-lg bg-white shadow-sm border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 font-medium"
+                        @click="$refs.file.click()">Import CSV</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50 relative"
+                        @click="exportsOpen = !exportsOpen" aria-haspopup="menu"
+                        :aria-expanded="exportsOpen">Export ▾
+                        <div x-show="exportsOpen" x-transition
+                            @click.outside="exportsOpen = false"
+                            class="absolute right-0 mt-1 w-44 bg-white border rounded-md shadow-lg z-high">
+                            <button
+                                class="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50"
+                                @click="exportCsv(); exportsOpen=false">Export
+                                CSV</button>
+                            <button
+                                class="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50"
+                                @click="exportJson(); exportsOpen=false">Export
+                                JSON</button>
+                            <button
+                                class="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50"
+                                @click="exportPdf(); exportsOpen=false">Export
+                                PDF</button>
+                        </div>
+                    </button>
+                    <button
+                        class="btn-primary"
+                        @click="openAdd()">+ Add Property</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700"
+                        @click="openBulk()">Bulk Add</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                        @click="loadSheet1()">Load Sheet1</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700"
+                        @click="loadSheet2()">Load Sheet2</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-fuchsia-600 text-white hover:bg-fuchsia-700"
+                        @click="loadSheet3()">Load Sheet3</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="loadDemo()">Load demo</button>
+                    <button aria-label="Clear all rows"
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="clearAll()" x-show="rows.length">Clear
+                        all</button>
+                </div>
+            </header>
+
+            <section class="card p-4 md:p-6">
+                <div class="flex flex-col lg:flex-row lg:items-end gap-3">
+                    <div class="flex-1">
+                        <label class="text-caption text-secondary font-medium">Search</label>
+                        <input type="text"
+                            x-model.debounce.300ms="filters.search"
+                            placeholder="Town, Parcel, or Note"
+                            class="form-input mt-2 w-full" />
+                    </div>
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-4 gap-3 flex-none">
+                        <div>
+                            <label class="text-caption text-secondary font-medium">State</label>
+                            <select x-model="filters.state"
+                                class="form-input mt-2 w-full bg-white">
+                                <option value>Any</option>
+                                <template x-for="s in uniqueStates()" :key="s">
+                                    <option :value="s" x-text="s"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500">Water</label>
+                            <select x-model="filters.water"
+                                class="mt-1 w-full px-3 py-2 border rounded-md bg-white">
+                                <option value>Any</option>
+                                <option value="adjacent">Adjacent (0)</option>
+                                <option value="near">Near (≤900)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500">Min
+                                acres</label>
+                            <input type="number" step="any"
+                                x-model.number="filters.minAcres"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" />
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500">Max
+                                price</label>
+                            <input type="number" step="1"
+                                x-model.number="filters.maxPrice"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 flex items-center justify-between">
+                    <div
+                        class="inline-flex rounded-md border bg-slate-50 overflow-hidden">
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='inbox' ? 'bg-white' : ''"
+                            @click="activeTab = 'inbox'">Inbox</button>
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='shortlist' ? 'bg-white' : ''"
+                            @click="activeTab = 'shortlist'">Shortlist</button>
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='watch' ? 'bg-white' : ''"
+                            @click="activeTab = 'watch'">Watchlist</button>
+                        <button class="px-3 py-1.5 text-sm"
+                            :class="activeTab==='archived' ? 'bg-white' : ''"
+                            @click="activeTab = 'archived'">Archived</button>
+                    </div>
+                    <div class="text-xs text-slate-600 flex items-center gap-3">
+                        <span>Inbox: <strong
+                                x-text="counts().inbox"></strong></span>
+                        <span>Visit: <strong
+                                x-text="counts().visit"></strong></span>
+                        <span>Watch: <strong
+                                x-text="counts().watch"></strong></span>
+                        <span>Offer: <strong
+                                x-text="counts().offer"></strong></span>
+                        <span>Skip: <strong
+                                x-text="counts().skip"></strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Simple list of properties -->
+            <section id="list" class="card p-4 md:p-6">
+                <h3 class="text-heading-3 text-primary mb-4">Property List</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <template x-for="row in filteredSorted()" :key="row.id">
+                        <li>
+                            <span x-text="row.Town + ' — ' + row.Parcel"></span>
+                            <span class="text-slate-500"> · </span>
+                            <span x-text="fmt.currency(row.Price)"></span>
+                        </li>
+                    </template>
+                    <li x-show="filteredSorted().length===0" class="text-slate-500 text-sm">No results</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <div class="p-4 md:p-6 flex items-center justify-between border-b border-slate-100">
+                    <div class="text-body-sm text-secondary">Pins: <strong class="text-primary"
+                            x-text="pinCount"></strong></div>
+                    <div class="text-caption text-tertiary">Score (lower =
+                        better)</div>
+                </div>
+                <div id="map" class="w-full h-80 md:h-96"></div>
+            </section>
+
+            <section class="flex flex-wrap items-center gap-2">
+                <button
+                    class="px-3 py-1.5 rounded-md text-sm bg-white shadow-sm border hover:bg-slate-50"
+                    @click="bulkMove('shortlist')"
+                    :disabled="selectedIds.size===0"
+                    :class="selectedIds.size===0 ? 'opacity-50 cursor-not-allowed' : ''">Move
+                    selected → Shortlist</button>
+                <button
+                    class="px-3 py-1.5 rounded-md text-sm bg-white shadow-sm border hover:bg-slate-50"
+                    @click="bulkMove('watch')" :disabled="selectedIds.size===0"
+                    :class="selectedIds.size===0 ? 'opacity-50 cursor-not-allowed' : ''">Move
+                    selected → Watchlist</button>
+                <button
+                    class="px-3 py-1.5 rounded-md text-sm bg-white shadow-sm border hover:bg-slate-50"
+                    @click="bulkMove('archived')"
+                    :disabled="selectedIds.size===0"
+                    :class="selectedIds.size===0 ? 'opacity-50 cursor-not-allowed' : ''">Move
+                    selected → Archived</button>
+                <span class="text-xs text-slate-500 ml-2"
+                    x-show="selectedIds.size">Selected: <span
+                        x-text="selectedIds.size"></span></span>
+            </section>
+
+            <!-- Mobile cards -->
+            <section class="md:hidden space-y-4">
+                <template x-for="row in filteredSorted()" :key="row.id">
+                    <div class="card p-4">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="min-w-0 flex-1">
+                                <div class="text-heading-3 text-primary truncate"
+                                    x-text="row.Town + ' — ' + row.Parcel"></div>
+                                <div class="text-body-sm text-secondary truncate mt-1"
+                                    x-text="row.State + (row.County ? ', ' + row.County : '')"></div>
+                            </div>
+                            <button class="text-2xl flex-none transition-colors duration-200"
+                                :class="row.Tag==='shortlist' ? 'text-teal-600' : 'text-slate-300 hover:text-slate-500'"
+                                @click.stop="toggleShortlist(row)"
+                                aria-label="Toggle shortlist">★</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-body-sm mb-4">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <div class="text-caption text-secondary mb-1">Price</div>
+                                <div class="text-heading-3 text-primary"
+                                    x-text="fmt.currency(row.Price)"></div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <div class="text-caption text-secondary mb-1">Acres</div>
+                                <div class="text-heading-3 text-primary"
+                                    x-text="fmt.number(row.Acres)"></div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <div class="text-caption text-secondary mb-1">$ / acre</div>
+                                <div class="text-heading-3 text-primary"
+                                    x-text="fmt.currency(ppa(row))"></div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <div class="text-caption text-secondary mb-1">Water</div>
+                                <div class="text-heading-3 text-primary"
+                                    x-text="waterLabel(row.WaterProximity)"></div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center gap-3">
+                            <select
+                                class="form-input text-sm flex-1"
+                                x-model="row.Tag" @change="onRowChanged(row)"
+                                aria-label="Change tag">
+                                <option>inbox</option>
+                                <option>visit</option>
+                                <option>shortlist</option>
+                                <option>watch</option>
+                                <option>offer</option>
+                                <option>hold</option>
+                                <option>skip</option>
+                                <option>archived</option>
+                            </select>
+                            <template x-if="row.Link">
+                                <a :href="row.Link" target="_blank"
+                                    class="text-teal-600 text-sm font-medium hover:underline">View</a>
+                            </template>
+                            <button class="text-sm text-secondary hover:text-primary font-medium"
+                                @click="centerOnRow(row)"
+                                x-show="hasCoords(row)">Map</button>
+                        </div>
+                        <div class="mt-4">
+                            <input type="text"
+                                class="form-input w-full text-sm"
+                                placeholder="Add note" x-model="row.Note"
+                                @change="onRowChanged(row)" />
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <button
+                                class="px-3 py-2 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-medium transition-colors duration-200"
+                                @click="quickTag(row, 'visit')">Visit</button>
+                            <button
+                                class="px-3 py-2 rounded-lg text-sm bg-teal-600 text-white hover:bg-teal-700 font-medium transition-colors duration-200"
+                                @click="quickTag(row, 'shortlist')">Shortlist</button>
+                            <button
+                                class="px-3 py-2 rounded-lg text-sm bg-cyan-50 text-cyan-700 border border-cyan-200 hover:bg-cyan-100 font-medium transition-colors duration-200"
+                                @click="quickTag(row, 'watch')">Watch</button>
+                            <button
+                                class="px-3 py-2 rounded-lg text-sm bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100 font-medium transition-colors duration-200"
+                                @click="quickTag(row, 'skip')">Skip</button>
+                            <button
+                                class="px-3 py-2 rounded-lg text-sm bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 font-medium transition-colors duration-200"
+                                @click="quickTag(row, 'archived')">Archive</button>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="card p-8 text-center text-secondary text-body-sm"
+                    x-show="filteredSorted().length===0">No results found</div>
+            </section>
+
+            <!-- Desktop table -->
+            <section
+                class="card overflow-hidden hidden md:block">
+                <div class="overflow-x-auto scrollbar-thin">
+                    <table class="min-w-[1000px] w-full">
+                        <thead>
+                            <tr
+                                class="text-left text-caption text-secondary border-b border-slate-200 bg-slate-50">
+                                <th class="sticky-th px-4 py-3 w-12"><input
+                                        type="checkbox"
+                                        @change="toggleSelectAll($event)" /></th>
+                                <th class="sticky-th px-4 py-3 w-12">★</th>
+                                <th class="sticky-th px-4 py-3 font-medium">State</th>
+                                <th class="sticky-th px-4 py-3 font-medium">County</th>
+                                <th class="sticky-th px-4 py-3 font-medium">Town</th>
+                                <th class="sticky-th px-4 py-3 font-medium">Parcel</th>
+                                <th
+                                    class="sticky-th px-4 py-3 text-right font-medium">Acres</th>
+                                <th
+                                    class="sticky-th px-4 py-3 text-right font-medium">Price</th>
+                                <th class="sticky-th px-4 py-3 text-right font-medium">$ /
+                                    acre</th>
+                                <th class="sticky-th px-4 py-3 font-medium">Water</th>
+                                <th class="sticky-th px-4 py-3 font-medium">Tag</th>
+                                <th class="sticky-th px-4 py-3 font-medium">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="row in filteredSorted()"
+                                :key="row.id">
+                                <tr
+                                    class="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors duration-150"
+                                    :class="activeId===row.id ? 'bg-teal-50 border-teal-200' : ''"
+                                    @click="centerOnRow(row)"
+                                    :aria-row-id="row.id">
+                                    <td class="px-4 py-3" @click.stop>
+                                        <input type="checkbox"
+                                            :checked="selectedIds.has(row.id)"
+                                            @change="toggleSelect(row.id, $event)" />
+                                    </td>
+                                    <td class="px-4 py-3" @click.stop>
+                                        <button class="text-xl transition-colors duration-200"
+                                            aria-label="Toggle shortlist"
+                                            :class="row.Tag==='shortlist' ? 'text-teal-600' : 'text-slate-300 hover:text-slate-500'"
+                                            @click="toggleShortlist(row)">★</button>
+                                    </td>
+                                    <td class="px-4 py-3 text-body-sm"
+                                        x-text="row.State"></td>
+                                    <td class="px-4 py-3 text-body-sm"
+                                        x-text="row.County"></td>
+                                    <td class="px-4 py-3 text-body-sm font-medium"
+                                        x-text="row.Town"></td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-2">
+                                            <template x-if="row.Link">
+                                                <a :href="row.Link"
+                                                    target="_blank"
+                                                    class="text-teal-600 hover:underline font-medium"
+                                                    @click.stop
+                                                    x-text="row.Parcel"></a>
+                                            </template>
+                                            <template x-if="!row.Link">
+                                                <span class="font-medium"
+                                                    x-text="row.Parcel"></span>
+                                            </template>
+                                            <span class="text-caption text-tertiary"
+                                                x-text="'(' + fmt.score(row._score_display ?? row._score) + ')'"
+                                                title="Score"></span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right text-body-sm font-medium"
+                                        x-text="fmt.number(row.Acres)"></td>
+                                    <td class="px-4 py-3 text-right text-body-sm font-semibold"
+                                        x-text="fmt.currency(row.Price)"></td>
+                                    <td class="px-4 py-3 text-right text-body-sm font-medium"
+                                        x-text="fmt.currency(ppa(row))"></td>
+                                    <td class="px-4 py-3 text-body-sm"
+                                        x-text="waterLabel(row.WaterProximity)"></td>
+                                    <td class="px-4 py-3" @click.stop>
+                                        <select
+                                            class="form-input text-sm"
+                                            x-model="row.Tag"
+                                            @change="onRowChanged(row)"
+                                            aria-label="Change tag">
+                                            <option>inbox</option>
+                                            <option>visit</option>
+                                            <option>shortlist</option>
+                                            <option>watch</option>
+                                            <option>offer</option>
+                                            <option>hold</option>
+                                            <option>skip</option>
+                                            <option>archived</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-4 py-3" @click.stop>
+                                        <input type="text"
+                                            class="form-input w-full text-sm"
+                                            x-model="row.Note"
+                                            @change="onRowChanged(row)"
+                                            @keydown.stop />
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="filteredSorted().length===0">
+                                <td colspan="12"
+                                    class="px-4 py-12 text-center text-secondary text-body-sm">No
+                                    results found</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Add Modal -->
+            <div x-show="modals.add" x-transition
+                class="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-high">
+                <div
+                    class="bg-white w-full md:max-w-2xl rounded-t-lg md:rounded-lg shadow-xl">
+                    <div class="p-4 border-b flex items-center justify-between">
+                        <h3 class="text-lg font-semibold">Add property</h3>
+                        <button class="text-slate-500 hover:text-slate-700"
+                            @click="modals.add=false">✕</button>
+                    </div>
+                    <form class="p-4 space-y-3" @submit.prevent="submitAdd()">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div><label
+                                    class="text-xs text-slate-500">State</label><input
+                                    x-model="form.State" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">County</label><input
+                                    x-model="form.County" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Town</label><input
+                                    x-model="form.Town" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Parcel</label><input
+                                    x-model="form.Parcel" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Acres</label><input
+                                    type="number" step="any"
+                                    x-model.number="form.Acres"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Price</label><input
+                                    type="number" step="1"
+                                    x-model.number="form.Price"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label class="text-xs text-slate-500">Water
+                                    proximity (feet)</label><input type="number"
+                                    step="1"
+                                    x-model.number="form.WaterProximity"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"
+                                    placeholder="0=adjacent, ≤900 near" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Link</label><input
+                                    x-model="form.Link"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md"
+                                    placeholder="https://..." /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Lat</label><input
+                                    type="number" step="any"
+                                    x-model.number="form.Lat"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Lon</label><input
+                                    type="number" step="any"
+                                    x-model.number="form.Lon"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div class="md:col-span-2"><label
+                                    class="text-xs text-slate-500">Note</label><input
+                                    x-model="form.Note"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 pt-2">
+                            <button type="button"
+                                class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                                @click="modals.add=false">Close</button>
+                            <button type="submit"
+                                class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">Add
+                                to Inbox</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bulk Modal -->
+            <div x-show="modals.bulk" x-transition
+                class="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-high">
+                <div
+                    class="bg-white w-full md:max-w-5xl rounded-t-lg md:rounded-lg shadow-xl">
+                    <div class="p-4 border-b flex items-center justify-between">
+                        <h3 class="text-lg font-semibold">Bulk Add</h3>
+                        <button class="text-slate-500 hover:text-slate-700"
+                            @click="modals.bulk=false">✕</button>
+                    </div>
+                    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-slate-500">Paste CSV/TSV
+                                or table (first row must be headers)</label>
+                            <textarea x-model="bulk.raw"
+                                class="mt-1 w-full h-56 px-3 py-2 border rounded-md font-mono text-sm"></textarea>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button
+                                    class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                                    @click="bulkPreview()">Preview</button>
+                                <button
+                                    class="px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                                    :disabled="bulk.preview.length===0"
+                                    :class="bulk.preview.length===0 ? 'opacity-50 cursor-not-allowed' : ''"
+                                    @click="bulkCommit()">Add to Inbox</button>
+                            </div>
+                        </div>
+                        <div class="overflow-auto border rounded-md">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr
+                                        class="text-left text-xs text-slate-500 border-b">
+                                        <template x-if="bulk.preview.length>0">
+                                            <template x-for="h in bulk.headers"
+                                                :key="h">
+                                                <th class="sticky-th px-3 py-2"
+                                                    x-text="h"></th>
+                                            </template>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(r,idx) in bulk.preview"
+                                        :key="idx">
+                                        <tr class="border-b">
+                                            <template x-for="h in bulk.headers"
+                                                :key="h">
+                                                <td class="px-3 py-1 text-sm"
+                                                    x-text="r[h] ?? ''"></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="bulk.preview.length===0">
+                                        <td
+                                            class="px-3 py-8 text-center text-slate-500 text-sm">Preview
+                                            will appear here</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 text-xs text-slate-500">Supported
+                        headers:
+                        State,County,Town,Parcel,Acres,Price,WaterProximity,Link,Lat,Lon,Tag,Note,CommuteMin,Walkable,WaterVibe,Joy</div>
+                    <div class="p-4 pt-0 flex items-center justify-end">
+                        <button
+                            class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                            @click="modals.bulk=false">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finance calculator (unchanged visuals) -->
+            <section class="max-w-7xl mx-auto p-4 md:p-6 pt-0">
+                <div class="bg-white rounded-lg shadow-sm border p-3 md:p-4"
+                    x-data="financeApp()">
+                    <h3 class="text-lg font-semibold mb-3">Finance
+                        calculator</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div><label class="text-xs text-slate-500">Area
+                                (state)</label>
+                            <select
+                                class="mt-1 w-full px-3 py-2 border rounded-md bg-white"
+                                x-model="finance.state"
+                                @change="setFinanceArea(finance.state)">
+                                <option value="CT">CT</option><option
+                                    value="MA">MA</option><option
+                                    value="ME">ME</option><option
+                                    value="NH">NH</option><option
+                                    value="RI">RI</option><option
+                                    value="VT">VT</option>
+                            </select>
+                        </div>
+                        <div><label class="text-xs text-slate-500">Purchase
+                                price</label><input type="number" step="1"
+                                x-model.number="finance.price"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">Down payment
+                                %</label><input type="number" step="0.1"
+                                x-model.number="finance.downPercent"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">Interest rate
+                                % (annual)</label><input type="number"
+                                step="0.01" x-model.number="finance.ratePercent"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">Term
+                                (years)</label><input type="number" step="1"
+                                x-model.number="finance.termYears"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">Property tax
+                                rate % (annual)</label><input type="number"
+                                step="0.01"
+                                x-model.number="finance.taxRatePercent"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">Insurance
+                                (monthly)</label><input type="number" step="1"
+                                x-model.number="finance.insuranceMonthly"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">HOA
+                                (monthly)</label><input type="number" step="1"
+                                x-model.number="finance.hoaMonthly"
+                                class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        <div><label class="text-xs text-slate-500">Loan
+                                amount</label><div
+                                class="mt-1 w-full px-3 py-2 border rounded-md bg-slate-50">$<span
+                                    x-text="fmt.number(loanAmount(), 0)"></span></div></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                        <div><div class="text-xs text-slate-500">Monthly
+                                P&I</div><div class="text-lg font-semibold"
+                                x-text="fmt.currency(monthlyPI())"></div></div>
+                        <div><div class="text-xs text-slate-500">Monthly
+                                taxes</div><div class="text-lg font-semibold"
+                                x-text="fmt.currency(monthlyTaxes())"></div></div>
+                        <div><div class="text-xs text-slate-500">Estimated
+                                monthly total</div><div
+                                class="text-lg font-semibold"
+                                x-text="fmt.currency(monthlyTotal())"></div></div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-500">Total interest over
+                        loan: <strong
+                            x-text="fmt.currency(totalInterest())"></strong></div>
+                </div>
+            </section>
+        </div>
+
+        <script type="module" src="./js/app-land.js"></script>
+    </body>
+</html>

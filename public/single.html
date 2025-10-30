@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>AGSCOUT — Single Family</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    </head>
+    <body class="bg-slate-50 text-slate-900 min-h-screen" x-data="app()"
+        x-init="init()">
+        <div class="max-w-7xl mx-auto p-4 md:p-6 space-y-4">
+            <header
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h1 class="text-2xl font-semibold">AGSCOUT — Single
+                        Family</h1>
+                    <p class="text-sm text-slate-500">Local-first; data stays in
+                        your browser.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <input type="file" class="hidden" x-ref="file"
+                        accept=".csv,text/csv" @change="importCsv($event)" />
+                    <input type="file" class="hidden" x-ref="jsonFile"
+                        accept="application/json,.json"
+                        @change="importJson($event)" />
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="$refs.file.click()">Import CSV</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="exportCsv()">Export CSV</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-white shadow-sm border text-slate-700 hover:bg-slate-50"
+                        @click="exportJson()">Export JSON</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
+                        @click="openAdd()">+ Add</button>
+                    <button
+                        class="px-3 py-2 rounded-md bg-teal-600 text-white hover:bg-teal-700"
+                        @click="openBulk()">Bulk Add</button>
+                </div>
+            </header>
+
+            <section class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div><label class="text-xs text-slate-500">State</label>
+                        <select x-model="filters.state"
+                            class="mt-1 w-full px-3 py-2 border rounded-md bg-white">
+                            <option value>Any</option>
+                            <template x-for="s in uniqueStates()"
+                                :key="s"><option :value="s"
+                                    x-text="s"></option></template>
+                        </select>
+                    </div>
+                    <div><label class="text-xs text-slate-500">Min
+                            beds</label><input type="number" step="1"
+                            x-model.number="filters.minBeds"
+                            class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                    <div><label class="text-xs text-slate-500">Max
+                            price</label><input type="number" step="1"
+                            x-model.number="filters.maxPrice"
+                            class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                    <div class="md:col-span-2"><label
+                            class="text-xs text-slate-500">Search</label><input
+                            type="text" x-model.debounce.300ms="filters.search"
+                            placeholder="Address, City, Notes"
+                            class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-sm border">
+                <div class="p-3 md:p-4 flex items-center justify-between"><div
+                        class="text-sm text-slate-600">Pins: <strong
+                            x-text="pinCount"></strong></div></div>
+                <div id="map" class="w-full h-72 md:h-96 rounded-b-lg"></div>
+            </section>
+
+            <!-- Simple list of properties -->
+            <section id="list" class="bg-white rounded-lg shadow-sm border p-3 md:p-4">
+                <h3 class="text-lg font-semibold mb-2">List</h3>
+                <div class="space-y-2">
+                    <template x-for="row in filteredSorted()" :key="row.id">
+                        <div class="border rounded-md p-3">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="font-semibold truncate" x-text="row.Address"></div>
+                                    <div class="text-xs text-slate-500 truncate" x-text="row.City + ', ' + row.State"></div>
+                                </div>
+                                <div class="text-right flex-none">
+                                    <div class="text-sm font-medium" x-text="fmt.currency(row.Price)"></div>
+                                    <div class="text-xs text-slate-500" x-text="row.Tag"></div>
+                                </div>
+                            </div>
+                            <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                                <div>
+                                    <div class="text-xs text-slate-500">Beds</div>
+                                    <div class="font-medium" x-text="fmt.number(row.Beds, 0)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">Baths</div>
+                                    <div class="font-medium" x-text="fmt.number(row.Baths, 0)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">Sqft</div>
+                                    <div class="font-medium" x-text="fmt.number(row.Sqft, 0)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">$/Sqft</div>
+                                    <div class="font-medium" x-text="fmt.currency(row._PricePerSqft)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">Rent est.</div>
+                                    <div class="font-medium" x-text="fmt.currency(row.RentZestimate)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">Rent Yield</div>
+                                    <div class="font-medium" x-text="row._RentYield != null ? (row._RentYield*100).toFixed(2)+'%' : ''"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">Taxes (annual)</div>
+                                    <div class="font-medium" x-text="fmt.currency(row.TaxesAnnual)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">Insurance (annual)</div>
+                                    <div class="font-medium" x-text="fmt.currency(row.InsuranceAnnual)"></div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500">HOA (monthly)</div>
+                                    <div class="font-medium" x-text="fmt.currency(row.HOAmonthly)"></div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex items-center gap-3 text-sm">
+                                <template x-if="row.Link">
+                                    <a :href="row.Link" target="_blank" class="text-indigo-600 underline">View listing</a>
+                                </template>
+                                <span class="text-slate-500" x-show="row.Notes" x-text="row.Notes"></span>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="filteredSorted().length===0" class="text-slate-500 text-sm">No results</div>
+                </div>
+            </section>
+
+            <section
+                class="bg-white rounded-lg shadow-sm border overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-[1100px] w-full">
+                        <thead>
+                            <tr
+                                class="text-left text-xs text-slate-500 border-b">
+                                <th class="px-3 py-2">Tag</th>
+                                <th class="px-3 py-2">Address</th>
+                                <th class="px-3 py-2">City</th>
+                                <th class="px-3 py-2">State</th>
+                                <th class="px-3 py-2 text-right">Beds</th>
+                                <th class="px-3 py-2 text-right">Baths</th>
+                                <th class="px-3 py-2 text-right">Sqft</th>
+                                <th class="px-3 py-2 text-right">Price</th>
+                                <th class="px-3 py-2 text-right">$/Sqft</th>
+                                <th class="px-3 py-2 text-right">Rent est.</th>
+                                <th class="px-3 py-2 text-right">Rent Yield</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="row in filteredSorted()"
+                                :key="row.id">
+                                <tr class="border-b">
+                                    <td class="px-3 py-2">
+                                        <select
+                                            class="px-2 py-1 border rounded-md bg-white text-sm"
+                                            x-model="row.Tag"
+                                            @change="onRowChanged(row)">
+                                            <option>inbox</option><option>visit</option><option>shortlist</option><option>watch</option><option>offer</option><option>hold</option><option>skip</option><option>archived</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-2"><a :href="row.Link"
+                                            target="_blank"
+                                            class="text-teal-600 hover:underline"
+                                            x-text="row.Address"></a></td>
+                                    <td class="px-3 py-2"
+                                        x-text="row.City"></td>
+                                    <td class="px-3 py-2"
+                                        x-text="row.State"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.number(row.Beds, 0)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.number(row.Baths, 0)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.number(row.Sqft, 0)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.currency(row.Price)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.currency(row._PricePerSqft)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="fmt.currency(row.RentZestimate)"></td>
+                                    <td class="px-3 py-2 text-right"
+                                        x-text="row._RentYield != null ? (row._RentYield*100).toFixed(2)+'%' : ''"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Add Modal -->
+            <div x-show="modals.add" x-transition
+                class="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50">
+                <div
+                    class="bg-white w-full md:max-w-2xl rounded-t-lg md:rounded-lg shadow-xl">
+                    <div
+                        class="p-4 border-b flex items-center justify-between"><h3
+                            class="text-lg font-semibold">Add
+                            property</h3><button
+                            class="text-slate-500 hover:text-slate-700"
+                            @click="modals.add=false">✕</button></div>
+                    <form class="p-4 space-y-3" @submit.prevent="submitAdd()">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div><label
+                                    class="text-xs text-slate-500">Address</label><input
+                                    x-model="form.Address" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">City</label><input
+                                    x-model="form.City" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">State</label><input
+                                    x-model="form.State" required
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Beds</label><input
+                                    type="number" step="1"
+                                    x-model.number="form.Beds"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Baths</label><input
+                                    type="number" step="1"
+                                    x-model.number="form.Baths"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Sqft</label><input
+                                    type="number" step="1"
+                                    x-model.number="form.Sqft"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label
+                                    class="text-xs text-slate-500">Price</label><input
+                                    type="number" step="1"
+                                    x-model.number="form.Price"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label class="text-xs text-slate-500">Rent
+                                    estimate</label><input type="number"
+                                    step="1" x-model.number="form.RentZestimate"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label class="text-xs text-slate-500">Taxes
+                                    (annual)</label><input type="number"
+                                    step="1" x-model.number="form.TaxesAnnual"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label class="text-xs text-slate-500">Insurance
+                                    (annual)</label><input type="number"
+                                    step="1"
+                                    x-model.number="form.InsuranceAnnual"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div><label class="text-xs text-slate-500">HOA
+                                    (monthly)</label><input type="number"
+                                    step="1" x-model.number="form.HOAmonthly"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                            <div class="md:col-span-2"><label
+                                    class="text-xs text-slate-500">Notes</label><input
+                                    x-model="form.Notes"
+                                    class="mt-1 w-full px-3 py-2 border rounded-md" /></div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 pt-2">
+                            <button type="button"
+                                class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                                @click="modals.add=false">Close</button>
+                            <button type="submit"
+                                class="px-3 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700">Add
+                                to Inbox</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bulk Modal -->
+            <div x-show="modals.bulk" x-transition
+                class="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50">
+                <div
+                    class="bg-white w-full md:max-w-5xl rounded-t-lg md:rounded-lg shadow-xl">
+                    <div
+                        class="p-4 border-b flex items-center justify-between"><h3
+                            class="text-lg font-semibold">Bulk Add</h3><button
+                            class="text-slate-500 hover:text-slate-700"
+                            @click="modals.bulk=false">✕</button></div>
+                    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-slate-500">Paste CSV/TSV
+                                or table (first row must be headers)</label>
+                            <textarea x-model="bulk.raw"
+                                class="mt-1 w-full h-56 px-3 py-2 border rounded-md font-mono text-sm"></textarea>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button
+                                    class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                                    @click="bulkPreview()">Preview</button>
+                                <button
+                                    class="px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+                                    :disabled="bulk.preview.length===0"
+                                    :class="bulk.preview.length===0 ? 'opacity-50 cursor-not-allowed' : ''"
+                                    @click="bulkCommit()">Add to Inbox</button>
+                            </div>
+                        </div>
+                        <div class="overflow-auto border rounded-md">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr
+                                        class="text-left text-xs text-slate-500 border-b">
+                                        <template x-if="bulk.preview.length>0">
+                                            <template x-for="h in bulk.headers"
+                                                :key="h">
+                                                <th class="px-3 py-2"
+                                                    x-text="h"></th>
+                                            </template>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(r,idx) in bulk.preview"
+                                        :key="idx">
+                                        <tr class="border-b">
+                                            <template x-for="h in bulk.headers"
+                                                :key="h">
+                                                <td class="px-3 py-1 text-sm"
+                                                    x-text="r[h] ?? ''"></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                    <tr x-show="bulk.preview.length===0"><td
+                                            class="px-3 py-8 text-center text-slate-500 text-sm">Preview
+                                            will appear here</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 text-xs text-slate-500">Include headers
+                        like
+                        Address,City,State,Beds,Baths,Sqft,Price,RentZestimate,TaxesAnnual,InsuranceAnnual,HOAmonthly,Notes,Tag,Lat,Lon,Link</div>
+                    <div class="p-4 pt-0 flex items-center justify-end"><button
+                            class="px-3 py-2 rounded-md bg-white shadow-sm border"
+                            @click="modals.bulk=false">Close</button></div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./js/app-single.js"></script>
+    </body>
+</html>
