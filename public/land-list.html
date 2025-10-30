@@ -437,11 +437,8 @@
           if (!res.ok) throw new Error('Failed to load JSON');
           const rows = await res.json();
           const allRows = Array.isArray(rows) ? rows : [];
-          // Filter to only show properties with images
-          const arr = allRows.filter(property => {
-            const images = Array.isArray(property.Images) ? property.Images : [];
-            return images.length > 0;
-          });
+          // Show all properties (including those without images)
+          const arr = allRows.filter(Boolean);
           allProperties = arr;
           document.getElementById('count').textContent = String(arr.length).padStart(3, '0');
           document.getElementById('property-count').textContent = `${arr.length} properties`;
