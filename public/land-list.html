@@ -11,6 +11,12 @@
       html { scroll-behavior: smooth; }
       .compact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
       .property-card { @apply bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-all; }
+      #properties-table tbody tr.selected { @apply bg-blue-50 ring-2 ring-blue-500; }
+      #properties-table tbody tr:hover { @apply bg-slate-50; }
+      @media (max-width: 768px) {
+        #properties-table { font-size: 0.75rem; }
+        #properties-table th, #properties-table td { padding: 0.5rem 0.25rem; }
+      }
       .grid-menu { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
       .menu-item { 
         @apply bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 text-center shadow-sm;
@@ -201,16 +207,46 @@
         </div>
       </section>
 
-      <!-- Detailed Properties Grid -->
-      <section id="detailed-view" class="bg-white rounded-lg border p-3">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-semibold">Properties</h2>
-          <div class="text-xs text-slate-600">Right-click properties to add to
-            calculator</div>
+      <!-- Detailed Properties Table -->
+      <section id="detailed-view" class="bg-white rounded-lg border overflow-hidden">
+        <div class="flex items-center justify-between p-4 border-b bg-slate-50">
+          <h2 class="text-base font-semibold text-slate-800">Properties</h2>
+          <div class="text-xs text-slate-600">Right-click rows to add to calculator</div>
         </div>
-        <div id="list" class="compact-grid"></div>
-        <div id="empty" class="text-center text-slate-500 text-xs hidden">No
-          properties</div>
+        <div class="overflow-x-auto">
+          <table id="properties-table" class="w-full">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('property')">
+                  Property <span class="sort-indicator" data-column="property">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('location')">
+                  Location <span class="sort-indicator" data-column="location">↕</span>
+                </th>
+                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('acres')">
+                  Acres <span class="sort-indicator" data-column="acres">↕</span>
+                </th>
+                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('price')">
+                  Price <span class="sort-indicator" data-column="price">↕</span>
+                </th>
+                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('ppa')">
+                  $/Acre <span class="sort-indicator" data-column="ppa">↕</span>
+                </th>
+                <th class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('water')">
+                  Water <span class="sort-indicator" data-column="water">↕</span>
+                </th>
+                <th class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('tag')">
+                  Status <span class="sort-indicator" data-column="tag">↕</span>
+                </th>
+                <th class="px-4 py-3 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="list" class="divide-y divide-slate-100">
+              <!-- Table rows will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+        <div id="empty" class="text-center text-slate-500 text-sm py-8 hidden">No properties found</div>
       </section>
 
       <!-- Property Calculator Tool -->
@@ -501,82 +537,81 @@
           
           gridMenuContainer.innerHTML = gridMenuItems;
 
-          // Generate compact detailed cards
-          const cards = arr.map((r, index) => {
+          // Generate table rows (Fidelity-style)
+          const tableRows = arr.map((r, index) => {
             const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
-            const details = (r.Note || '').split(/\n+/).slice(0, 3).map(p => `<p class="text-xs text-slate-600">${escapeHtml(p)}</p>`).join('');
             const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
             const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
             const analysis = window.acreAnalysis && regionStats ? window.acreAnalysis.analyzeProperty(r, regionStats) : null;
             const ppaClass = analysis?.ppaColor || '';
-            const researchExtra = (window.Alpine?.store('app')?.research && analysis) ? `
-              <div class="mt-2 text-xs bg-slate-50 border rounded p-2">
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                  ${analysis.badge ? `<span class="px-2 py-0.5 rounded-full ${analysis.badgeColor}">${analysis.badge}</span>` : ''}
-                  ${analysis.signal ? `<span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">${analysis.signal}</span>` : ''}
-                </div>
-                <div class="text-slate-600">${analysis.detail || ''}</div>
-                ${analysis.percentile!=null ? `<div class="text-slate-500">Percentile vs region: ${analysis.percentile}</div>` : ''}
-                ${analysis.regionName ? `<div class="text-slate-500">Region: ${analysis.regionName}</div>` : ''}
-                <div class="mt-1"><a href="#" class="text-emerald-700 underline">Open comp dataset</a></div>
-                <div class="mt-2">
-                  <textarea rows="2" class="w-full border rounded p-1 text-xs" placeholder="Notes..."></textarea>
-                </div>
-              </div>
-            ` : '';
-            
             const images = Array.isArray(r.Images) ? r.Images : [];
-            const imageHtml = images.length > 0 ? `
-              <div class="mb-2">
-                <div class="grid grid-cols-3 gap-1">
-                  ${images.slice(0, 3).map(img => `
-                    <img src="${escapeHtml(img)}" 
-                         alt="${escapeHtml(title)}" 
-                         class="w-full h-16 object-cover rounded border"
-                         loading="lazy"
-                         onerror="this.style.display='none'">
-                  `).join('')}
-                </div>
-                ${images.length > 3 ? `<div class="text-xs text-slate-500 mt-1">+${images.length - 3} more</div>` : ''}
-              </div>
-            ` : '';
+            const firstImage = images.length > 0 ? images[0] : null;
+            const location = [r.State, r.County].filter(Boolean).join(', ');
+            const tagLower = String(r.Tag||'inbox').toLowerCase();
+            const tagClass = tagLower==='shortlist'?'bg-emerald-100 text-emerald-800':tagLower==='watch'?'bg-amber-100 text-amber-800':tagLower==='offer'?'bg-indigo-100 text-indigo-800':'bg-slate-100 text-slate-700';
+            const waterClass = water==='adjacent'?'bg-teal-100 text-teal-800':water==='near'?'bg-blue-100 text-blue-800':'bg-slate-100 text-slate-700';
             
             return `
-            <div id="property-${index}" class="property-card"
-                 oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
-                 title="Right-click to add to calculator">
-              ${imageHtml}
-              <div class="flex items-start justify-between gap-2 mb-2">
-                <div class="min-w-0 flex-1">
-                  <div class="font-semibold text-sm truncate">${escapeHtml(title)}</div>
-                  <div class="text-xs text-slate-500 truncate">${escapeHtml([r.State, r.County].filter(Boolean).join(', '))}</div>
+            <tr id="property-${index}" 
+                class="hover:bg-slate-50 transition-colors border-b border-slate-100"
+                oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
+                data-property-index="${index}"
+                data-price="${r.Price || 0}"
+                data-acres="${r.Acres || 0}"
+                data-ppa="${ppa || 0}"
+                data-water="${water}"
+                data-tag="${tagLower}"
+                data-location="${escapeHtml(location)}"
+                data-property="${escapeHtml(title)}">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-3">
+                  ${firstImage ? `
+                    <img src="${escapeHtml(firstImage)}" 
+                         alt="${escapeHtml(title)}" 
+                         class="w-12 h-12 object-cover rounded border flex-shrink-0"
+                         loading="lazy"
+                         onerror="this.style.display='none'">
+                  ` : `
+                    <div class="w-12 h-12 bg-slate-100 rounded border flex-shrink-0 flex items-center justify-center text-slate-400 text-lg">
+                      🏞️
+                    </div>
+                  `}
+                  <div class="min-w-0">
+                    <div class="font-semibold text-sm text-slate-900 truncate">${escapeHtml(title)}</div>
+                    ${r.Note ? `<div class="text-xs text-slate-500 truncate mt-0.5" title="${escapeHtml(r.Note.substring(0, 100))}">${escapeHtml(r.Note.substring(0, 60))}${r.Note.length > 60 ? '...' : ''}</div>` : ''}
+                  </div>
                 </div>
-                <div class="text-right flex-none">
-                  <div class="text-sm font-medium">${escapeHtml(fmtCurrency(r.Price))}</div>
-                  <div class="text-xs text-slate-500">${escapeHtml(fmtNumber(r.Acres))} acres</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="text-sm text-slate-700">${escapeHtml(r.State || '')}</div>
+                <div class="text-xs text-slate-500">${escapeHtml(r.County || '')}</div>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="text-sm font-medium text-slate-900">${escapeHtml(fmtNumber(r.Acres, 2))}</div>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="text-sm font-semibold text-slate-900">${escapeHtml(fmtCurrency(r.Price))}</div>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="text-sm font-medium ${ppaClass}">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : '—'}</div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${waterClass}">${escapeHtml(water)}</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${tagClass}">${escapeHtml(String(r.Tag||'inbox'))}</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <a href="land-detail.html?id=${index}" 
+                     class="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                     onclick="event.stopPropagation()">Details</a>
+                  ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-xs text-teal-600 hover:text-teal-800 hover:underline" onclick="event.stopPropagation()">Listing</a>` : ''}
                 </div>
-              </div>
-              <div class="grid grid-cols-3 gap-2 text-xs mb-2">
-                <div><div class="text-slate-500">$/acre</div><div class="font-medium ${ppaClass}">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : ''}</div></div>
-                <div>
-                  <div class="text-slate-500">Water</div>
-                  <div class="font-medium"><span class="px-2 py-0.5 rounded-full ${water==='adjacent'?'bg-teal-100 text-teal-800':water==='near'?'bg-blue-100 text-blue-800':'bg-slate-100 text-slate-700'}">${escapeHtml(water)}</span></div>
-                </div>
-                <div>
-                  <div class="text-slate-500">Tag</div>
-                  <div class="font-medium"><span class="px-2 py-0.5 rounded-full ${String(r.Tag||'inbox').toLowerCase()==='shortlist'?'bg-emerald-100 text-emerald-800':String(r.Tag||'inbox').toLowerCase()==='watch'?'bg-amber-100 text-amber-800':String(r.Tag||'inbox').toLowerCase()==='offer'?'bg-indigo-100 text-indigo-800':'bg-slate-100 text-slate-700'}">${escapeHtml(String(r.Tag||'inbox'))}</span></div>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <a href="land-detail.html?id=${index}" class="text-green-600 hover:text-green-800 underline font-medium">See More</a>
-                ${r.Link ? `<a href="${escapeHtml(r.Link)}" target="_blank" class="text-teal-600 underline">View listing</a>` : ''}
-                <button onclick="togglePropertySelection(${index})" class="text-blue-600 hover:text-blue-800 underline">Add to Calculator</button>
-              </div>
-              ${details ? `<div class="mt-2 space-y-1">${details}</div>` : ''}
-              ${researchExtra}
-            </div>`;
+              </td>
+            </tr>`;
           }).join('\n');
-          container.innerHTML = cards;
+          container.innerHTML = tableRows;
           
           generateDistanceMap(arr);
         } catch (e) {
@@ -589,14 +624,92 @@
       let selectedProperties = [];
       let allProperties = [];
       let regionStats = null;
+      let currentSort = { column: null, direction: 'asc' };
+
+      // Table sorting function
+      function sortTable(column) {
+        const tbody = document.getElementById('list');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        // Update sort direction
+        if (currentSort.column === column) {
+          currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSort.column = column;
+          currentSort.direction = 'asc';
+        }
+        
+        // Update sort indicators
+        document.querySelectorAll('.sort-indicator').forEach(ind => {
+          ind.textContent = '↕';
+        });
+        const indicator = document.querySelector(`.sort-indicator[data-column="${column}"]`);
+        if (indicator) {
+          indicator.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+        }
+        
+        // Sort rows
+        rows.sort((a, b) => {
+          let aVal, bVal;
+          
+          switch(column) {
+            case 'property':
+              aVal = a.dataset.property || '';
+              bVal = b.dataset.property || '';
+              return currentSort.direction === 'asc' 
+                ? aVal.localeCompare(bVal) 
+                : bVal.localeCompare(aVal);
+            case 'location':
+              aVal = a.dataset.location || '';
+              bVal = b.dataset.location || '';
+              return currentSort.direction === 'asc' 
+                ? aVal.localeCompare(bVal) 
+                : bVal.localeCompare(aVal);
+            case 'acres':
+              aVal = parseFloat(a.dataset.acres) || 0;
+              bVal = parseFloat(b.dataset.acres) || 0;
+              return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+            case 'price':
+              aVal = parseFloat(a.dataset.price) || 0;
+              bVal = parseFloat(b.dataset.price) || 0;
+              return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+            case 'ppa':
+              aVal = parseFloat(a.dataset.ppa) || 0;
+              bVal = parseFloat(b.dataset.ppa) || 0;
+              return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+            case 'water':
+              const waterOrder = { 'adjacent': 0, 'near': 1, 'far': 2 };
+              aVal = waterOrder[a.dataset.water] ?? 3;
+              bVal = waterOrder[b.dataset.water] ?? 3;
+              return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+            case 'tag':
+              aVal = a.dataset.tag || 'inbox';
+              bVal = b.dataset.tag || 'inbox';
+              return currentSort.direction === 'asc' 
+                ? aVal.localeCompare(bVal) 
+                : bVal.localeCompare(aVal);
+            default:
+              return 0;
+          }
+        });
+        
+        // Re-append sorted rows
+        rows.forEach(row => tbody.appendChild(row));
+      }
 
       // Scroll to property in detailed view
       function scrollToProperty(index) {
         const element = document.getElementById(`property-${index}`);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          element.style.backgroundColor = '#fef3c7';
-          setTimeout(() => { element.style.backgroundColor = ''; }, 2000);
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('bg-yellow-50');
+          element.classList.add('ring-2');
+          element.classList.add('ring-yellow-400');
+          setTimeout(() => { 
+            element.classList.remove('bg-yellow-50');
+            element.classList.remove('ring-2');
+            element.classList.remove('ring-yellow-400');
+          }, 2000);
         }
       }
 
@@ -605,17 +718,17 @@
         const property = allProperties[index];
         if (!property) return;
 
-        const card = document.getElementById(`property-${index}`);
+        const row = document.getElementById(`property-${index}`);
         const menuItem = document.getElementById(`menu-item-${index}`);
         const isSelected = selectedProperties.some(p => p.index === index);
         
         if (isSelected) {
           selectedProperties = selectedProperties.filter(p => p.index !== index);
-          card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+          row.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
           menuItem.classList.remove('selected');
         } else {
           selectedProperties.push({...property, index});
-          card.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+          row.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
           menuItem.classList.add('selected');
         }
         
@@ -710,9 +823,9 @@
       function removeFromSelection(index) {
         const removed = selectedProperties[index];
         selectedProperties.splice(index, 1);
-        const card = document.getElementById(`property-${removed.index}`);
+        const row = document.getElementById(`property-${removed.index}`);
         const menuItem = document.getElementById(`menu-item-${removed.index}`);
-        card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        row.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
         menuItem.classList.remove('selected');
         updateCalculator();
       }
@@ -720,9 +833,9 @@
       // Clear all selections
       function clearSelection() {
         selectedProperties.forEach(prop => {
-          const card = document.getElementById(`property-${prop.index}`);
+          const row = document.getElementById(`property-${prop.index}`);
           const menuItem = document.getElementById(`menu-item-${prop.index}`);
-          card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+          row.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
           menuItem.classList.remove('selected');
         });
         selectedProperties = [];
