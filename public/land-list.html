@@ -7,40 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="js/acreAnalysis.js"></script>
-    <style>
-      html { scroll-behavior: smooth; }
-      .compact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
-      .property-card { @apply bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-all; }
-      #properties-table tbody tr.selected { @apply bg-blue-50 ring-2 ring-blue-500; }
-      #properties-table tbody tr:hover { @apply bg-slate-50; }
-      @media (max-width: 768px) {
-        #properties-table { font-size: 0.75rem; }
-        #properties-table th, #properties-table td { padding: 0.5rem 0.25rem; }
-      }
-      .grid-menu { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
-      .menu-item { 
-        @apply bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 text-center shadow-sm;
-        border-left: 4px solid #e5e7eb;
-      }
-      .menu-item:hover {
-        border-left-color: #3b82f6;
-        transform: translateY(-1px);
-      }
-      .menu-item.selected {
-        border-left-color: #10b981;
-        background-color: #f0fdf4;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-      }
-      .nav-link {
-        @apply px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors;
-      }
-      .mobile-nav-link {
-        @apply block px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors;
-      }
-      .action-btn {
-        @apply px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors;
-      }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
   </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen">
     <!-- Enhanced Top Navigation -->
@@ -1056,8 +1023,5 @@
 
       main();
     </script>
-    <style>
-      @media print { .no-print { display: none !important; } body { background: white; } }
-    </style>
   </body>
 </html>
