@@ -94,6 +94,72 @@
     </nav>
 
     <div class="max-w-7xl mx-auto p-3 space-y-3">
+      <!-- Detailed Properties Table -->
+      <section id="detailed-view"
+        class="bg-white rounded-lg border overflow-hidden">
+        <div class="flex items-center justify-between p-4 border-b bg-slate-50">
+          <h2 class="text-base font-semibold text-slate-800">Properties</h2>
+          <div class="text-xs text-slate-600">Right-click rows to add to
+            calculator</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="properties-table" class="w-full">
+            <thead>
+              <tr
+                class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <th
+                  class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('property')">
+                  Property <span class="sort-indicator"
+                    data-column="property">↕</span>
+                </th>
+                <th
+                  class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('location')">
+                  Location <span class="sort-indicator"
+                    data-column="location">↕</span>
+                </th>
+                <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('acres')">
+                  Acres <span class="sort-indicator"
+                    data-column="acres">↕</span>
+                </th>
+                <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('price')">
+                  Price <span class="sort-indicator"
+                    data-column="price">↕</span>
+                </th>
+                <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('ppa')">
+                  $/Acre <span class="sort-indicator" data-column="ppa">↕</span>
+                </th>
+                <th
+                  class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('water')">
+                  Water <span class="sort-indicator"
+                    data-column="water">↕</span>
+                </th>
+                <th
+                  class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('tag')">
+                  Status <span class="sort-indicator" data-column="tag">↕</span>
+                </th>
+                <th class="px-4 py-3 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="list" class="divide-y divide-slate-100">
+              <!-- Table rows will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+        <div id="empty"
+          class="text-center text-slate-500 text-sm py-8 hidden">No properties
+          found</div>
+      </section>
+
       <!-- Compact Western MA Alternatives -->
       <section
         class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border p-3">
@@ -165,72 +231,6 @@
               stats...</div>
           </div>
         </div>
-      </section>
-
-      <!-- Detailed Properties Table -->
-      <section id="detailed-view"
-        class="bg-white rounded-lg border overflow-hidden">
-        <div class="flex items-center justify-between p-4 border-b bg-slate-50">
-          <h2 class="text-base font-semibold text-slate-800">Properties</h2>
-          <div class="text-xs text-slate-600">Right-click rows to add to
-            calculator</div>
-        </div>
-        <div class="overflow-x-auto">
-          <table id="properties-table" class="w-full">
-            <thead>
-              <tr
-                class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                <th
-                  class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('property')">
-                  Property <span class="sort-indicator"
-                    data-column="property">↕</span>
-                </th>
-                <th
-                  class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('location')">
-                  Location <span class="sort-indicator"
-                    data-column="location">↕</span>
-                </th>
-                <th
-                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('acres')">
-                  Acres <span class="sort-indicator"
-                    data-column="acres">↕</span>
-                </th>
-                <th
-                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('price')">
-                  Price <span class="sort-indicator"
-                    data-column="price">↕</span>
-                </th>
-                <th
-                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('ppa')">
-                  $/Acre <span class="sort-indicator" data-column="ppa">↕</span>
-                </th>
-                <th
-                  class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('water')">
-                  Water <span class="sort-indicator"
-                    data-column="water">↕</span>
-                </th>
-                <th
-                  class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
-                  onclick="sortTable('tag')">
-                  Status <span class="sort-indicator" data-column="tag">↕</span>
-                </th>
-                <th class="px-4 py-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="list" class="divide-y divide-slate-100">
-              <!-- Table rows will be inserted here -->
-            </tbody>
-          </table>
-        </div>
-        <div id="empty"
-          class="text-center text-slate-500 text-sm py-8 hidden">No properties
-          found</div>
       </section>
 
       <!-- Property Calculator Tool -->
