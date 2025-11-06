@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AGSCOUT — Land List</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="js/acreAnalysis.js"></script>
     <link rel="stylesheet" href="css/styles.css">
   </head>
@@ -24,10 +25,9 @@
 
           <!-- Main Navigation -->
           <div class="hidden lg:flex items-center space-x-1">
-            <a href="#grid-menu" class="nav-link">Overview</a>
+            <a href="#detailed-view" class="nav-link">Overview</a>
             <a href="#detailed-view" class="nav-link">Properties</a>
             <a href="#calculator" class="nav-link">Calculator</a>
-            <a href="#distance-map" class="nav-link">Distance</a>
             <a href="#financing" class="nav-link">Financing</a>
             <a href="#strategy" class="nav-link">Strategy</a>
             <a href="#vision" class="nav-link">Vision</a>
@@ -67,21 +67,21 @@
               </svg>
               <span class="hidden sm:inline">Hub</span>
             </a>
-            <button onclick="toggleResearchMode()" class="action-btn bg-emerald-600 text-white hover:bg-emerald-700" title="Toggle Research Mode">Research Mode</button>
+            <button onclick="toggleResearchMode()"
+              class="action-btn bg-emerald-600 text-white hover:bg-emerald-700"
+              title="Toggle Research Mode">Research Mode</button>
           </div>
         </div>
 
         <!-- Mobile Navigation Menu -->
         <div id="mobile-menu" class="lg:hidden hidden border-t bg-slate-50">
           <div class="px-3 py-2 space-y-1">
-            <a href="#grid-menu" class="mobile-nav-link"
+            <a href="#detailed-view" class="mobile-nav-link"
               onclick="closeMobileMenu()">Overview</a>
             <a href="#detailed-view" class="mobile-nav-link"
               onclick="closeMobileMenu()">Properties</a>
             <a href="#calculator" class="mobile-nav-link"
               onclick="closeMobileMenu()">Calculator</a>
-            <a href="#distance-map" class="mobile-nav-link"
-              onclick="closeMobileMenu()">Distance</a>
             <a href="#financing" class="mobile-nav-link"
               onclick="closeMobileMenu()">Financing</a>
             <a href="#strategy" class="mobile-nav-link"
@@ -141,68 +141,83 @@
 
       <!-- Market Benchmarks -->
       <section id="market-benchmarks" class="bg-white rounded-lg border p-3">
-        <button onclick="toggleDropdown('benchmarks-body')" class="w-full text-left flex items-center justify-between">
+        <button onclick="toggleDropdown('benchmarks-body')"
+          class="w-full text-left flex items-center justify-between">
           <h2 class="text-base font-semibold">Market Benchmarks</h2>
           <span id="benchmarks-body-arrow" class="text-slate-400">▼</span>
         </button>
         <div id="benchmarks-body" class="mt-2 hidden">
-          <div id="benchmarks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
-          <div id="benchmarks-empty" class="text-xs text-slate-500 italic">Loading benchmarks...</div>
+          <div id="benchmarks-list"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+          <div id="benchmarks-empty"
+            class="text-xs text-slate-500 italic">Loading benchmarks...</div>
           <div class="mt-3 border-t pt-3">
             <div class="flex items-center justify-between mb-2">
-              <h3 class="text-sm font-semibold text-slate-800">Region Acre Stats (computed)</h3>
-              <a href="data/region_acre_stats.json" target="_blank" class="text-xs text-emerald-700 underline">View JSON</a>
+              <h3 class="text-sm font-semibold text-slate-800">Region Acre Stats
+                (computed)</h3>
+              <a href="data/region_acre_stats.json" target="_blank"
+                class="text-xs text-emerald-700 underline">View JSON</a>
             </div>
-            <div id="region-stats-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
-            <div id="region-stats-empty" class="text-xs text-slate-500 italic">Loading region acre stats...</div>
+            <div id="region-stats-list"
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+            <div id="region-stats-empty"
+              class="text-xs text-slate-500 italic">Loading region acre
+              stats...</div>
           </div>
         </div>
       </section>
 
-      <!-- Property Grid Menu -->
-      <section id="grid-menu" class="bg-white rounded-lg border p-3">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold">Property Grid Menu</h2>
-          <div class="text-xs text-slate-600">Total: <strong
-              id="count">0</strong> properties</div>
-        </div>
-        <div id="grid-menu" class="grid-menu"></div>
-        <div id="grid-menu-empty"
-          class="text-center text-slate-500 text-sm hidden py-8">
-          <div class="text-4xl mb-2">🏞️</div>
-          <div>No properties found</div>
-        </div>
-      </section>
-
       <!-- Detailed Properties Table -->
-      <section id="detailed-view" class="bg-white rounded-lg border overflow-hidden">
+      <section id="detailed-view"
+        class="bg-white rounded-lg border overflow-hidden">
         <div class="flex items-center justify-between p-4 border-b bg-slate-50">
           <h2 class="text-base font-semibold text-slate-800">Properties</h2>
-          <div class="text-xs text-slate-600">Right-click rows to add to calculator</div>
+          <div class="text-xs text-slate-600">Right-click rows to add to
+            calculator</div>
         </div>
         <div class="overflow-x-auto">
           <table id="properties-table" class="w-full">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('property')">
-                  Property <span class="sort-indicator" data-column="property">↕</span>
+              <tr
+                class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <th
+                  class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('property')">
+                  Property <span class="sort-indicator"
+                    data-column="property">↕</span>
                 </th>
-                <th class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('location')">
-                  Location <span class="sort-indicator" data-column="location">↕</span>
+                <th
+                  class="px-4 py-3 text-left cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('location')">
+                  Location <span class="sort-indicator"
+                    data-column="location">↕</span>
                 </th>
-                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('acres')">
-                  Acres <span class="sort-indicator" data-column="acres">↕</span>
+                <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('acres')">
+                  Acres <span class="sort-indicator"
+                    data-column="acres">↕</span>
                 </th>
-                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('price')">
-                  Price <span class="sort-indicator" data-column="price">↕</span>
+                <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('price')">
+                  Price <span class="sort-indicator"
+                    data-column="price">↕</span>
                 </th>
-                <th class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('ppa')">
+                <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('ppa')">
                   $/Acre <span class="sort-indicator" data-column="ppa">↕</span>
                 </th>
-                <th class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('water')">
-                  Water <span class="sort-indicator" data-column="water">↕</span>
+                <th
+                  class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('water')">
+                  Water <span class="sort-indicator"
+                    data-column="water">↕</span>
                 </th>
-                <th class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('tag')">
+                <th
+                  class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('tag')">
                   Status <span class="sort-indicator" data-column="tag">↕</span>
                 </th>
                 <th class="px-4 py-3 text-center">Actions</th>
@@ -213,7 +228,9 @@
             </tbody>
           </table>
         </div>
-        <div id="empty" class="text-center text-slate-500 text-sm py-8 hidden">No properties found</div>
+        <div id="empty"
+          class="text-center text-slate-500 text-sm py-8 hidden">No properties
+          found</div>
       </section>
 
       <!-- Property Calculator Tool -->
@@ -245,22 +262,6 @@
                 calculations</div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- Distance Map -->
-      <section id="distance-map"
-        class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border p-3">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-slate-800">Distance Map</h2>
-          <div class="text-xs text-slate-600">From 206 Saint John Street</div>
-        </div>
-        <div
-          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"
-          id="distance-map">
-          <div
-            class="text-center text-slate-500 italic text-xs col-span-full">Loading
-            distances...</div>
         </div>
       </section>
 
@@ -443,16 +444,12 @@
           // Show all properties (including those without images)
           const arr = allRows.filter(Boolean);
           allProperties = arr;
-          document.getElementById('count').textContent = String(arr.length).padStart(3, '0');
           document.getElementById('property-count').textContent = `${arr.length} properties`;
           
-          const gridMenuContainer = document.getElementById('grid-menu');
-          const gridMenuEmpty = document.getElementById('grid-menu-empty');
           const container = document.getElementById('list');
           const empty = document.getElementById('empty');
           
           if (arr.length === 0) { 
-            gridMenuEmpty.classList.remove('hidden');
             empty.classList.remove('hidden'); 
             return; 
           }
@@ -462,47 +459,7 @@
           const escapeHtml = (s) => String(s==null?'':s)
             .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 
-          // Generate grid menu items
-          const gridMenuItems = arr.map((r, index) => {
-            const title = `${r.Town || ''} — ${r.Parcel || ''}`.trim();
-            const water = (r.WaterProximity===0) ? 'adjacent' : ((r.WaterProximity!=null && isFinite(Number(r.WaterProximity)) && Number(r.WaterProximity)<=900) ? 'near' : 'far');
-            const images = Array.isArray(r.Images) ? r.Images : [];
-            const firstImage = images.length > 0 ? images[0] : null;
-            const ppa = (r.Price && r.Acres) ? (Number(r.Price)/Number(r.Acres)) : null;
-            
-            return `
-            <div class="menu-item" 
-                 onclick="scrollToProperty(${index})"
-                 oncontextmenu="event.preventDefault(); togglePropertySelection(${index}); return false;"
-                 data-property-index="${index}"
-                 id="menu-item-${index}"
-                 title="Click to view details • Right-click to add to calculator">
-              <div class="w-16 h-16 mx-auto mb-2 bg-slate-100 rounded-lg overflow-hidden">
-                ${firstImage ? `
-                  <img src="${escapeHtml(firstImage)}" 
-                       alt="${escapeHtml(title)}" 
-                       class="w-full h-full object-cover"
-                       loading="lazy"
-                       onerror="this.style.display='none'">
-                ` : `
-                  <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs">
-                    🏞️
-                  </div>
-                `}
-              </div>
-              <div class="font-semibold text-base truncate mb-1" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
-              <div class="text-xl font-extrabold text-green-700 mb-0.5">${escapeHtml(fmtCurrency(r.Price))}</div>
-              <div class="text-sm text-slate-600 mb-2">${escapeHtml(fmtNumber(r.Acres))} acres</div>
-              <div class="flex justify-center gap-1 mb-2">
-                <span class="px-2 py-0.5 bg-slate-100 text-xs rounded-full">${escapeHtml(String(r.Tag||'inbox'))}</span>
-                <span class="px-2 py-0.5 bg-blue-100 text-xs rounded-full">${escapeHtml(water)}</span>
-              </div>
-              <div class="text-xs text-slate-400 mb-2">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) + '/acre' : ''}</div>
-              <a href="land-detail.html?id=${index}" class="text-xs text-green-600 hover:text-green-800 underline font-medium">See More</a>
-            </div>`;
-          }).join('\n');
           
-          gridMenuContainer.innerHTML = gridMenuItems;
 
           // Generate table rows (Fidelity-style)
           const tableRows = arr.map((r, index) => {
@@ -579,8 +536,6 @@
             </tr>`;
           }).join('\n');
           container.innerHTML = tableRows;
-          
-          generateDistanceMap(arr);
         } catch (e) {
           document.getElementById('empty').textContent = 'Failed to load land.json';
           document.getElementById('empty').classList.remove('hidden');
@@ -692,11 +647,11 @@
         if (isSelected) {
           selectedProperties = selectedProperties.filter(p => p.index !== index);
           row.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-          menuItem.classList.remove('selected');
+          if (menuItem) menuItem.classList.remove('selected');
         } else {
           selectedProperties.push({...property, index});
           row.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
-          menuItem.classList.add('selected');
+          if (menuItem) menuItem.classList.add('selected');
         }
         
         updateCalculator();
@@ -793,7 +748,7 @@
         const row = document.getElementById(`property-${removed.index}`);
         const menuItem = document.getElementById(`menu-item-${removed.index}`);
         row.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-        menuItem.classList.remove('selected');
+        if (menuItem) menuItem.classList.remove('selected');
         updateCalculator();
       }
 
@@ -803,7 +758,7 @@
           const row = document.getElementById(`property-${prop.index}`);
           const menuItem = document.getElementById(`menu-item-${prop.index}`);
           row.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
-          menuItem.classList.remove('selected');
+          if (menuItem) menuItem.classList.remove('selected');
         });
         selectedProperties = [];
         updateCalculator();
@@ -823,108 +778,7 @@
         }
       }
 
-      // Generate distance map
-      function generateDistanceMap(properties) {
-        const homeAddress = "206 Saint John Street";
-        const distanceContainer = document.getElementById('distance-map');
-        
-        if (properties.length === 0) {
-          distanceContainer.innerHTML = '<div class="text-center text-slate-500 italic text-xs col-span-full">No properties to map</div>';
-          return;
-        }
-
-        const homeCoords = { lat: 41.3083, lng: -72.9279 };
-        
-        const distanceCards = properties.map((prop, index) => {
-          const address = `${prop.Parcel}, ${prop.Town}, ${prop.State}`;
-          const distance = calculateDistance(homeCoords, getPropertyCoords(prop));
-          const driveTime = estimateDriveTime(distance);
-          
-          const images = Array.isArray(prop.Images) ? prop.Images : [];
-          const firstImage = images.length > 0 ? images[0] : null;
-          
-          return `
-            <div class="bg-white rounded-lg p-3 border shadow-sm text-center hover:shadow-md transition-shadow cursor-pointer"
-                 onclick="scrollToProperty(${index})"
-                 title="Click to view property details">
-              <div class="w-12 h-12 mx-auto mb-2 rounded-lg overflow-hidden bg-slate-100">
-                ${firstImage ? `
-                  <img src="${firstImage}" 
-                       alt="${prop.Town} property" 
-                       class="w-full h-full object-cover"
-                       loading="lazy"
-                       onerror="this.style.display='none'">
-                ` : `
-                  <div class="w-full h-full flex items-center justify-center text-slate-400 text-lg">
-                    🏞️
-                  </div>
-                `}
-              </div>
-              
-              <div class="text-xs font-medium text-slate-700 mb-1 truncate" title="${prop.Town}, ${prop.State}">${prop.Town}, ${prop.State}</div>
-              <div class="text-xs text-slate-500 mb-2 truncate" title="${address}">${prop.Parcel}</div>
-              
-              <div class="text-xl font-bold text-green-600 mb-1">${distance.toFixed(1)} mi</div>
-              <div class="text-xs text-slate-600 mb-2">${driveTime}</div>
-              
-              <div class="space-y-1">
-                <div class="text-sm font-semibold text-slate-800">$${Number(prop.Price).toLocaleString()}</div>
-                <div class="text-xs text-slate-500">${prop.Acres} acres</div>
-                <div class="text-xs text-slate-400">$${Math.round(Number(prop.Price)/Number(prop.Acres)).toLocaleString()}/acre</div>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        distanceContainer.innerHTML = distanceCards;
-      }
-
-      // Get property coordinates
-      function getPropertyCoords(property) {
-        const coords = {
-          'Cheshire': { lat: 41.4981, lng: -72.9007 },
-          'Sherman': { lat: 41.5804, lng: -73.4962 },
-          'Torrington': { lat: 41.8009, lng: -73.1212 },
-          'Smithfield': { lat: 41.8887, lng: -71.5495 },
-          'Lebanon': { lat: 41.6440, lng: -72.2100 },
-          'Norwich': { lat: 41.5245, lng: -72.0759 },
-          'Putnam': { lat: 41.9154, lng: -71.9089 },
-          'Clifton Park': { lat: 42.8656, lng: -73.7708 },
-          'Monterey': { lat: 42.1895, lng: -73.2121 },
-          'Tolland': { lat: 42.0648, lng: -72.9990 },
-          'Ware': { lat: 42.2598, lng: -72.2398 },
-          'New Marlborough': { lat: 42.1220, lng: -73.2284 },
-          'Brimfield': { lat: 42.1226, lng: -72.2006 },
-          'Sheffield': { lat: 42.1098, lng: -73.3551 },
-          'Becket': { lat: 42.3333, lng: -73.0833 },
-          'Hinsdale': { lat: 42.4333, lng: -73.1167 },
-          'Florida': { lat: 42.6667, lng: -73.0167 },
-          'North Adams': { lat: 42.7000, lng: -73.1167 }
-        };
-        
-        return coords[property.Town] || { lat: 41.3083, lng: -72.9279 };
-      }
-
-      // Calculate distance using Haversine formula
-      function calculateDistance(coord1, coord2) {
-        const R = 3959;
-        const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
-        const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
-                  Math.sin(dLng/2) * Math.sin(dLng/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
-      }
-
-      // Estimate drive time
-      function estimateDriveTime(distance) {
-        if (distance < 5) return '~10-15 min';
-        if (distance < 15) return '~20-30 min';
-        if (distance < 30) return '~30-45 min';
-        if (distance < 50) return '~45-60 min';
-        return '~1+ hours';
-      }
+      
 
       // Mobile menu functions
       function toggleMobileMenu() {
