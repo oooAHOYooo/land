@@ -137,6 +137,12 @@
                   $/Acre <span class="sort-indicator" data-column="ppa">↕</span>
                 </th>
                 <th
+                  class="px-4 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors"
+                  onclick="sortTable('distance')">
+                  Distance <span class="sort-indicator"
+                    data-column="distance">↕</span>
+                </th>
+                <th
                   class="px-4 py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors"
                   onclick="sortTable('water')">
                   Water <span class="sort-indicator"
@@ -474,6 +480,8 @@
             const tagLower = String(r.Tag||'inbox').toLowerCase();
             const tagClass = tagLower==='shortlist'?'bg-emerald-100 text-emerald-800':tagLower==='watch'?'bg-amber-100 text-amber-800':tagLower==='offer'?'bg-indigo-100 text-indigo-800':'bg-slate-100 text-slate-700';
             const waterClass = water==='adjacent'?'bg-teal-100 text-teal-800':water==='near'?'bg-blue-100 text-blue-800':'bg-slate-100 text-slate-700';
+            const coords = getPropertyCoords(r);
+            const distance = coords ? calculateDistance(homeCoords, coords) : null;
             
             return `
             <tr id="property-${index}" 
@@ -483,6 +491,7 @@
                 data-price="${r.Price || 0}"
                 data-acres="${r.Acres || 0}"
                 data-ppa="${ppa || 0}"
+                data-distance="${Number.isFinite(distance) ? distance : ''}"
                 data-water="${water}"
                 data-tag="${tagLower}"
                 data-location="${escapeHtml(location)}"
@@ -519,6 +528,9 @@
               <td class="px-4 py-3 text-right">
                 <div class="text-sm font-medium ${ppaClass}">${ppa!=null ? escapeHtml(fmtCurrency(ppa)) : '—'}</div>
               </td>
+              <td class="px-4 py-3 text-right">
+                <div class="text-sm text-slate-900">${Number.isFinite(distance) ? escapeHtml(distance.toFixed(1)) + ' mi' : '—'}</div>
+              </td>
               <td class="px-4 py-3 text-center">
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${waterClass}">${escapeHtml(water)}</span>
               </td>
@@ -547,6 +559,7 @@
       let allProperties = [];
       let regionStats = null;
       let currentSort = { column: null, direction: 'asc' };
+      const homeCoords = { lat: 41.3083, lng: -72.9279 };
 
       // Table sorting function
       function sortTable(column) {
@@ -598,6 +611,12 @@
             case 'ppa':
               aVal = parseFloat(a.dataset.ppa) || 0;
               bVal = parseFloat(b.dataset.ppa) || 0;
+              return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+            case 'distance':
+              aVal = parseFloat(a.dataset.distance);
+              bVal = parseFloat(b.dataset.distance);
+              if (!isFinite(aVal)) aVal = Infinity;
+              if (!isFinite(bVal)) bVal = Infinity;
               return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
             case 'water':
               const waterOrder = { 'adjacent': 0, 'near': 1, 'far': 2 };
@@ -776,6 +795,54 @@
           section.classList.add('hidden');
           arrow.textContent = '▼';
         }
+      }
+
+      // Distance utilities
+      function getPropertyCoords(property) {
+        // Prefer explicit lat/lon if provided
+        const lat = property.Lat;
+        const lon = property.Lon;
+        if (lat != null && lon != null && isFinite(Number(lat)) && isFinite(Number(lon))) {
+          return { lat: Number(lat), lng: Number(lon) };
+        }
+        const coords = {
+          'Cheshire': { lat: 41.4981, lng: -72.9007 },
+          'Sherman': { lat: 41.5804, lng: -73.4962 },
+          'Torrington': { lat: 41.8009, lng: -73.1212 },
+          'Winchester': { lat: 41.9215, lng: -73.0701 },
+          'Winsted': { lat: 41.9212, lng: -73.0607 },
+          'Watertown': { lat: 41.6065, lng: -73.1184 },
+          'Plymouth': { lat: 41.6718, lng: -73.0523 },
+          'Colebrook': { lat: 42.0215, lng: -73.0971 },
+          'Bethlehem': { lat: 41.6393, lng: -73.2034 },
+          'Lebanon': { lat: 41.6440, lng: -72.2100 },
+          'Norwich': { lat: 41.5245, lng: -72.0759 },
+          'Putnam': { lat: 41.9154, lng: -71.9089 },
+          'Clifton Park': { lat: 42.8656, lng: -73.7708 },
+          'Monterey': { lat: 42.1895, lng: -73.2121 },
+          'Tolland': { lat: 42.0648, lng: -72.9990 },
+          'Ware': { lat: 42.2598, lng: -72.2398 },
+          'New Marlborough': { lat: 42.1220, lng: -73.2284 },
+          'Brimfield': { lat: 42.1226, lng: -72.2006 },
+          'Sheffield': { lat: 42.1098, lng: -73.3551 },
+          'Becket': { lat: 42.3333, lng: -73.0833 },
+          'Hinsdale': { lat: 42.4333, lng: -73.1167 },
+          'Florida': { lat: 42.6667, lng: -73.0167 },
+          'North Adams': { lat: 42.7000, lng: -73.1167 }
+        };
+        return coords[property.Town] || null;
+      }
+
+      function calculateDistance(coord1, coord2) {
+        if (!coord1 || !coord2) return null;
+        const R = 3959; // miles
+        const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
+        const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
       }
 
       
