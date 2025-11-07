@@ -167,12 +167,12 @@
     "Acres": 7.60,
     "Price": 79900,
     "WaterProximity": null,
-    "Link": "https://www.zillow.com/homedetails/0-Covell-Rd-Tolland-MA-01034/93320345_zpid/",
+    "Link": "https://agscout.netlify.app/land-detail.html?id=9",
     "Lat": null,
     "Lon": null,
-    "Tag": "inbox",
+    "Tag": "film_retreat",
     "Images": [],
-    "Note": "7.6 acres in Tolland, MA—good size for your studio/retreat build out. Zillow listing shows land in wooded setting."
+    "Note": "7.6 acres in Tolland, MA — wooded and secluded. Excellent for modular development: yurt cluster + solar + timber studio. Room for driveway and water system."
   },
   {
     "State": "MA",
@@ -193,16 +193,16 @@
     "State": "MA",
     "County": "Berkshire",
     "Town": "New Marlborough",
-    "Parcel": "10.7 Acre Lot Boardman St",
+    "Parcel": "Boardman St (10.7 ac Lot)",
     "Acres": 10.70,
     "Price": 169000,
     "WaterProximity": null,
-    "Link": "https://www.landsearch.com/properties/10-7-acre-lot-boardman-st-new-marlborough-ma-01230/437652",
+    "Link": "https://agscout.netlify.app/land-detail.html?id=11",
     "Lat": null,
     "Lon": null,
-    "Tag": "inbox",
+    "Tag": "film_retreat",
     "Images": [],
-    "Note": "10.7-acre parcel in New Marlborough, MA. Enough space to build retreat compound; check for terrain and stream."
+    "Note": "10.7-acre parcel in New Marlborough, MA. Mixed woods and open field potential; quiet backroad access. Ample space for main studio and long-term retreat growth."
   },
   {
     "State": "MA",
@@ -272,12 +272,12 @@
     "Acres": 2.47,
     "Price": 21000,
     "WaterProximity": null,
-    "Link": "https://www.zillow.com/homedetails/26-Stoney-Brk-Becket-MA-01223/449571546_zpid/",
+    "Link": "https://agscout.netlify.app/land-detail.html?id=16",
     "Lat": null,
     "Lon": null,
-    "Tag": "inbox",
+    "Tag": "film_retreat",
     "Images": [],
-    "Note": "Wooded 2.47 acres; quiet road in Becket. 196 days on Zillow. MLS: 245925."
+    "Note": "Wooded 2.47-acre lot on a quiet road in Becket, MA. Ideal for first yurt and solar setup. Near Sherwood Forest lakes. Rural but drivable from New Haven."
   },
   {
     "State": "MA",
@@ -391,13 +391,13 @@
     "Parcel": "Tilda Hill Rd",
     "Acres": 3.8,
     "Price": 30000,
-    "WaterProximity": null,
-    "Link": "https://www.zillow.com/north-adams-ma-01247/land/",
+    "WaterProximity": 0,
+    "Link": "https://agscout.netlify.app/land-detail.html?id=24",
     "Lat": null,
     "Lon": null,
-    "Tag": "inbox",
+    "Tag": "film_retreat",
     "Images": [],
-    "Note": "North Berkshire (town of Florida, MA). 3.8 wooded acres, listed at $30,000 (MLS #247890 – appears in the 01247 land feed)."
+    "Note": "North Berkshire (town of Florida, MA). 3.8 wooded acres with intermittent stream noted in listing. Good candidate for off-grid retreat with water access and road frontage."
   },
   {
     "State": "MA",
@@ -472,16 +472,16 @@
     "Acres": 3.57,
     "Price": 23500,
     "WaterProximity": null,
-    "Link": "https://www.land.com/property/0-hopkins-lane-becket-ma-01223/24682449",
+    "Link": "https://agscout.netlify.app/land-detail.html?id=29",
     "Lat": null,
     "Lon": null,
-    "Tag": "inbox",
+    "Tag": "film_retreat",
     "Images": [
       "https://assets.land.com/resizedimages/600/0/h/80/w/1-5796589515",
       "https://assets.land.com/resizedimages/600/0/h/80/w/1-5796589522",
       "https://assets.land.com/resizedimages/600/0/h/80/w/1-5796589520"
     ],
-    "Note": "3.57-acre raw parcel on quiet Hopkins Lane in Becket, MA. Nestled in the heart of the Berkshires, this wooded lot offers a serene natural setting while being within easy reach of year-round recreation. Perfect for building a full-time residence, seasonal getaway, or investment. Becket features natural beauty, hiking trails, pristine lakes, and cultural attractions like Jacob's Pillow. Convenient to Lee, Lenox, and the Mass Pike. Directions: Wade Inn Road to Hopkins Lane, lot on right heading toward Bancroft Road, about 800 feet past Partridge Road, telephone pole 16 16 in front of property. Listed by Peter West - BISHOP WEST REAL ESTATE LLC (413-300-2290). MLS# 247631. Property ID 24682449. Listed October 21, 2025."
+    "Note": "3.57-acre raw parcel on quiet Hopkins Lane. Near Indian Lake Estates. Great privacy and tree coverage; strong fit for solar and small studio build."
   },
   {
     "State": null,
