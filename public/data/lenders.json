@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Greylock Federal Credit Union",
+    "link": "https://www.greylock.org",
+    "rateRange": "Land loans ~7–9% APR",
+    "note": "Local land loans in Berkshires; best for property-specific financing"
+  },
+  {
+    "name": "Lee Bank",
+    "link": "https://www.leebank.com",
+    "rateRange": "Land loans ~7–9% APR",
+    "note": "Regional lender familiar with Berkshire County parcels"
+  },
+  {
+    "name": "SoFi",
+    "link": "https://www.sofi.com",
+    "rateRange": "Personal loans ~10–13% APR",
+    "note": "Fast pre-qualification; good for small loan gaps"
+  },
+  {
+    "name": "LightStream",
+    "link": "https://www.lightstream.com",
+    "rateRange": "Personal loans ~10–13% APR",
+    "note": "Quick unsecured loans; competitive rates for excellent credit"
+  }
+]
+

@@ -54,7 +54,7 @@
                                     class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm"></span>
                                 <span id="property-region-badge" class="px-3 py-1 rounded-full text-sm hidden"></span>
                             </div>
-                            <div class="flex gap-3">
+                            <div class="flex flex-wrap gap-3">
                                 <a id="property-link" href="#" target="_blank"
                                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                                     View Original Listing
@@ -63,10 +63,59 @@
                                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                     Add to Calculator
                                 </button>
+                                <button id="btn-action-plan"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                                    onclick="openActionPlan()">
+                                    Action Plan
+                                </button>
+                                <a id="btn-schedule-visit" href="#"
+                                    class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                                    Schedule Visit
+                                </a>
                             </div>
                         </div>
                         <div id="hero-image" class="image-card">
                             <!-- Hero image will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Property Overview -->
+            <section class="py-6 bg-white border-t border-slate-100">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">Property Overview</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="text-slate-600 text-sm">Price</div>
+                            <div id="ov-price" class="text-2xl font-semibold text-green-700"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="text-slate-600 text-sm">Acres</div>
+                            <div id="ov-acres" class="text-2xl font-semibold text-slate-900"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="text-slate-600 text-sm">Price per Acre</div>
+                            <div id="ov-ppa" class="text-2xl font-semibold text-blue-700"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="text-slate-600 text-sm">Zoning</div>
+                            <div id="ov-zoning" class="text-lg font-medium"></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="text-slate-600 text-sm">Access</div>
+                            <div id="ov-access" class="text-lg font-medium"></div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button id="btn-toggle-financing" class="text-sm text-indigo-700 hover:underline" onclick="toggleFinancingInfo()">Show Financing Info</button>
+                        <div id="financing-info" class="mt-2 hidden text-sm text-slate-700">
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Down payment defaults to 25%, interest 8%, term 10 years (editable below).</li>
+                                <li>Inputs are saved per-property in your browser.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -222,7 +271,7 @@
                                         class="block text-sm font-medium text-slate-700 mb-1">Down
                                         Payment %</label>
                                     <input type="number" id="down-payment"
-                                        value="20" min="0" max="100"
+                                        value="25" min="0" max="100"
                                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
@@ -230,7 +279,7 @@
                                         class="block text-sm font-medium text-slate-700 mb-1">Interest
                                         Rate %</label>
                                     <input type="number" id="interest-rate"
-                                        value="6.5" min="0" max="20" step="0.1"
+                                        value="8" min="0" max="20" step="0.1"
                                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
@@ -238,7 +287,7 @@
                                         class="block text-sm font-medium text-slate-700 mb-1">Loan
                                         Term (Years)</label>
                                     <input type="number" id="loan-term"
-                                        value="30" min="1" max="50"
+                                        value="10" min="1" max="50"
                                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                             </div>
@@ -254,7 +303,56 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Lenders Panel -->
+            <section class="py-8">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Financing Resources</h2>
+                    <div id="lenders" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Lenders will render here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pitfall Tips -->
+            <section class="py-8 bg-white border-t border-slate-100">
+                <div class="max-w-6xl mx-auto px-4">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Pitfall Tips</h2>
+                    <div class="space-y-3" id="pitfall-accordion">
+                        <!-- Accordion items inserted by JS -->
+                    </div>
+                </div>
+            </section>
         </div>
+
+        <!-- Action Plan Modal -->
+        <dialog id="action-plan" class="rounded-lg p-0 w-full max-w-2xl">
+            <div class="p-4 border-b">
+                <h3 class="text-lg font-semibold">Action Plan</h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <ol class="list-decimal pl-5 space-y-2 text-sm">
+                    <li>Contact agent: <a id="agent-link" href="#" target="_blank" class="text-indigo-600 underline">Agent link</a> <span id="agent-phone" class="ml-2 text-slate-600"></span></li>
+                    <li>Start financing: 
+                        <a href="https://www.greylock.org" target="_blank" class="text-indigo-600 underline">Greylock FCU</a>,
+                        <a href="https://www.leebank.com" target="_blank" class="text-indigo-600 underline">Lee Bank</a>,
+                        <a href="https://www.sofi.com" target="_blank" class="text-indigo-600 underline">SoFi</a>
+                    </li>
+                    <li>Schedule visit: <a id="maps-link" href="#" target="_blank" class="text-indigo-600 underline">Open in Google Maps</a></li>
+                </ol>
+                <div class="mt-4">
+                    <h4 class="font-semibold mb-2 text-sm">Progress</h4>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-2"><input type="checkbox" id="ap-step1"> <span>Contacted agent</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" id="ap-step2"> <span>Started financing</span></label>
+                        <label class="flex items-center gap-2"><input type="checkbox" id="ap-step3"> <span>Scheduled visit</span></label>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t flex justify-end gap-2">
+                <button class="px-3 py-2 rounded-md border" onclick="closeActionPlan()">Close</button>
+            </div>
+        </dialog>
 
         <!-- Error State -->
         <div id="error"
@@ -308,17 +406,23 @@
         try {
           const urlParams = new URLSearchParams(window.location.search);
           const propertyId = urlParams.get('id');
-          
-          if (!propertyId) {
-            showError();
-            return;
-          }
+          const qTown = urlParams.get('town');
+          const qParcel = urlParams.get('parcel');
 
           const res = await fetch('data/land.json', { cache: 'no-store' });
           if (!res.ok) throw new Error('Failed to load property data');
           
           allProperties = await res.json();
-          currentProperty = allProperties[parseInt(propertyId)];
+          if (propertyId != null) {
+            currentProperty = allProperties[parseInt(propertyId)];
+          } else if (qTown || qParcel) {
+            const townLc = String(qTown || '').trim().toLowerCase();
+            const parcelLc = String(qParcel || '').trim().toLowerCase();
+            currentProperty = allProperties.find(r =>
+              String(r.Town || '').trim().toLowerCase() === townLc &&
+              String(r.Parcel || '').trim().toLowerCase() === parcelLc
+            );
+          }
           
           if (!currentProperty) {
             showError();
@@ -399,6 +503,20 @@
         document.getElementById('detail-status').textContent = currentProperty.Tag || 'inbox';
         document.getElementById('detail-updated').textContent = new Date().toLocaleDateString();
 
+        // Overview cards
+        const ppaVal = (currentProperty.Price && currentProperty.Acres) ? (Number(currentProperty.Price)/Number(currentProperty.Acres)) : null;
+        document.getElementById('ov-price').textContent = fmtCurrency(currentProperty.Price);
+        document.getElementById('ov-acres').textContent = `${fmtNumber(currentProperty.Acres)} acres`;
+        document.getElementById('ov-ppa').textContent = fmtCurrency(ppaVal);
+        // Best-effort Zoning/Access (from known properties or notes)
+        const zoning = inferZoning(currentProperty) || 'See listing/notes';
+        const access = inferAccess(currentProperty) || 'See listing/notes';
+        document.getElementById('ov-zoning').textContent = zoning;
+        document.getElementById('ov-access').textContent = access;
+
+        // Schedule Visit mailto
+        document.getElementById('btn-schedule-visit').href = buildMailto(currentProperty);
+
         // Notes
         displayNotes();
 
@@ -407,6 +525,12 @@
 
         // Load regional benchmark badge
         loadRegionBadge(ppa);
+
+        // Load lenders
+        loadLenders();
+
+        // Build pitfalls
+        buildPitfalls();
       }
 
       function displayImageGallery(images) {
@@ -468,9 +592,9 @@
 
       function calculatePayments() {
         const price = Number(currentProperty.Price) || 0;
-        const downPaymentPercent = Number(document.getElementById('down-payment').value) || 20;
-        const interestRate = Number(document.getElementById('interest-rate').value) || 6.5;
-        const termYears = Number(document.getElementById('loan-term').value) || 30;
+        const downPaymentPercent = Number(document.getElementById('down-payment').value) || 25;
+        const interestRate = Number(document.getElementById('interest-rate').value) || 8;
+        const termYears = Number(document.getElementById('loan-term').value) || 10;
 
         const downPayment = price * (downPaymentPercent / 100);
         const loanAmount = price - downPayment;
@@ -521,6 +645,9 @@
         `;
 
         document.getElementById('detail-monthly').textContent = fmtCurrency(totalMonthly);
+
+        // Persist per-property
+        saveFinanceInputs({ down: downPaymentPercent, rate: interestRate, term: termYears });
       }
 
       function showError() {
@@ -598,6 +725,129 @@
         const byState = regions.filter(r => Array.isArray(r.states) && r.states.map(String).includes(state));
         if (byState.length === 1) return byState[0];
         return null;
+      }
+
+      // Helpers for overview and action plan
+      function toggleFinancingInfo() {
+        const el = document.getElementById('financing-info');
+        const btn = document.getElementById('btn-toggle-financing');
+        const isHidden = el.classList.contains('hidden');
+        if (isHidden) { el.classList.remove('hidden'); btn.textContent = 'Hide Financing Info'; }
+        else { el.classList.add('hidden'); btn.textContent = 'Show Financing Info'; }
+      }
+
+      function buildMailto(prop) {
+        const subject = encodeURIComponent(`Showing request: ${prop.Town || ''} — ${prop.Parcel || ''}`);
+        const body = encodeURIComponent(`Hi Kim Bergland,\n\nI'm interested in ${prop.Parcel}, ${prop.Town}, ${prop.State}. I'd like to schedule a visit and get the plot plan, wetlands/perc status, and road maintenance confirmation.\n\nThanks!`);
+        return `mailto:?subject=${subject}&body=${body}`;
+      }
+
+      function inferZoning(prop) {
+        // Known override for Otis 72 W Center Rd from listing summary
+        if (String(prop.Town).toLowerCase()==='otis' && String(prop.Parcel).toLowerCase()==='72 w center rd') return 'Residential';
+        return null;
+      }
+      function inferAccess(prop) {
+        if (String(prop.Town).toLowerCase()==='otis' && String(prop.Parcel).toLowerCase()==='72 w center rd') return 'West Center → Hayes Hill Rd (dirt); not winter maintained';
+        return null;
+      }
+
+      function propertyKey() {
+        const parts = [currentProperty.State, currentProperty.County, currentProperty.Town, currentProperty.Parcel]
+          .map(s => String(s || '').trim().toLowerCase()).filter(Boolean);
+        return 'agscout.detail.' + parts.join('|');
+      }
+      function saveFinanceInputs({ down, rate, term }) {
+        try {
+          const key = propertyKey() + '.finance';
+          localStorage.setItem(key, JSON.stringify({ down, rate, term }));
+        } catch(_e) {}
+      }
+      function loadFinanceInputs() {
+        try {
+          const key = propertyKey() + '.finance';
+          const raw = localStorage.getItem(key);
+          if (!raw) return;
+          const obj = JSON.parse(raw);
+          if (obj && typeof obj === 'object') {
+            if (obj.down != null) document.getElementById('down-payment').value = obj.down;
+            if (obj.rate != null) document.getElementById('interest-rate').value = obj.rate;
+            if (obj.term != null) document.getElementById('loan-term').value = obj.term;
+          }
+        } catch(_e) {}
+      }
+
+      function openActionPlan() {
+        // Wire links
+        const addr = [currentProperty.Parcel, currentProperty.Town, currentProperty.State].filter(Boolean).join(', ');
+        const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
+        document.getElementById('maps-link').href = mapsUrl;
+        document.getElementById('agent-link').href = currentProperty.Link || '#';
+        // Basic stored progress
+        const key = propertyKey() + '.action';
+        const raw = localStorage.getItem(key);
+        const obj = raw ? JSON.parse(raw) : {};
+        document.getElementById('ap-step1').checked = !!obj.s1;
+        document.getElementById('ap-step2').checked = !!obj.s2;
+        document.getElementById('ap-step3').checked = !!obj.s3;
+        // Persist on change
+        ['ap-step1','ap-step2','ap-step3'].forEach(id => {
+          document.getElementById(id).onchange = () => {
+            const data = {
+              s1: document.getElementById('ap-step1').checked,
+              s2: document.getElementById('ap-step2').checked,
+              s3: document.getElementById('ap-step3').checked,
+            };
+            localStorage.setItem(key, JSON.stringify(data));
+          };
+        });
+        document.getElementById('action-plan').showModal();
+      }
+      function closeActionPlan() {
+        document.getElementById('action-plan').close();
+      }
+
+      async function loadLenders() {
+        try {
+          const res = await fetch('data/lenders.json', { cache: 'no-store' });
+          if (!res.ok) return;
+          const arr = await res.json();
+          if (!Array.isArray(arr)) return;
+          const html = arr.map(l => `
+            <div class="bg-white rounded-lg border p-4">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">${escapeHtml(l.name)}</div>
+                <a href="${escapeHtml(l.link)}" target="_blank" class="text-indigo-600 text-sm underline">Apply</a>
+              </div>
+              <div class="text-sm text-slate-600 mt-1">${escapeHtml(l.note || '')}</div>
+              <div class="text-sm mt-1">Rate: <span class="font-medium">${escapeHtml(l.rateRange || '')}</span></div>
+            </div>
+          `).join('');
+          document.getElementById('lenders').innerHTML = html;
+        } catch(_e) {}
+      }
+
+      function buildPitfalls() {
+        const items = [
+          { title: 'Access', bullets: ['Town maintenance may stop before lot', 'Confirm legal frontage on a public way'] },
+          { title: 'Utilities', bullets: ['No existing well/septic', 'Get early quotes for well + septic'] },
+          { title: 'Zoning/Wetlands', bullets: ['Request wetlands layer and zoning confirmation', 'Wet areas reduce buildable envelope'] },
+          { title: 'Financing', bullets: ['Land < $50K can be tricky for banks', 'Pre-qual with local CU or personal loan'] },
+          { title: 'Survey/Boundaries', bullets: ['Ask for latest plot or deed sketch', 'Locate or replace missing markers'] },
+        ];
+        const acc = document.getElementById('pitfall-accordion');
+        acc.innerHTML = items.map((it, idx) => `
+          <div class="border-l-4 border-yellow-400 bg-yellow-50 rounded-r p-3">
+            <button class="w-full text-left font-semibold" onclick="togglePit(${idx})">${escapeHtml(it.title)}</button>
+            <ul id="pit-${idx}" class="mt-2 ml-4 list-disc text-sm text-slate-700 hidden">
+              ${it.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('');
+        window.togglePit = (i) => {
+          const el = document.getElementById('pit-' + i);
+          el.classList.toggle('hidden');
+        };
       }
     </script>
     </body>
