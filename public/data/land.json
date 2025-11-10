@@ -690,5 +690,110 @@
     "Added": "2025-11-07",
     "Images": [],
     "Note": "Neighborhood lot; confirm road access and utilities."
+  },
+  {
+    "State": "CT",
+    "County": "Tolland",
+    "Town": "Stafford",
+    "Parcel": "336 East Street",
+    "Acres": 0.49,
+    "Price": 24900,
+    "WaterProximity": null,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "new",
+    "Added": "11.10.25",
+    "Images": [
+      "https://assets.land.com/resizedimages/0/1480/w/80/w/1-5831833174",
+      "https://assets.land.com/resizedimages/0/960/w/80/w/1-5831833170"
+    ],
+    "Note": "0.49 acres in Tolland County, CT — half acre surveyed lot with 300 feet of road frontage. Public sewer at the street. CT DOT driveway application approved; Stafford ZBA setback variances approved. Acreage (non-buildable) across the street available.\n\nAddress: 336 East Street, Stafford, CT 06076\nType: Residential land\nProperty ID: 24515794; Source: Homes, MLS# 24120373\n\nContact: Andy Goodhall — Connecticut Crossroads Realty (959) 500-5922\nLast updated: 2025-11-10"
+  },
+  {
+    "State": "NY",
+    "County": "Lewis",
+    "Town": "Diana",
+    "Parcel": "Henry Road (Blanchard Creek waterfront)",
+    "Acres": 5.01,
+    "Price": 44900,
+    "WaterProximity": 0,
+    "Link": "https://www.landandfarm.com/property/waterfront-5-acres-155-kayak-river-with-20-000-acre-state-forest-44-900-38030020/",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "new",
+    "Added": "11.10.25",
+    "Images": [
+      "https://assets.landandfarm.com/resizedimages/0/960/w/80/w/1-5589935209",
+      "https://assets.landandfarm.com/resizedimages/0/960/w/80/w/1-5589935215",
+      "https://assets.landandfarm.com/resizedimages/0/960/w/80/w/1-5589935156",
+      "https://assets.landandfarm.com/resizedimages/0/960/w/80/w/1-5589935208"
+    ],
+    "Note": "Waterfront 5.01 acres with ~155' along Blanchard Creek; flatwater canoe/kayak; borders 20,412-acre State Forest. Private gated crushed-stone road access—call for gate access. Recreational/residential/hunting fit.\n\nLocation: Henry Road, Diana, NY 13665 (Lewis County)\nContact: Bill Wilson — Land First, Inc. (315) 860-8195\nSource: MLS# BL&C14\nListing last updated: 2025-08-15"
+  },
+  {
+    "State": "MA",
+    "County": "Hampden",
+    "Town": "Palmer",
+    "Parcel": "L16 Wilbraham St",
+    "Acres": 22.00,
+    "Price": 55800,
+    "WaterProximity": null,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "new",
+    "Added": "11.10.25",
+    "Images": [
+      "https://ap.rdcpix.com/713ce05d1db91c7f9c774374c2bccadel-m4056484809rd-w1280_h960.webp",
+      "https://ap.rdcpix.com/713ce05d1db91c7f9c774374c2bccadel-m2241736843rd-w1280_h960.webp",
+      "https://ap.rdcpix.com/713ce05d1db91c7f9c774374c2bccadel-m2284188710rd-w1280_h960.webp",
+      "https://ap.rdcpix.com/713ce05d1db91c7f9c774374c2bccadel-m2235910398rd-w1280_h960.webp"
+    ],
+    "Note": "22-acre wooded parcel along the Mass Pike corridor; privacy and recreation potential; highway road frontage noted. Listed by Cuoco & Co. Real Estate. Source: MLSPIN #73446015. On Realtor.com ~19 days as of 2025-10-30."
+  },
+  {
+    "State": "MA",
+    "County": "Berkshire",
+    "Town": "North Adams",
+    "Parcel": "LOT-17A Reservoir Rd",
+    "Acres": 4.65,
+    "Price": 49500,
+    "WaterProximity": null,
+    "Link": "",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "new",
+    "Added": "11.10.25",
+    "Images": [
+      "https://photos.zillowstatic.com/fp/33ac64ec0dbf3d61af3dbd1764e8b718-cc_ft_576.webp",
+      "https://photos.zillowstatic.com/fp/bf3e2faac9da9cebb9648a9913c587c2-cc_ft_576.webp",
+      "https://photos.zillowstatic.com/fp/ea5495e564335acbc7ea1b6f41a0db24-cc_ft_576.webp"
+    ],
+    "Note": "4.65 acres on Reservoir Rd in a desirable area; town water; wooded with seasonal hill/mountain views; Parcel: Map 6 Lot 17A; Zoning: Residential; Taxes (annual): $94. Listed by Collin Boucher (Moresi Real Estate Partners). Source: BCMLS #239952. Listing updated 2025-03-17."
+  },
+  {
+    "State": "MA",
+    "County": "Berkshire",
+    "Town": "Otis",
+    "Parcel": "72 W Center Rd",
+    "Acres": 4.53,
+    "Price": 32000,
+    "WaterProximity": null,
+    "Link": "https://www.zillow.com/homedetails/72-W-Center-Rd-Otis-MA-01253/2093097254_zpid/?mmlb=g,6",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "shortlist",
+    "Added": "11.10.25",
+    "Featured": true,
+    "Images": [
+      "https://photos.zillowstatic.com/fp/82eb34519666a681ee3ba874dee861a9-cc_ft_576.webp",
+      "https://photos.zillowstatic.com/fp/b0f52695d2b07f6cc3e6ada2a3e6f0dd-o_a.webp",
+      "https://photos.zillowstatic.com/fp/30fcf70c1b67d95e413f272f65304571-o_a.webp",
+      "https://photos.zillowstatic.com/fp/8e137eace3dc6fefae172b58112c6b2d-o_a.webp",
+      "https://photos.zillowstatic.com/fp/538a5b5fff9f47b7d1374610ecce3f09-o_a.webp",
+      "https://photos.zillowstatic.com/fp/91f35b812002b762abaca08d9db68020-o_a.webp"
+    ],
+    "Note": "Very private forested 4.53-acre lot near Hayes Pond via Hayes Hill Rd; parcel no. 9A, 71; zoning residential; water/sewer: none; BCMLS #245478. Highly interested — featured and on checkout list."
   }
 ]

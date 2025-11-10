@@ -189,6 +189,25 @@
                 </div>
             </section>
 
+            <!-- Weekly Adds -->
+            <section class="card p-4 md:p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-heading-3 text-primary">Weekly Adds</h3>
+                    <div class="text-caption text-tertiary">Counts by week (based on Added)</div>
+                </div>
+                <div class="mt-3">
+                    <ul class="divide-y divide-slate-100 border rounded-md bg-white">
+                        <template x-for="item in groupAddedByWeek()" :key="item.week">
+                            <li class="flex items-center justify-between px-4 py-2">
+                                <span class="text-body-sm font-medium" x-text="item.week"></span>
+                                <span class="text-body-sm text-slate-600"><strong x-text="item.count"></strong> added</span>
+                            </li>
+                        </template>
+                        <li x-show="groupAddedByWeek().length===0" class="px-4 py-3 text-slate-500 text-sm">No Added dates found</li>
+                    </ul>
+                </div>
+            </section>
+
             <!-- Simple list of properties -->
             <section id="list" class="card p-4 md:p-6">
                 <h3 class="text-heading-3 text-primary mb-4">Property List</h3>
@@ -579,7 +598,7 @@
                     </div>
                     <div class="p-4 pt-0 text-xs text-slate-500">Supported
                         headers:
-                        State,County,Town,Parcel,Acres,Price,WaterProximity,Link,Lat,Lon,Tag,Note,CommuteMin,Walkable,WaterVibe,Joy</div>
+                        State,County,Town,Parcel,Acres,Price,WaterProximity,Link,Lat,Lon,Tag,Note,Added,Featured,CommuteMin,Walkable,WaterVibe,Joy</div>
                     <div class="p-4 pt-0 flex items-center justify-end">
                         <button
                             class="px-3 py-2 rounded-md bg-white shadow-sm border"

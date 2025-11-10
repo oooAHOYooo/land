@@ -20,9 +20,9 @@ export function appLand() {
   const storageKey = storageKeyFor('land');
   const normalizeRow = (raw) =>
     normalizeRowGeneric(raw, {
-      strings: ['State', 'County', 'Town', 'Parcel', 'Link', 'Note'],
+      strings: ['State', 'County', 'Town', 'Parcel', 'Link', 'Note', 'Added'],
       numbers: ['Acres', 'Price', 'WaterProximity', 'Lat', 'Lon', 'CommuteMin', 'Joy'],
-      booleans: ['Walkable', 'WaterVibe'],
+      booleans: ['Walkable', 'WaterVibe', 'Featured'],
       lowerTags: true,
     });
 
@@ -164,6 +164,55 @@ export function appLand() {
         if (t === 'skip') c.skip++;
       }
       return c;
+    },
+
+    // Weekly grouping by Added date (supports 'YYYY-MM-DD' and 'MM.DD.YY')
+    _parseAddedDate(s) {
+      if (!s) return null;
+      const str = String(s).trim();
+      // Try YYYY-MM-DD
+      const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
+      if (iso) {
+        const d = new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+        return isNaN(d) ? null : d;
+      }
+      // Try MM.DD.YY -> assume 20YY
+      const md = /^(\d{1,2})\.(\d{1,2})\.(\d{2})$/.exec(str);
+      if (md) {
+        const y = 2000 + Number(md[3]);
+        const m = Number(md[1]) - 1;
+        const d = Number(md[2]);
+        const dt = new Date(y, m, d);
+        return isNaN(dt) ? null : dt;
+      }
+      return null;
+    },
+    _weekStartMonday(d) {
+      const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const day = dt.getDay(); // 0=Sun .. 6=Sat
+      const diff = (day === 0 ? -6 : 1 - day); // move to Monday
+      dt.setDate(dt.getDate() + diff);
+      return dt;
+    },
+    _dateKey(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    },
+    groupAddedByWeek() {
+      const map = new Map(); // key: 'Week of YYYY-MM-DD' -> count
+      for (const r of this.rows) {
+        const d = this._parseAddedDate(r.Added);
+        if (!d) continue;
+        const wk = this._weekStartMonday(d);
+        const key = `Week of ${this._dateKey(wk)}`;
+        map.set(key, (map.get(key) || 0) + 1);
+      }
+      // Return sorted by week start descending
+      const arr = Array.from(map.entries()).map(([week, count]) => ({ week, count }));
+      arr.sort((a, b) => (a.week < b.week ? 1 : a.week > b.week ? -1 : 0));
+      return arr;
     },
 
     uniqueStates() {
