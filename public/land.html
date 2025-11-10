@@ -111,6 +111,35 @@
                 </div>
             </header>
 
+            <!-- Next Action Steps (Featured) -->
+            <section class="card p-4 md:p-6" x-show="rows.some(r => r.Featured)">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-heading-3 text-primary">Next Action Steps</h3>
+                    <span class="text-caption text-tertiary">Quick links to featured properties</span>
+                </div>
+                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <template x-for="r in rows.filter(r => r.Featured)" :key="r.id">
+                        <a
+                            :href="`properties/${encodeURIComponent((r.Town || '').toLowerCase())}-${encodeURIComponent((r.Parcel || '').toLowerCase().replaceAll(' ', '-'))}.html`"
+                            class="flex items-center justify-between px-4 py-3 rounded-md border hover:bg-slate-50">
+                            <div>
+                                <div class="font-semibold" x-text="(r.Town || '') + ' — ' + (r.Parcel || '')"></div>
+                                <div class="text-sm text-slate-600">
+                                    <span x-text="fmt.currency(r.Price)"></span>
+                                    <span class="mx-1">·</span>
+                                    <span x-text="fmt.number(r.Acres) + ' acres'"></span>
+                                    <template x-if="r.Tag">
+                                        <span class="mx-1">·</span>
+                                        <span class="uppercase text-xs tracking-wide" x-text="String(r.Tag)"></span>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="text-indigo-600 text-sm font-medium">Open →</div>
+                        </a>
+                    </template>
+                </div>
+            </section>
+
             <section class="card p-4 md:p-6">
                 <div class="flex flex-col lg:flex-row lg:items-end gap-3">
                     <div class="flex-1">
