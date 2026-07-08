@@ -777,15 +777,16 @@
     "County": "Berkshire",
     "Town": "Otis",
     "Parcel": "72 W Center Rd",
-    "Acres": 4.53,
-    "Price": 32000,
+    "Acres": 3.8,
+    "Price": 28000,
     "WaterProximity": null,
     "Link": "https://www.zillow.com/homedetails/72-W-Center-Rd-Otis-MA-01253/2093097254_zpid/?mmlb=g,6",
     "Lat": null,
     "Lon": null,
-    "Tag": "shortlist",
+    "Tag": "sold",
     "Added": "11.10.25",
-    "Featured": true,
+    "Featured": false,
+    "Sold": "2026-03-10",
     "Images": [
       "https://photos.zillowstatic.com/fp/82eb34519666a681ee3ba874dee861a9-cc_ft_576.webp",
       "https://photos.zillowstatic.com/fp/b0f52695d2b07f6cc3e6ada2a3e6f0dd-o_a.webp",
@@ -794,6 +795,27 @@
       "https://photos.zillowstatic.com/fp/538a5b5fff9f47b7d1374610ecce3f09-o_a.webp",
       "https://photos.zillowstatic.com/fp/91f35b812002b762abaca08d9db68020-o_a.webp"
     ],
-    "Note": "Very private forested 4.53-acre lot near Hayes Pond via Hayes Hill Rd; parcel no. 9A, 71; zoning residential; water/sewer: none; BCMLS #245478. Highly interested — featured and on checkout list."
+    "Note": "SOLD 3/10/2026 for $28,000. Was: Very private forested 4.53-acre lot near Hayes Pond via Hayes Hill Rd; parcel no. 9A, 71; zoning residential; water/sewer: none; BCMLS #245478."
+  },
+  {
+    "State": "MA",
+    "County": "Berkshire",
+    "Town": "Otis",
+    "Parcel": "40 Bliven Rd",
+    "Acres": 1.82,
+    "Price": 42900,
+    "WaterProximity": null,
+    "Link": "https://www.zillow.com/homedetails/40-Bliven-Rd-Otis-MA-01253/",
+    "Lat": null,
+    "Lon": null,
+    "Tag": "inbox",
+    "Added": "2026-07-07",
+    "HOAFees": {
+      "annual": 1610,
+      "monthly": 134,
+      "breakdown": "Road maintenance/association $990 + pool/tennis $620"
+    },
+    "Images": [],
+    "Note": "Harrington Woods community, 1.82 acres on cul-de-sac. Lovely residential area. Pool and tennis facilities. Fiber optic and electricity available. Septic design on file from 90s (may need update). Listed 10/16/2025, 939 days on market. Zoning: Residential. Parcel: Map 10 Lot 134. MLS #242189. Listed by Laurie Crittendon Nikituk & Kim Bergland (RED HORSE REAL ESTATE). Total monthly cost: ~$295 (mortgage + HOA)."
   }
 ]
